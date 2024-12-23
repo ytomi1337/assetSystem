@@ -12,5 +12,8 @@ const apiAssetClient = axios.create({
 export default {
     getAssets(){
         return apiAssetClient.get('/assets')
+    },
+    getId(id){
+        return apiAssetClient.get('/assets/'+id)
     }
 }

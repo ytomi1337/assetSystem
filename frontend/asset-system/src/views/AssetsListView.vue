@@ -1,5 +1,6 @@
 <script setup>
     import assetService from '@/services/assetService';
+    import AssetActionData from '@/components/AssetActionData.vue';
     import { ref, onMounted} from 'vue'
 
     const assets = ref(null)
@@ -21,6 +22,7 @@
 <template>
     <div class="containerBox">
         <div class="filterBar">
+            <button class="navbtn createBtn">Utwórz</button>
             <button class="navbtn">Filtr</button>
             <button class="navbtn">Refresh</button>
         </div>
@@ -36,7 +38,7 @@
                 <th>Status</th>
                 <th>Data Gwarancji</th>
                 <th>Data Wydania</th>
-                <th>Data Zwrotu</th>
+                <th>Akcje</th>
             </tr>
             <tr v-for="asset in assets" :id="asset" >
                 <td>{{ asset.id }}</td>
@@ -48,7 +50,7 @@
                 <td>{{ asset.status }}</td>
                 <td>{{ asset.warranty_date }}</td>
                 <td>{{ asset.recipt_date }}</td>
-                <td>{{ asset.return_date }}</td>
+                <td><AssetActionData :key="asset.id" :asset="asset"></AssetActionData></td>
             </tr>
             
         </table>
@@ -87,6 +89,13 @@
             margin-right: 2%;
             border-radius: 5px;
             transition: 0.3s;
+        }
+        .navbtn:first-child{
+            background-color: #71cc5eda;
+        }
+        .navbtn:first-child:hover{
+            background-color: #398d23c9;
+            color: #fff;
         }
 
         .navbtn:hover{
