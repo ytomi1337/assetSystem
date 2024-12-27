@@ -30,6 +30,12 @@ const router = createRouter({
     }
     
   ],
+
+  // methods:{
+  //   editData(){
+  //     console.log('dzialam');
+  //   }
+  // }
 })
 
 export default router
