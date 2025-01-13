@@ -9,9 +9,13 @@ const apiAssetClient = axios.create({
     }
 })
 
+
+
 export default {
-    getAssets(){
-        return apiAssetClient.get('/assets')
+    
+    getAssets(page, limit, sortValue, sortKey){
+        console.log(sortValue);
+        return apiAssetClient.get(`/assets?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)
     },
     getId(id){
         return apiAssetClient.get('/assets/'+id)

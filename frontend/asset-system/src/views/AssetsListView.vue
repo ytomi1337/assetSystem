@@ -1,21 +1,40 @@
 <script setup>
     import assetService from '@/services/assetService';
     import AssetActionData from '@/components/AssetActionData.vue';
-    import { ref, onMounted} from 'vue'
+    import { ref, onMounted, watchEffect} from 'vue'
 
     const assets = ref(null)
 
+    const page = ref(1)
+    const limit = ref(10)
+    const sortKey = ref('id')
+    const sortValue = ref('asc')
+    const sortSymbol = ref('&darr;&uarr;' )
+   
+
     onMounted(() =>{
-        assetService.getAssets()
-        .then((response)=>{
-            assets.value = response.data
-        }).catch((error)=>{
-            console.log(error);
-            console.log('wyzej error');
-        })
+        watchEffect(()=>{ 
+            assetService.getAssets(page.value, limit.value, sortValue.value, sortKey.value)
+            .then((response)=>{
+                assets.value = response.data
+            }).catch((error)=>{
+                console.log(error);
+                console.log('wyzej error');
+            })
+            
+    })
     })
 
-    console.log(assets);
+    const toggleSort = (column) => {
+        if(column){
+          sortValue.value = sortValue.value == 'asc' ? 'desc':'asc';
+          sortSymbol.value = sortValue.value == 'asc' ? '&darr;': '&uarr;';
+        }
+        sortKey.value = column
+};
+    
+
+    
 
 </script>
 
@@ -29,18 +48,18 @@
         <hr>
         <table id="mainTable" class="mainTable">
             <tr class="tableHeader">
-                <th>ID</th>
-                <th>Nr IT</th>
-                <th>Nazwa</th>
-                <th>Nr Seryjny</th>
-                <th>Użytkownik</th>
-                <th>Lokalizacja</th>
-                <th>Status</th>
-                <th>Data Gwarancji</th>
-                <th>Data Wydania</th>
+                <th>ID <button class="sortBtn" @click="toggleSort('id')" v-html="sortSymbol"></button> </th>
+                <th>Nr IT<button class="sortBtn" @click="toggleSort('it_num')"v-html="sortSymbol"></button></th>
+                <th>Nazwa <button class="sortBtn" @click="toggleSort('name')"v-html="sortSymbol"></button></th>
+                <th>Nr Seryjny <button class="sortBtn" @click="toggleSort('serialnum')"v-html="sortSymbol"></button></th>
+                <th>Użytkownik <button class="sortBtn" @click="toggleSort('user_new')"v-html="sortSymbol"></button></th>
+                <th>Lokalizacja <button class="sortBtn" @click="toggleSort('localization')"v-html="sortSymbol"></button></th>
+                <th>Status <button class="sortBtn" @click="toggleSort('status')"v-html="sortSymbol"></button></th>
+                <th>Data Gwarancji <button class="sortBtn" @click="toggleSort('warranty_date')"v-html="sortSymbol"></button></th>
+                <th>Data Wydania <button class="sortBtn" @click="toggleSort('recipt_date')"v-html="sortSymbol"></button></th>
                 <th>Akcje</th>
             </tr>
-            <tr v-for="asset in assets" :id="asset" >
+            <tr v-for="asset in assets" >
                 <td>{{ asset.id }}</td>
                 <td>{{ asset.it_num }}</td>
                 <td>{{ asset.name }}</td>
@@ -50,7 +69,7 @@
                 <td>{{ asset.status }}</td>
                 <td>{{ asset.warranty_date }}</td>
                 <td>{{ asset.recipt_date }}</td>
-                <td><AssetActionData :key="asset.id" :asset="asset"></AssetActionData></td>
+                <td><AssetActionData :asset="asset"></AssetActionData></td>
             </tr>
             
         </table>
@@ -102,6 +121,12 @@
             background-color: rgba(109, 109, 109, 0.781);
             color: #fff;
         }
+    }
+
+    .sortBtn{
+        border: none;
+        background-color: transparent;
+        
     }
 
 </style>

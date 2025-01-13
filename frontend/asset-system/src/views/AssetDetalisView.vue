@@ -11,6 +11,8 @@
 
     const asset = ref(null)
     const isDisabled = ref(true)
+    const newAssets = asset
+    const headerTxt = ref(asset.name)
 
     onMounted(() => {
         assetService.getId(props.id)
@@ -25,9 +27,12 @@
         isDisabled.value = false;
     };
 
-    console.log(asset);
-    console.log(asset.user_old);
+    
+
+    console.log(newAssets);
     console.log('new assets');
+    
+    
 
 
 
@@ -42,7 +47,7 @@
                     <h1 class="mb-4">{{ asset.name }}</h1>
                     <p>
                     <label for="itNum">Nr działu IT: </label>
-                    <input type="text" name="itNum" class="ms-3" :disabled="isDisabled" :placeholder="asset.name"> 
+                    <input type="text" name="itNum" class="ms-3" :disabled="isDisabled" :placeholder="asset.it_num" v-model="headerTxt"> 
                     </p>
 
                     <p>

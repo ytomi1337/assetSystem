@@ -6,7 +6,7 @@ const { Sequelize } = require('sequelize');
 
 router.get('/assets', function(req, res){
     const page = Number(req.query.page) || 1
-    const limit = Number(req.query.limit) || 1
+    const limit = Number(req.query.limit) || 3
     const sortKey = req.query.sortKey || 'id'
     const sortValue = req.query.sortValue || 'asc'
     // Asset.findAll({}).then((asset) => {res.send(asset)})
