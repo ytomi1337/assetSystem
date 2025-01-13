@@ -1,12 +1,13 @@
 <script setup>
     import assetService from '@/services/assetService';
     import AssetActionData from '@/components/AssetActionData.vue';
-    import { ref, onMounted, watchEffect} from 'vue'
+    import { ref, onMounted, watchEffect, computed} from 'vue'
 
     const assets = ref(null)
+    const totalAssets = ref(0)
 
     const page = ref(1)
-    const limit = ref(10)
+    const limit = ref(4)
     const sortKey = ref('id')
     const sortValue = ref('asc')
     const sortSymbol = ref('&darr;&uarr;' )
@@ -31,9 +32,17 @@
           sortSymbol.value = sortValue.value == 'asc' ? '&darr;': '&uarr;';
         }
         sortKey.value = column
-};
-    
 
+    };
+    
+    const pagePlus = () =>{
+        page.value = page.value + 1
+    }
+
+    const pageMinus = () =>{
+        
+        page.value = page.value - 1
+    }
     
 
 </script>
@@ -73,6 +82,17 @@
             </tr>
             
         </table>
+        <div class="tableFotter">
+            <div class="paginationSection">
+                <button @click="pageMinus" v-if="page != 1"> < </button>
+                <button @click="pagePlus"> > </button>
+            </div>
+            <div class="rowsSection">
+                <button>3</button>
+                <button>5</button>
+                <button>10</button>
+            </div>
+        </div>
         
     </div>
   
@@ -128,5 +148,24 @@
         background-color: transparent;
         
     }
+    
+    .tableFotter{
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2%;
 
+        button{
+            border: 1px solid rgba(180, 179, 179, 0.781);
+            padding: 5px 10px;
+            margin: 3px;
+            background-color: transparent;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        button:hover{
+            background-color: rgba(109, 109, 109, 0.781);
+            color: #fff;
+        }
+    }
 </style>

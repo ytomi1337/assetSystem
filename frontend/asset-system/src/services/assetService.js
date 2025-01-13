@@ -14,7 +14,6 @@ const apiAssetClient = axios.create({
 export default {
     
     getAssets(page, limit, sortValue, sortKey){
-        console.log(sortValue);
         return apiAssetClient.get(`/assets?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)
     },
     getId(id){
