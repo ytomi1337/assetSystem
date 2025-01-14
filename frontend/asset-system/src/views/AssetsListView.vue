@@ -1,6 +1,7 @@
 <script setup>
     import assetService from '@/services/assetService';
     import AssetActionData from '@/components/AssetActionData.vue';
+    import AssetCreate from '@/components/AssetCreate.vue';
     import { ref, onMounted, watchEffect, computed} from 'vue'
 
     const assets = ref(null)
@@ -49,16 +50,20 @@
         limit.value = limitNum
     }  
     
+    const showCreateForm = ref(false)
 
 </script>
 
 <template>
+    <AssetCreate v-if="showCreateForm" class="transComp" ></AssetCreate>
     <div class="containerBox">
+        
         <div class="filterBar">
-            <button class="navbtn createBtn">Utwórz</button>
+            <button class="navbtn createBtn" @click="showCreateForm = true">Utworz</button>
             <button class="navbtn">Filtr</button>
             <button class="navbtn">Refresh</button>
         </div>
+        
         <hr>
         <table id="mainTable" class="mainTable">
             <tr class="tableHeader">
@@ -173,4 +178,5 @@
             color: #fff;
         }
     }
+
 </style>
