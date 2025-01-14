@@ -4,14 +4,16 @@
     import { ref, onMounted, watchEffect, computed} from 'vue'
 
     const assets = ref(null)
-    const totalAssets = ref(0)
 
     const page = ref(1)
     const limit = ref(4)
     const sortKey = ref('id')
     const sortValue = ref('asc')
-    const sortSymbol = ref('&darr;&uarr;' )
+    const sortSymbol = ref('&darr;&uarr;')
    
+    const limitOne = ref(3)
+    const limitTwo = ref(5)
+    const limitThree = ref(10)
 
     onMounted(() =>{
         watchEffect(()=>{ 
@@ -40,9 +42,12 @@
     }
 
     const pageMinus = () =>{
-        
         page.value = page.value - 1
     }
+
+    const changeLimit = (limitNum) =>  {
+        limit.value = limitNum
+    }  
     
 
 </script>
@@ -88,9 +93,9 @@
                 <button @click="pagePlus"> > </button>
             </div>
             <div class="rowsSection">
-                <button>3</button>
-                <button>5</button>
-                <button>10</button>
+                <button @click="changeLimit(limitOne)">{{ limitOne }}</button>
+                <button @click="changeLimit(limitTwo)">{{ limitTwo }}</button>
+                <button @click="changeLimit(limitThree)">{{ limitThree }}</button>
             </div>
         </div>
         
