@@ -11,12 +11,19 @@ router.get('/assets', function(req, res){
     const sortValue = req.query.sortValue || 'asc'
     // Asset.findAll({}).then((asset) => {res.send(asset)})
 
-    Asset.findAll({
-        offset: (page -1) * limit,
-        limit: (limit),
-        order: [ [sortKey, sortValue] ]
-    }).then((assets) => {
-        res.send(assets)
+    Promise.all([
+        Asset.count(),
+        Asset.findAll({
+            offset: (page -1) * limit,
+            limit: (limit),
+            order: [ [sortKey, sortValue] ]
+        })
+    ])
+    .then(([count, assets]) => {
+        res.send({
+            count: count,
+            assets: assets
+        })
     })
 })
 
