@@ -2,12 +2,14 @@
     import assetService from '@/services/assetService';
     import AssetActionData from '@/components/AssetActionData.vue';
     import AssetCreate from '@/components/AssetCreate.vue';
+    import ArrowIcons from '@/components/ArrowIcons.vue';
     import { ref, onMounted, watchEffect, computed} from 'vue'
 
     const assets = ref(null)
+    const totalNum = ref(null)
 
     const page = ref(1)
-    const limit = ref(4)
+    const limit = ref(10)
     const sortKey = ref('id')
     const sortValue = ref('asc')
     const sortSymbol = ref('&darr;&uarr;')
@@ -16,11 +18,17 @@
     const limitTwo = ref(5)
     const limitThree = ref(10)
 
+    const totalPages = ref(null)
+
+    
+
     onMounted(() =>{
         watchEffect(()=>{ 
             assetService.getAssets(page.value, limit.value, sortValue.value, sortKey.value)
             .then((response)=>{
-                assets.value = response.data
+                assets.value = response.data.assets
+                totalNum.value = response.data.count
+                totalPages.value = totalNum.value / limit.value
             }).catch((error)=>{
                 console.log(error);
                 console.log('wyzej error');
@@ -47,7 +55,16 @@
     }
 
     const changeLimit = (limitNum) =>  {
+        page.value = 1
         limit.value = limitNum
+        console.log('Total pages: ' + totalPages.value);
+        console.log('page value:' + page.value);
+        
+
+        // if (totalPages.value < page.value){
+        //     page.value = 1
+        //     console.log('loop');
+        // }
     }  
     
     const showCreateForm = ref(false)
@@ -67,15 +84,15 @@
         <hr>
         <table id="mainTable" class="mainTable">
             <tr class="tableHeader">
-                <th>ID <button class="sortBtn" @click="toggleSort('id')" v-html="sortSymbol"></button> </th>
-                <th>Nr IT<button class="sortBtn" @click="toggleSort('it_num')"v-html="sortSymbol"></button></th>
-                <th>Nazwa <button class="sortBtn" @click="toggleSort('name')"v-html="sortSymbol"></button></th>
-                <th>Nr Seryjny <button class="sortBtn" @click="toggleSort('serialnum')"v-html="sortSymbol"></button></th>
-                <th>Użytkownik <button class="sortBtn" @click="toggleSort('user_new')"v-html="sortSymbol"></button></th>
-                <th>Lokalizacja <button class="sortBtn" @click="toggleSort('localization')"v-html="sortSymbol"></button></th>
-                <th>Status <button class="sortBtn" @click="toggleSort('status')"v-html="sortSymbol"></button></th>
-                <th>Data Gwarancji <button class="sortBtn" @click="toggleSort('warranty_date')"v-html="sortSymbol"></button></th>
-                <th>Data Wydania <button class="sortBtn" @click="toggleSort('recipt_date')"v-html="sortSymbol"></button></th>
+                <th>ID <button class="sortBtn" @click="toggleSort('id')" ><ArrowIcons :column="sortKey" :value="sortValue" :current="'id'"></ArrowIcons></button> </th>
+                <th>Nr IT<button class="sortBtn" @click="toggleSort('it_num')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'it_num'"></ArrowIcons></button></th>
+                <th>Nazwa <button class="sortBtn" @click="toggleSort('name')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'name'"></ArrowIcons></button></th>
+                <th>Nr Seryjny <button class="sortBtn" @click="toggleSort('serialnum')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'serialnum'"></ArrowIcons></button></th>
+                <th>Użytkownik <button class="sortBtn" @click="toggleSort('user_new')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'user_new'"></ArrowIcons></button></th>
+                <th>Lokalizacja <button class="sortBtn" @click="toggleSort('localization')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'localization'"></ArrowIcons></button></th>
+                <th>Status <button class="sortBtn" @click="toggleSort('status')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'status'"></ArrowIcons></button></th>
+                <th>Data Gwarancji <button class="sortBtn" @click="toggleSort('warranty_date')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'warranty_date'"></ArrowIcons></button></th>
+                <th>Data Wydania <button class="sortBtn" @click="toggleSort('recipt_date')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'recipt_date'"></ArrowIcons></button></th>
                 <th>Akcje</th>
             </tr>
             <tr v-for="asset in assets" >
@@ -95,7 +112,7 @@
         <div class="tableFotter">
             <div class="paginationSection">
                 <button @click="pageMinus" v-if="page != 1"> < </button>
-                <button @click="pagePlus"> > </button>
+                <button @click="pagePlus" v-if="totalPages > page" > > </button>
             </div>
             <div class="rowsSection">
                 <button @click="changeLimit(limitOne)">{{ limitOne }}</button>
