@@ -9,14 +9,14 @@
     const totalNum = ref(null)
 
     const page = ref(1)
-    const limit = ref(10)
+    const limit = ref(25)
     const sortKey = ref('id')
     const sortValue = ref('asc')
     const sortSymbol = ref('&darr;&uarr;')
    
     const limitOne = ref(3)
     const limitTwo = ref(5)
-    const limitThree = ref(10)
+    const limitThree = ref(25)
 
     const totalPages = ref(null)
 
@@ -32,11 +32,10 @@
             }).catch((error)=>{
                 console.log(error);
                 console.log('wyzej error');
-            })
-            
+            })    
+        })
     })
-    })
-
+    
     const toggleSort = (column) => {
         if(column){
           sortValue.value = sortValue.value == 'asc' ? 'desc':'asc';

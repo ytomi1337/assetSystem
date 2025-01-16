@@ -1,5 +1,48 @@
 <script>
+import assetService from '@/services/assetService';
+import AssetsListView from '@/views/AssetsListView.vue';
+import { reactive, ref } from 'vue';
 
+
+    export default {
+      data(){
+        return{
+          newAsset: {
+              name: '',
+              it_num: '',
+              serialnum: '',
+              user_new: '',
+              localization:'' ,
+              category:'' ,
+              status: '',
+              recipt_date: '',
+              warranty_date: ''
+           }
+        }
+    },
+    methods: {
+      crtAssetFun(){
+        if(this.newAsset.name =='' || this.newAsset.category=='' || this.newAsset ==''||this.newAsset.it_num=='' ||this.newAsset.user_new == ''){
+          return console.log('error');
+        }
+        assetService.createAsset(this.newAsset.it_num, 
+        this.newAsset.name, 
+        this.newAsset.serialnum, 
+        this.newAsset.user_new, 
+        this.newAsset.localization, 
+        this.newAsset.category, 
+        this.newAsset.status, 
+        this.newAsset.recipt_date, 
+        this.newAsset.warranty_date, 
+        )
+        .then((response)=>{
+            console.log('object added sucesfly');
+        }).catch((error)=>{
+            console.log(error);
+        })
+    }
+    }
+  }
     
 </script>
 
@@ -11,42 +54,52 @@
     <form>
       <div class="formRecord">
       <label for="it_num">Nr działu IT:</label>
-      <input type="text" />
+      <input type="text" v-model="newAsset.it_num" required/>
       </div>
 
       <div class="formRecord">
       <label for="name">Nazwa:</label>
-      <input type="text" />
+      <input type="text" v-model="newAsset.name" required/>
       </div>
 
       <div class="formRecord">
       <label for="serialnum">Nr Seryjny:</label>
-      <input type="text" />
+      <input type="text" v-model="newAsset.serialnum" required/>
       </div>
 
       <div class="formRecord">
       <label for="user_new">Użytkownik:</label>
-      <input type="text" />
+      <input type="text" v-model="newAsset.user_new" required/>
       </div>
 
       <div class="formRecord">
-      <label for="localization">localization:</label>
-      <input type="text" />
+      <label for="localization">Lokalizacja:</label>
+      <input type="text" v-model="newAsset.localization"/>
+      </div>
+
+      <div class="formRecord">
+      <label for="warranty_date">Kategoria: </label>
+      <input type="text" v-model="newAsset.category" required/>
+      </div>
+
+      <div class="formRecord">
+      <label for="warranty_date">Status:</label>
+      <input type="text" v-model="newAsset.status"/>
       </div>
 
       <div class="formRecord">
       <label for="warranty_date">Data Gwarancji:</label>
-      <input type="text" />
+      <input type="date" v-model="newAsset.warranty_date"/>
       </div>
 
       <div class="formRecord">
       <label for="recpit_date">Data Wydania:</label>
-      <input type="text" />
+      <input type="date" v-model="newAsset.recipt_date"/>
       </div>
 
       <div class="buttonSection">
-      <button class="formBtn">Utworz</button>
-      <button class="formBtn">Zamknij</button>
+      <button type="submit" class="formBtn" @click="crtAssetFun()">Utworz</button>
+      <button type="button" class="formBtn">Zamknij</button>
       </div>
     </form>
   </div>
