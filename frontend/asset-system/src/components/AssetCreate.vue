@@ -126,7 +126,7 @@ import { reactive, ref } from 'vue';
   background: white;
   padding: 20px;
   border-radius: 8px;
-  max-width: 400px;
+  max-width: 500px;
   width: 100%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }

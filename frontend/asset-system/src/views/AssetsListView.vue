@@ -80,7 +80,7 @@
             <button class="navbtn">Refresh</button>
         </div>
         
-        <hr>
+        
         <table id="mainTable" class="mainTable">
             <tr class="tableHeader">
                 <th>ID <button class="sortBtn" @click="toggleSort('id')" ><ArrowIcons :column="sortKey" :value="sortValue" :current="'id'"></ArrowIcons></button> </th>
@@ -142,6 +142,8 @@
     }
     .mainTable{
         width: 100%;
+        margin-top: 2%;
+        border-top: 1px solid black;
     }
     .filterBar{
         margin-top: 3%;
