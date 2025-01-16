@@ -1,7 +1,7 @@
 <script>
 import assetService from '@/services/assetService';
 import AssetsListView from '@/views/AssetsListView.vue';
-import { reactive, ref } from 'vue';
+import { GStore } from '@/main';
 
 
     export default {
@@ -35,11 +35,17 @@ import { reactive, ref } from 'vue';
         this.newAsset.recipt_date, 
         this.newAsset.warranty_date, 
         )
-        .then((response)=>{
+        .then(()=>{
+          GStore.flashMessage = 'Urządzenie ' + this.newAsset.name + ' zostało dodane'
+            setTimeout (() => {
+              GStore.flashMessage = ''
+            },5000)
+            console.log(GStore);
             console.log('object added sucesfly');
         }).catch((error)=>{
             console.log(error);
         })
+        this.$router.push({ name: 'asset-list' });
     }
     }
   }
@@ -98,7 +104,7 @@ import { reactive, ref } from 'vue';
       </div>
 
       <div class="buttonSection">
-      <button type="submit" class="formBtn" @click="crtAssetFun()">Utworz</button>
+      <button type="button" class="formBtn" @click="crtAssetFun()">Utworz</button>
       <button type="button" class="formBtn">Zamknij</button>
       </div>
     </form>

@@ -1,7 +1,7 @@
 
 
 
-import { createApp } from 'vue'
+import { createApp, reactive } from 'vue'
 import { createPinia } from 'pinia'
 import { bootstrap } from 'bootstrap/dist/js/bootstrap.bundle'
 
@@ -16,6 +16,11 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+
+export const GStore = reactive({
+    flashMessage: ''
+})
+app.provide('GStore', GStore)
 
 
 app.mount('#app')

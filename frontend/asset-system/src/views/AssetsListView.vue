@@ -3,8 +3,10 @@
     import AssetActionData from '@/components/AssetActionData.vue';
     import AssetCreate from '@/components/AssetCreate.vue';
     import ArrowIcons from '@/components/ArrowIcons.vue';
-    import { ref, onMounted, watchEffect, computed} from 'vue'
+    import { ref, onMounted, watchEffect, inject} from 'vue'
 
+    const GStore = inject ('GStore')
+    console.log(GStore);
     const assets = ref(null)
     const totalNum = ref(null)
 
@@ -58,12 +60,6 @@
         limit.value = limitNum
         console.log('Total pages: ' + totalPages.value);
         console.log('page value:' + page.value);
-        
-
-        // if (totalPages.value < page.value){
-        //     page.value = 1
-        //     console.log('loop');
-        // }
     }  
     
     const showCreateForm = ref(false)
@@ -71,6 +67,7 @@
 </script>
 
 <template>
+    <div id="flashMessage" v-if="GStore.flashMessage">{{ GStore.flashMessage }}</div>
     <AssetCreate v-if="showCreateForm" class="transComp" ></AssetCreate>
     <div class="containerBox">
         
@@ -125,7 +122,18 @@
 </template>
 
 <style>
-
+    @keyframes yellowfade{
+        from{
+            background: yellow;
+        }
+        to{
+            background: transparent;
+        }
+    }
+    #flashMessage{
+        animation-name: yellowfade;
+        animation-duration: 3s;
+    }
     th{
         text-align: center;
         background-color: #fdf9f9;
