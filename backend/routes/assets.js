@@ -9,7 +9,6 @@ router.get('/assets', function(req, res){
     const limit = Number(req.query.limit) || 3
     const sortKey = req.query.sortKey || 'id'
     const sortValue = req.query.sortValue || 'asc'
-    // Asset.findAll({}).then((asset) => {res.send(asset)})
 
     Promise.all([
         Asset.count(),
@@ -18,8 +17,7 @@ router.get('/assets', function(req, res){
             limit: (limit),
             order: [ [sortKey, sortValue] ]
         })
-    ])
-    .then(([count, assets]) => {
+    ]).then(([count, assets]) => {
         res.send({
             count: count,
             assets: assets
@@ -32,5 +30,21 @@ router.get('/assets/:id', function(req, res){
         res.send(asset)
     })
 })
-//
+
+router.post('/assets', function(req, res){
+    Asset.create({
+        name: req.body.name,
+        it_num: req.body.it_num,
+        serialnum: req.body.serialnum,
+        user_new: req.body.user_new,
+        localization: req.body.localization,
+        category: req.body.category,
+        status: req.body.status,
+        // recipt_date: req.body.recipt_date,
+        // warranty_date: req.body.warranty_date
+    }).then((asset)=>{
+        res.send(asset)
+    })
+})
+
 module.exports = router;
