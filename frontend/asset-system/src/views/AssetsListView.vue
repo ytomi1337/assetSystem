@@ -3,9 +3,9 @@
     import AssetActionData from '@/components/AssetActionData.vue';
     import AssetCreate from '@/components/AssetCreate.vue';
     import ArrowIcons from '@/components/ArrowIcons.vue';
-    import { ref, onMounted, watchEffect, inject} from 'vue'
+    import { ref, onMounted, watchEffect,  } from 'vue'
+    import { GStore } from '@/main';
 
-    const GStore = inject ('GStore')
     console.log(GStore);
     const assets = ref(null)
     const totalNum = ref(null)
@@ -22,7 +22,6 @@
 
     const totalPages = ref(null)
 
-    
 
     onMounted(() =>{
         watchEffect(()=>{ 
@@ -64,11 +63,17 @@
     
     const showCreateForm = ref(false)
 
+    const disableShowCreateForm = () =>{
+        showCreateForm.value = false
+        console.log('test');
+    }
+
+
 </script>
 
 <template>
     <div id="flashMessage" v-if="GStore.flashMessage">{{ GStore.flashMessage }}</div>
-    <AssetCreate v-if="showCreateForm" class="transComp" ></AssetCreate>
+    <AssetCreate @showCreate="disableShowCreateForm" v-if="showCreateForm" class="transComp" ></AssetCreate>
     <div class="containerBox">
         
         <div class="filterBar">

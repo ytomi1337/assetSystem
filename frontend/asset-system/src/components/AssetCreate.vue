@@ -2,9 +2,11 @@
 import assetService from '@/services/assetService';
 import AssetsListView from '@/views/AssetsListView.vue';
 import { GStore } from '@/main';
-
+import { defineEmits} from 'vue';
 
     export default {
+
+      emits: ['showCreate'],
       data(){
         return{
           newAsset: {
@@ -21,33 +23,31 @@ import { GStore } from '@/main';
         }
     },
     methods: {
-      crtAssetFun(){
+      crtAssetFun(event){
+
+        event.preventDefault()
+
         if(this.newAsset.name =='' || this.newAsset.category=='' || this.newAsset ==''||this.newAsset.it_num=='' ||this.newAsset.user_new == ''){
           return console.log('error');
         }
-        assetService.createAsset(this.newAsset.it_num, 
-        this.newAsset.name, 
-        this.newAsset.serialnum, 
-        this.newAsset.user_new, 
-        this.newAsset.localization, 
-        this.newAsset.category, 
-        this.newAsset.status, 
-        this.newAsset.recipt_date, 
-        this.newAsset.warranty_date, 
-        )
-        .then(()=>{
-          GStore.flashMessage = 'Urządzenie ' + this.newAsset.name + ' zostało dodane'
+
+        GStore.flashMessage = 'Urządzenie ' + this.newAsset.name + ' zostało dodane prawidłowo'
             setTimeout (() => {
               GStore.flashMessage = ''
             },5000)
-            console.log(GStore);
+
+        assetService.createAsset(this.newAsset
+        )
+        .then(()=>{
             console.log('object added sucesfly');
         }).catch((error)=>{
             console.log(error);
+        }).finally(()=>{
+            this.$emit('showCreate')
         })
         this.$router.push({ name: 'asset-list' });
     }
-    }
+  }
   }
     
 </script>
@@ -57,7 +57,7 @@ import { GStore } from '@/main';
   <div class="box">
     <h2 class="mb-4">Dodaj Urządzenie:</h2>
 
-    <form>
+    <form @submit="crtAssetFun">
       <div class="formRecord">
       <label for="it_num">Nr działu IT:</label>
       <input type="text" v-model="newAsset.it_num" required/>
@@ -104,10 +104,11 @@ import { GStore } from '@/main';
       </div>
 
       <div class="buttonSection">
-      <button type="button" class="formBtn" @click="crtAssetFun()">Utworz</button>
-      <button type="button" class="formBtn">Zamknij</button>
+        <button type="submit" class="formBtn">Utworz</button>
+        <button type="button" class="formBtn">Zamknij</button>
       </div>
     </form>
+    
   </div>
 </div>
 
