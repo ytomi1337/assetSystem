@@ -40,8 +40,8 @@ router.post('/assets', function(req, res){
         localization: req.body.localization,
         category: req.body.category,
         status: req.body.status,
-        // recipt_date: req.body.recipt_date,
-        // warranty_date: req.body.warranty_date
+        recipt_date: req.body.recipt_date?new Date(req.body.recipt_date):null,
+        warranty_date: req.body.warranty_date?new Date(req.body.warranty_date):null
     }).then((asset)=>{
         res.send(asset)
     })
