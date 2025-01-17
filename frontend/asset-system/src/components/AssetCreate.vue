@@ -9,6 +9,17 @@ import { defineEmits} from 'vue';
       emits: ['showCreate'],
       data(){
         return{
+          defaultAsset: {
+              name: '',
+              it_num: '',
+              serialnum: '',
+              user_new: '',
+              localization:'' ,
+              category:'' ,
+              status: '',
+              recipt_date: '',
+              warranty_date: ''
+          },
           newAsset: {
               name: '',
               it_num: '',
@@ -46,8 +57,21 @@ import { defineEmits} from 'vue';
             this.$emit('showCreate')
         })
         this.$router.push({ name: 'asset-list' });
+      },
+      leaveComponent(){
+
+        if(JSON.stringify(this.newAsset) !== JSON.stringify(this.defaultAsset)){
+         const close = confirm('Masz wprowadzone dane czy napewno chcesz zamknac?')
+          if(close == true){
+            this.$emit('showCreate')
+          }
+        }else{
+          this.$emit('showCreate')
+        }
+
+        
+      }
     }
-  }
   }
     
 </script>
@@ -105,7 +129,7 @@ import { defineEmits} from 'vue';
 
       <div class="buttonSection">
         <button type="submit" class="formBtn">Utworz</button>
-        <button type="button" class="formBtn">Zamknij</button>
+        <button type="button" class="formBtn" @click="leaveComponent">Zamknij</button>
       </div>
     </form>
     

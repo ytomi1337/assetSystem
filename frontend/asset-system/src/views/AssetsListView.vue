@@ -6,7 +6,6 @@
     import { ref, onMounted, watchEffect,  } from 'vue'
     import { GStore } from '@/main';
 
-    console.log(GStore);
     const assets = ref(null)
     const totalNum = ref(null)
 
@@ -57,15 +56,12 @@
     const changeLimit = (limitNum) =>  {
         page.value = 1
         limit.value = limitNum
-        console.log('Total pages: ' + totalPages.value);
-        console.log('page value:' + page.value);
     }  
     
     const showCreateForm = ref(false)
 
     const disableShowCreateForm = () =>{
         showCreateForm.value = false
-        console.log('test');
     }
 
 
@@ -129,15 +125,16 @@
 <style>
     @keyframes yellowfade{
         from{
-            background: yellow;
+            background: rgb(144, 238, 144);
         }
         to{
-            background: transparent;
+            background: rgba(144, 238, 144, 0.185);
         }
     }
     #flashMessage{
         animation-name: yellowfade;
-        animation-duration: 3s;
+        text-align: center;
+        animation-duration: 7s;
     }
     th{
         text-align: center;
