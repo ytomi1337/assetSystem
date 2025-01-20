@@ -47,4 +47,15 @@ router.post('/assets', function(req, res){
     })
 })
 
+router.delete('/assets/:id', function(req, res){
+    Asset.destroy({
+        where:{
+            id: req.params.id
+        },
+        force: true,
+    }).then(()=>{
+        res.send('success')
+    })
+})
+
 module.exports = router;
