@@ -18,7 +18,8 @@ app.use(createPinia())
 app.use(router)
 
 export const GStore = reactive({
-    flashMessage: ''
+    flashMessage: '',
+    deleteMessage: ''
 })
 app.provide('GStore', GStore)
 

@@ -1,6 +1,8 @@
 <script setup>
     import { ref, onMounted } from 'vue';
     import assetService from '@/services/assetService';
+    import { GStore } from '@/main';
+    import router from '@/router/index';
     
 
     const props = defineProps({
@@ -11,8 +13,7 @@
 
     const asset = ref(null)
     const isDisabled = ref(true)
-    const newAssets = asset
-    const headerTxt = ref(asset.name)
+    
 
     onMounted(() => {
         assetService.getId(props.id)
@@ -27,10 +28,28 @@
         isDisabled.value = false;
     };
 
+    const deleteAsset =() =>{
+
+        const deletedAsset = asset.name
+        const checkConfirm = confirm(`Czy jestes pewien że chcesz usunąć TRWALE urządzenie ${deletedAsset} ta operacja jest nieodwracalna!!!`)
+        
+        if(checkConfirm){
+            assetService.deleteAsset(props.id)
+        .then(()=>{
+            GStore.deleteMessage = 'Urządzenie ' + deletedAsset + ' Zostało usunięte'
+            setTimeout (() => {
+              GStore.deleteMessage = ''
+            },5000)
+            router.push({name: 'asset-list'})
+            console.log('Success');
+        }).catch((error)=>{
+            console.log('error');
+        })
+        }
+    }
+
     
 
-    console.log(newAssets);
-    console.log('new assets');
     
     
 
@@ -43,6 +62,7 @@
 <template>
     <div v-if="asset">
         <div  class="container assetContainer">
+            <div>
                 <form>
                     <h1 class="mb-4">{{ asset.name }}</h1>
                     <p>
@@ -73,7 +93,12 @@
 
                     <button type="button" @click="setEnabled()">Edytuj dane</button>
                 </form>
-            <img src="../assets/Hp-ProBook-650G8.png">
+            </div>
+
+            <div class="rightSection">
+                <button class="deleteBtn" @click="deleteAsset">Usuń</button>
+                <img src="../assets/Hp-ProBook-650G8.png">
+            </div>
         </div>
     </div>
 </template>
@@ -84,5 +109,23 @@
         display: flex;
         justify-content: space-around;
     }
+    .rightSection{
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+    }
+    .deleteBtn{
+        padding: 5px 0px;
+        margin-right: 12%;
+        border: solid 1px rgba(180, 179, 179, 0.781);
+        width: 20%;
+        border-radius: 5px;
+        transition: 0.3s;
+        background-color: #eb1414d7;
+        color: #fff;
+    }
+    .deleteBtn:hover{
+  background-color: #8a1515e6
+}
 
 </style>

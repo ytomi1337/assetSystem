@@ -20,8 +20,9 @@ export default {
         return apiAssetClient.get('/assets/'+id)
     },
     createAsset(newAsset){
-        return apiAssetClient.post('/assets',newAsset
-            
-        )
+        return apiAssetClient.post('/assets',newAsset)
+    },
+    deleteAsset(id){
+        return apiAssetClient.delete('/assets/'+id)
     }
 }

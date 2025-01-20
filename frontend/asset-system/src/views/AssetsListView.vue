@@ -69,6 +69,7 @@
 
 <template>
     <div id="flashMessage" v-if="GStore.flashMessage">{{ GStore.flashMessage }}</div>
+    <div id="deletedMessage" v-if="GStore.deleteMessage">{{ GStore.deleteMessage }}</div>
     <AssetCreate @showCreate="disableShowCreateForm" v-if="showCreateForm" class="transComp" ></AssetCreate>
     <div class="containerBox">
         
@@ -131,8 +132,24 @@
             background: rgba(144, 238, 144, 0.185);
         }
     }
+
+    @keyframes redFade{
+        from{
+            background: red;
+        }
+        to{
+            background: rgba(245, 214, 214, 0.993);
+        }
+    }
     #flashMessage{
         animation-name: yellowfade;
+        text-align: center;
+        animation-duration: 7s;
+    }
+
+    #deletedMessage{
+        color: #fff;
+        animation-name: redFade;
         text-align: center;
         animation-duration: 7s;
     }

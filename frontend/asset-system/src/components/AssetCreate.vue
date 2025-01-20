@@ -1,8 +1,6 @@
 <script>
 import assetService from '@/services/assetService';
-import AssetsListView from '@/views/AssetsListView.vue';
 import { GStore } from '@/main';
-import { defineEmits} from 'vue';
 
     export default {
 
