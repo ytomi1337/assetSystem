@@ -33,13 +33,12 @@ import { GStore } from '@/main';
     },
     methods: {
       crtAssetFun(event){
-
         event.preventDefault()
 
         if(this.newAsset.name =='' || this.newAsset.category=='' || this.newAsset ==''||this.newAsset.it_num=='' ||this.newAsset.user_new == ''){
           return console.log('error');
         }
-
+        
         GStore.flashMessage = 'Urządzenie ' + this.newAsset.name + ' zostało dodane prawidłowo'
             setTimeout (() => {
               GStore.flashMessage = ''
@@ -167,6 +166,10 @@ import { GStore } from '@/main';
 
   label{
     font-weight: 500;
+  }
+
+  img{
+    max-width: 448px;
   }
 }
 

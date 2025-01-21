@@ -21,6 +21,8 @@
 
     const totalPages = ref(null)
 
+    const showCreateForm = ref(false)
+
 
     onMounted(() =>{
         watchEffect(()=>{ 
@@ -58,10 +60,12 @@
         limit.value = limitNum
     }  
     
-    const showCreateForm = ref(false)
-
     const disableShowCreateForm = () =>{
         showCreateForm.value = false
+    }
+
+    const refresh = () => {
+        window.location.reload()
     }
 
 
@@ -76,7 +80,7 @@
         <div class="filterBar">
             <button class="navbtn createBtn" @click="showCreateForm = true">Utworz</button>
             <button class="navbtn">Filtr</button>
-            <button class="navbtn">Refresh</button>
+            <button class="navbtn" @click="refresh">Refresh</button>
         </div>
         
         

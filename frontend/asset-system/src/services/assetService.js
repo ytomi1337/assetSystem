@@ -24,5 +24,8 @@ export default {
     },
     deleteAsset(id){
         return apiAssetClient.delete('/assets/'+id)
+    },
+    updateAsset(id, changes){
+        return apiAssetClient.patch('/assets/'+id, changes)
     }
 }
