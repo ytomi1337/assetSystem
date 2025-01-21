@@ -48,6 +48,7 @@ router.post('/assets', function(req, res){
 })
 
 router.delete('/assets/:id', function(req, res){
+
     Asset.destroy({
         where:{
             id: req.params.id
@@ -57,5 +58,26 @@ router.delete('/assets/:id', function(req, res){
         res.send('success')
     })
 })
+
+router.patch('/assets/:id', async(req, res) => {
+    const  id  = req.params.id
+    const  changes  = req.body
+
+    try{
+        const asset = await Asset.findByPk(id)
+
+        if(!asset){
+            return res.status(400).json({ message: "Asset not found"})
+        }
+
+        await asset.update(changes)
+
+        res.status(200).json({ message: "Asset updated correctly", asset });
+    }catch(error){
+        console.log("Update Error:", error);
+        res.status(500).json({message: "Wystapił błąd podczas aktualizacji", error})
+    }
+})
+
 
 module.exports = router;
