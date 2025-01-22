@@ -5,6 +5,7 @@ const { Sequelize } = require('sequelize');
 
 
 router.get('/assets', function(req, res){
+    console.log('request to assets');
     const page = Number(req.query.page) || 1
     const limit = Number(req.query.limit) || 3
     const sortKey = req.query.sortKey || 'id'

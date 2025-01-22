@@ -3,18 +3,22 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "migrate:up": "NODE_ENV=production npx sequelize-cli db:migrate",
+    "migrate:down": "NODE_ENV=production npx sequelize-cli db:migrate:undo",    
     "start": "node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
+    "dotenv": "^16.4.7",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2"
   }
 }

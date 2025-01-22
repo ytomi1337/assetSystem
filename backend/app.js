@@ -4,12 +4,36 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
+require('dotenv').config();
 
-const { Sequelize, DataTypes } = require('sequelize');
-global.sequelize = new Sequelize('Assets', 'postgres', '42386618Aa.', {
-  host: 'localhost',
-  dialect: 'postgres'
-});
+// const { Sequelize, DataTypes } = require('sequelize');
+// global.sequelize = new Sequelize('assets', 'postgres', 'Qwerty123', {
+//   host: 'localhost',
+//   dialect: 'postgres'
+// });
+
+const { Sequelize } = require('sequelize');
+
+global.sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT
+  }
+);
+
+async function testDatabaseConnection() {
+  try {
+    await global.sequelize.authenticate();
+    console.log('Connection to PostgreSQL established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+}
+
+testDatabaseConnection();
 
 var assetsRouter = require('./routes/assets.js');
 
