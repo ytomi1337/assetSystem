@@ -63,22 +63,22 @@
 
     const detectChanges=() =>{
         const changes = {}
-            for (const key in asset.value) {
-                // console.log(asset.value[key]);
+            for (let key in asset.value) {
                 if (asset.value[key] != orginalAsset.value[key]) {
-                    console.log('petla');
-                    console.log(key);
-                    console.log(asset.value[key]);
-                    changes[key] = asset.value[key]; // Zapisz tylko zmienione pola
+                    changes[key] = asset.value[key];
                 }
             }
-        console.log('changes' + changes.value);
-        return changes; // Zwróć zmienione pola
+        return changes;
     };
-    const saveAsset = ()=>{
-        
-
-        detectChanges()
+    const saveAsset = async () => {
+       const changes = detectChanges()
+       
+       try{
+        assetService.updateAsset(props.id, changes)
+        console.log('success');
+       }catch(error){
+        console.log("Unable to upddate asset", error);
+       }
 
     }
 
@@ -147,7 +147,7 @@
                     <div class="buttonsSection mb-4">
                     <button v-if="isEdit" class="btnSectionNew editBtn" @click="editAsset">Edycja</button>
                     <button v-if="isLeaveEdited" class="btnSectionNew deleteBtn" @click="leaveEdit">Opuść Edycje</button>
-                    <button type="button" v-if="isSave" class="btnSectionNew safeBtn"  @click="detectChanges">Zapisz</button>
+                    <button type="button" v-if="isSave" class="btnSectionNew safeBtn"  @click="saveAsset">Zapisz</button>
                     <button type="button" v-if="isDelete" class="btnSectionNew deleteBtn" @click="deleteAsset">Usuń</button>
                     </div>
 
