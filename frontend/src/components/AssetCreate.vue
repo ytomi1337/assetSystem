@@ -58,8 +58,8 @@ import { GStore } from '@/main';
       leaveComponent(){
 
         if(JSON.stringify(this.newAsset) !== JSON.stringify(this.defaultAsset)){
-         const close = confirm('Masz wprowadzone dane czy napewno chcesz zamknac?')
-          if(close == true){
+        //  const close = confirm('Masz wprowadzone dane czy napewno chcesz zamknac?')
+          if(confirm('Masz wprowadzone dane czy napewno chcesz zamknac?')){
             this.$emit('showCreate')
           }
         }else{

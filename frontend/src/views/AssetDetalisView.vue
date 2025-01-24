@@ -75,7 +75,16 @@
        
        try{
         assetService.updateAsset(props.id, changes)
-        console.log('success');
+        GStore.editMessage = 'Urządzenie: ' + asset.value.it_num + ' Zostało prawidło zakutalizowane'
+        setTimeout (() => {
+            GStore.editMessage = ''
+        },5000)
+
+        isSave.value = false
+        isDelete.value = true
+        isEdit.value = true
+        isLeaveEdited.value = false
+        isDisabled.value = !isDisabled.value
        }catch(error){
         console.log("Unable to upddate asset", error);
        }
@@ -83,18 +92,32 @@
     }
 
     const leaveEdit = () => {
-        isSave.value = false
-        isDelete.value = true
-        isEdit.value = true
-        isLeaveEdited.value = false
 
-        isDisabled.value = !isDisabled.value
+        if(JSON.stringify(asset.value) !== JSON.stringify(orginalAsset.value)){
+            if(confirm('Masz wprowadzone dane czy napewno chcesz oposcic Edycje?')){
+                asset.value = orginalAsset.value
+
+                isSave.value = false
+                isDelete.value = true
+                isEdit.value = true
+                isLeaveEdited.value = false
+                isDisabled.value = !isDisabled.value
+            }
+            console.log('kontyuje');
+        }else{
+            isSave.value = false
+            isDelete.value = true
+            isEdit.value = true
+            isLeaveEdited.value = false
+            isDisabled.value = !isDisabled.value
+        }   
     };
     
 </script>
 
 <template>
     <div v-if="asset">
+        <div id="editMessage" v-if="GStore.editMessage"> {{ GStore.editMessage }}</div>
         <div  class="container mt-4">
             <div>
                 <form class="formClass">
@@ -146,7 +169,7 @@
 
                     <div class="buttonsSection mb-4">
                     <button v-if="isEdit" class="btnSectionNew editBtn" @click="editAsset">Edycja</button>
-                    <button v-if="isLeaveEdited" class="btnSectionNew deleteBtn" @click="leaveEdit">Opuść Edycje</button>
+                    <button type="button" v-if="isLeaveEdited" class="btnSectionNew deleteBtn" @click="leaveEdit">Opuść Edycje</button>
                     <button type="button" v-if="isSave" class="btnSectionNew safeBtn"  @click="saveAsset">Zapisz</button>
                     <button type="button" v-if="isDelete" class="btnSectionNew deleteBtn" @click="deleteAsset">Usuń</button>
                     </div>
@@ -169,21 +192,16 @@
                 </div>
                 </form>
             </div>
-
-            <!-- <div class="rightSection">
-                <img src="../assets/Hp-ProBook-650G8.png">
-                <div class="buttonsSection">
-                    <button v-if="isEdit" class="btnSectionNew editBtn" @click="editAsset">Edycja</button>
-                    <button v-if="isLeaveEdited" class="btnSectionNew deleteBtn" @click="leaveEdit">Opuść Edycje</button>
-                    <button v-if="isSave" class="btnSectionNew safeBtn" disabled @click="deleteAsset">Zapisz</button>
-                    <button v-if="isDelete" class="btnSectionNew deleteBtn" @click="deleteAsset">Usuń</button>
-                </div>
-            </div> -->
         </div>
     </div>
 </template>
 
 <style>
+#editMessage{
+     animation-name: yellowfade;
+        text-align: center;
+        animation-duration: 7s;
+}
 .formRecordImg{
     display: flex;
     flex-direction: column;
