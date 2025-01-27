@@ -27,18 +27,10 @@ router.get('/assets', function(req, res){
 })
 
 router.get('/assets/:id', function(req, res){
-    try{
-        const asset = Asset.findByPk(Number(req.params.id))
-
-        if(!asset){
-            return res.status(404).send(error)
-        }
-
-        res.send(asset)
-    }catch(error){
-        res.status(500).send({ error: 'An error occurred while retrieving the asset'})
-    }
-        
+    
+        Asset.findByPk(Number(req.params.id)).then((asset) => {
+            res.send(asset)
+        })
 })
 
 router.post('/assets', function(req, res){
