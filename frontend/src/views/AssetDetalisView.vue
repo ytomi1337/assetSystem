@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, computed } from 'vue';
     import assetService from '@/services/assetService';
     import { GStore } from '@/main';
     import router from '@/router/index';
@@ -12,6 +12,8 @@
         }
     })
 
+    const id = computed(()=> props.id)
+
     const asset = ref(null)
     const orginalAsset = ref(null)
     const isLeaveEdited = ref(false)
@@ -23,11 +25,18 @@
     
 
     onMounted(() => {
-        assetService.getId(props.id)
-        .then((response) => {
+        assetService.getId(id.value).then((response) => {
         asset.value = response.data
+        console.log('blad');
         }).catch((error) => {
+            console.log('blad');
             console.log(error);
+            router.push({
+                name: '404Resource',
+                params: {
+                    resource: 'asset'
+                }
+            })
         })
     })
 
