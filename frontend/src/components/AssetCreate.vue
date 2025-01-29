@@ -49,7 +49,7 @@ import { GStore } from '@/main';
         .then(()=>{
             console.log('object added sucesfly');
         }).catch((error)=>{
-            console.log(error);
+            console.log(error.response.data.errors[0].msg);
         }).finally(()=>{
             this.$emit('showCreate')
         })

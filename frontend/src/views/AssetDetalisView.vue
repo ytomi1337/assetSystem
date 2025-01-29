@@ -27,9 +27,7 @@
     onMounted(() => {
         assetService.getId(id.value).then((response) => {
         asset.value = response.data
-        console.log('blad');
         }).catch((error) => {
-            console.log('blad');
             console.log(error);
             router.push({
                 name: '404Resource',
