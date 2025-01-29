@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Asset = require('../models/assets.js');
 const { Sequelize } = require('sequelize');
+const { body, validationResult } = require('express-validator')
 
 
 router.get('/assets', function(req, res){
@@ -30,10 +31,22 @@ router.get('/assets/:id', function(req, res){
     
         Asset.findByPk(Number(req.params.id)).then((asset) => {
             res.send(asset)
+        }).catch((error) =>{
+            res.status(500).send({ error: 'Not found asset in database', details: error.message });
         })
 })
 
-router.post('/assets', function(req, res){
+router.post('/assets', [ 
+    body('serialnum').isInt().withMessage('SN must be integer'),
+    body('it_num').isLength({min: 10, max: 10}).withMessage('IT_Num must be 10 characters long')
+
+    ], function(req, res){
+
+    const errors = validationResult(req)
+
+    if(!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() })
+    }
     Asset.create({
         name: req.body.name,
         it_num: req.body.it_num,
@@ -46,6 +59,8 @@ router.post('/assets', function(req, res){
         warranty_date: req.body.warranty_date?new Date(req.body.warranty_date):null
     }).then((asset)=>{
         res.send(asset)
+    }).catch(()=>{
+        return res.status(400).json({ errors: [{ field: 'it_num', msg: 'It_num must be uniqe' }] })
     })
 })
 
