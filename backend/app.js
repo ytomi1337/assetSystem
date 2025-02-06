@@ -30,6 +30,7 @@ async function testDatabaseConnection() {
 testDatabaseConnection();
 
 var assetsRouter = require('./routes/assets.js');
+var categoriesRouter = require('./routes/category.js');
 
 var app = express();
 app.use(cors())
@@ -45,6 +46,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', assetsRouter);
+app.use('/', categoriesRouter);
 
 
 // catch 404 and forward to error handler
