@@ -11,7 +11,8 @@ const Asset = sequelize.define(
     },
     it_num: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
+      unique: true,
     },
     serialnum: {
         type: DataTypes.TEXT,
@@ -51,6 +52,5 @@ const Asset = sequelize.define(
     },
   },
 );
- 
  
 module.exports = Asset;

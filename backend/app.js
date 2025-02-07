@@ -6,12 +6,6 @@ var logger = require('morgan');
 var cors = require('cors')
 require('dotenv').config();
 
-// const { Sequelize, DataTypes } = require('sequelize');
-// global.sequelize = new Sequelize('assets', 'postgres', 'Qwerty123', {
-//   host: 'localhost',
-//   dialect: 'postgres'
-// });
-
 const { Sequelize } = require('sequelize');
 
 global.sequelize = new Sequelize(

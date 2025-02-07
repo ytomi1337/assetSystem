@@ -49,7 +49,7 @@ import { GStore } from '@/main';
         .then(()=>{
             console.log('object added sucesfly');
         }).catch((error)=>{
-            console.log(error);
+            console.log(error.response.data.errors[0].msg);
         }).finally(()=>{
             this.$emit('showCreate')
         })
@@ -58,8 +58,8 @@ import { GStore } from '@/main';
       leaveComponent(){
 
         if(JSON.stringify(this.newAsset) !== JSON.stringify(this.defaultAsset)){
-         const close = confirm('Masz wprowadzone dane czy napewno chcesz zamknac?')
-          if(close == true){
+        //  const close = confirm('Masz wprowadzone dane czy napewno chcesz zamknac?')
+          if(confirm('Masz wprowadzone dane czy napewno chcesz zamknac?')){
             this.$emit('showCreate')
           }
         }else{

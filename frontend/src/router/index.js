@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AssetsListView from '@/views/AssetsListView.vue'
 import PhoneListView from '@/views/PhoneListView.vue'
 import AssetDetalisView from '@/views/AssetDetalisView.vue'
+import NotFound from '@/views/NotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,15 +28,24 @@ const router = createRouter({
       name: 'asset-detalis',
       props: true,
       component: AssetDetalisView
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'NotFound',
+      component: NotFound,
+      props: {
+        resource: ''
+      }
+    },
+    {
+      path: '/404/:resource',
+      name: '404Resource',
+      component: NotFound,
+      props: true
     }
     
   ],
 
-  // methods:{
-  //   editData(){
-  //     console.log('dzialam');
-  //   }
-  // }
 })
 
 export default router

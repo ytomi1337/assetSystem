@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, computed } from 'vue';
     import assetService from '@/services/assetService';
     import { GStore } from '@/main';
     import router from '@/router/index';
@@ -12,6 +12,8 @@
         }
     })
 
+    const id = computed(()=> props.id)
+
     const asset = ref(null)
     const orginalAsset = ref(null)
     const isLeaveEdited = ref(false)
@@ -23,11 +25,16 @@
     
 
     onMounted(() => {
-        assetService.getId(props.id)
-        .then((response) => {
+        assetService.getId(id.value).then((response) => {
         asset.value = response.data
         }).catch((error) => {
             console.log(error);
+            router.push({
+                name: '404Resource',
+                params: {
+                    resource: 'asset'
+                }
+            })
         })
     })
 
@@ -63,38 +70,61 @@
 
     const detectChanges=() =>{
         const changes = {}
-            for (const key in asset.value) {
-                // console.log(asset.value[key]);
+            for (let key in asset.value) {
                 if (asset.value[key] != orginalAsset.value[key]) {
-                    console.log('petla');
-                    console.log(key);
-                    console.log(asset.value[key]);
-                    changes[key] = asset.value[key]; // Zapisz tylko zmienione pola
+                    changes[key] = asset.value[key];
                 }
             }
-        console.log('changes' + changes.value);
-        return changes; // Zwróć zmienione pola
+        return changes;
     };
-    const saveAsset = ()=>{
-        
+    const saveAsset = async () => {
+       const changes = detectChanges()
+       
+       try{
+        assetService.updateAsset(props.id, changes)
+        GStore.editMessage = 'Urządzenie: ' + asset.value.it_num + ' Zostało prawidło zakutalizowane'
+        setTimeout (() => {
+            GStore.editMessage = ''
+        },5000)
 
-        detectChanges()
-
-    }
-
-    const leaveEdit = () => {
         isSave.value = false
         isDelete.value = true
         isEdit.value = true
         isLeaveEdited.value = false
-
         isDisabled.value = !isDisabled.value
+       }catch(error){
+        console.log("Unable to upddate asset", error);
+       }
+
+    }
+
+    const leaveEdit = () => {
+
+        if(JSON.stringify(asset.value) !== JSON.stringify(orginalAsset.value)){
+            if(confirm('Masz wprowadzone dane czy napewno chcesz oposcic Edycje?')){
+                asset.value = orginalAsset.value
+
+                isSave.value = false
+                isDelete.value = true
+                isEdit.value = true
+                isLeaveEdited.value = false
+                isDisabled.value = !isDisabled.value
+            }
+            console.log('kontyuje');
+        }else{
+            isSave.value = false
+            isDelete.value = true
+            isEdit.value = true
+            isLeaveEdited.value = false
+            isDisabled.value = !isDisabled.value
+        }   
     };
     
 </script>
 
 <template>
     <div v-if="asset">
+        <div id="editMessage" v-if="GStore.editMessage"> {{ GStore.editMessage }}</div>
         <div  class="container mt-4">
             <div>
                 <form class="formClass">
@@ -146,8 +176,8 @@
 
                     <div class="buttonsSection mb-4">
                     <button v-if="isEdit" class="btnSectionNew editBtn" @click="editAsset">Edycja</button>
-                    <button v-if="isLeaveEdited" class="btnSectionNew deleteBtn" @click="leaveEdit">Opuść Edycje</button>
-                    <button type="button" v-if="isSave" class="btnSectionNew safeBtn"  @click="detectChanges">Zapisz</button>
+                    <button type="button" v-if="isLeaveEdited" class="btnSectionNew deleteBtn" @click="leaveEdit">Opuść Edycje</button>
+                    <button type="button" v-if="isSave" class="btnSectionNew safeBtn"  @click="saveAsset">Zapisz</button>
                     <button type="button" v-if="isDelete" class="btnSectionNew deleteBtn" @click="deleteAsset">Usuń</button>
                     </div>
 
@@ -169,21 +199,16 @@
                 </div>
                 </form>
             </div>
-
-            <!-- <div class="rightSection">
-                <img src="../assets/Hp-ProBook-650G8.png">
-                <div class="buttonsSection">
-                    <button v-if="isEdit" class="btnSectionNew editBtn" @click="editAsset">Edycja</button>
-                    <button v-if="isLeaveEdited" class="btnSectionNew deleteBtn" @click="leaveEdit">Opuść Edycje</button>
-                    <button v-if="isSave" class="btnSectionNew safeBtn" disabled @click="deleteAsset">Zapisz</button>
-                    <button v-if="isDelete" class="btnSectionNew deleteBtn" @click="deleteAsset">Usuń</button>
-                </div>
-            </div> -->
         </div>
     </div>
 </template>
 
 <style>
+#editMessage{
+     animation-name: yellowfade;
+        text-align: center;
+        animation-duration: 7s;
+}
 .formRecordImg{
     display: flex;
     flex-direction: column;
