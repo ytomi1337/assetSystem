@@ -16,6 +16,9 @@
 
     const asset = ref(null)
     const orginalAsset = ref(null)
+
+    const categories = ref(null)
+
     const isLeaveEdited = ref(false)
     const isEdit = ref(true)
     const isSave = ref(false)
@@ -25,8 +28,14 @@
     
 
     onMounted(() => {
+        assetService.getCategories().then((response)=>{
+            categories.value = response.data
+        }).catch((error) =>{
+            console.log(error);
+        })
+
         assetService.getId(id.value).then((response) => {
-        asset.value = response.data
+            asset.value = response.data
         }).catch((error) => {
             console.log(error);
             router.push({
@@ -157,8 +166,11 @@
                     </div>
 
                     <div class="formRecord">
-                    <label for="name">Kategoria:</label>
-                    <input type="text" name="category" :disabled="isDisabled" v-model="asset.category"/>
+                    <label for="category">Kategoria:</label>
+                    <select :disabled="isDisabled" name="category" v-model="asset.category">
+                        
+                        <option v-for="category in categories" > {{ category.name }}</option>
+                    </select>
                     </div>
 
                     <div class="formRecord">
