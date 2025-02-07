@@ -1,12 +1,31 @@
 <script>
 import assetService from '@/services/assetService';
 import { GStore } from '@/main';
-
+import { ref, onMounted } from 'vue';
     export default {
 
       emits: ['showCreate'],
+
+
+      setup() {
+          const categories = ref([]);
+
+          onMounted(() => {
+            assetService.getCategories().then((response)=>{
+                  categories.value = response.data
+                  console.log(categories.value)
+              }).catch((error) =>{
+                  console.log(error);
+              })
+          });
+
+          return {
+            categories
+          };
+  },
       data(){
         return{
+
           defaultAsset: {
               name: '',
               it_num: '',
@@ -48,8 +67,7 @@ import { GStore } from '@/main';
             this.isError = error.response.data.errors[0].msg
         })
   
-      },
-
+      }, 
 
       leaveComponent(){
         if(JSON.stringify(this.newAsset) !== JSON.stringify(this.defaultAsset)){
@@ -59,12 +77,10 @@ import { GStore } from '@/main';
         }else{
           this.$emit('showCreate')
         }
-
-        
-      }
+      },
     }
   }
-    
+
 </script>
 
 <template>
@@ -104,8 +120,12 @@ import { GStore } from '@/main';
       </div>
 
       <div class="formRecord">
-      <label for="warranty_date">Kategoria: </label>
-      <input type="text" v-model="newAsset.category" required/>
+      <label for="category">Kategoria:</label>
+      <select v-model="newAsset.category" name="category">
+          <option v-for="category in categories" :key="category.id" :value="category.name">
+            {{ category.name }}
+          </option>
+      </select>
       </div>
 
       <div class="formRecord">
