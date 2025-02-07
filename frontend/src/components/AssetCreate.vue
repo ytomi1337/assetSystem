@@ -28,37 +28,31 @@ import { GStore } from '@/main';
               status: '',
               recipt_date: '',
               warranty_date: ''
-           }
+           },
+          isError: ''
         }
     },
     methods: {
       crtAssetFun(event){
         event.preventDefault()
-
-        if(this.newAsset.name =='' || this.newAsset.category=='' || this.newAsset ==''||this.newAsset.it_num=='' ||this.newAsset.user_new == ''){
-          return console.log('error');
-        }
-        
-        GStore.flashMessage = 'Urządzenie ' + this.newAsset.name + ' zostało dodane prawidłowo'
-            setTimeout (() => {
-              GStore.flashMessage = ''
-            },5000)
-
         assetService.createAsset(this.newAsset
         )
         .then(()=>{
+            GStore.flashMessage = 'Urządzenie ' + this.newAsset.name + ' zostało dodane prawidłowo'
+            setTimeout (() => {
+              GStore.flashMessage = ''
+            },5000)
             console.log('object added sucesfly');
-        }).catch((error)=>{
-            console.log(error.response.data.errors[0].msg);
-        }).finally(()=>{
             this.$emit('showCreate')
+        }).catch((error)=>{
+            this.isError = error.response.data.errors[0].msg
         })
-        this.$router.push({ name: 'asset-list' });
+  
       },
-      leaveComponent(){
 
+
+      leaveComponent(){
         if(JSON.stringify(this.newAsset) !== JSON.stringify(this.defaultAsset)){
-        //  const close = confirm('Masz wprowadzone dane czy napewno chcesz zamknac?')
           if(confirm('Masz wprowadzone dane czy napewno chcesz zamknac?')){
             this.$emit('showCreate')
           }
@@ -79,6 +73,11 @@ import { GStore } from '@/main';
     <h2 class="mb-4">Dodaj Urządzenie:</h2>
 
     <form @submit="crtAssetFun">
+
+      <div class="errorSection">
+      <p v-if="isError" >{{ this.isError }}</p>
+      </div>
+
       <div class="formRecord">
       <label for="it_num">Nr działu IT:</label>
       <input type="text" v-model="newAsset.it_num" required/>
@@ -124,7 +123,7 @@ import { GStore } from '@/main';
       <input type="date" v-model="newAsset.recipt_date"/>
       </div>
 
-      <div class="buttonSection">
+      <div class="butonnSection">
         <button type="submit" class="formBtn">Utworz</button>
         <button type="button" class="formBtn" @click="leaveComponent">Zamknij</button>
       </div>
@@ -174,7 +173,7 @@ import { GStore } from '@/main';
 }
 
 .formBtn{
-    margin-top: 13%;
+    margin-top: 8%;
     padding: 5px 15px;
     border: solid 1px rgba(180, 179, 179, 0.781);
     margin-right: 2%;
@@ -193,5 +192,13 @@ import { GStore } from '@/main';
 .formBtn:first-child:hover{
     background-color: #398d23c9;
     color: #fff;
+}
+
+.errorSection{
+  text-align: center;
+  margin: 0%;
+  color: #fff;
+  background-color: #eb1414d7;
+  border-radius: 5px;
 }
 </style>

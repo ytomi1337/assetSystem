@@ -37,8 +37,15 @@ router.get('/assets/:id', function(req, res){
 })
 
 router.post('/assets', [ 
-    body('serialnum').isInt().withMessage('SN must be integer'),
-    body('it_num').isLength({min: 10, max: 10}).withMessage('IT_Num must be 10 characters long')
+    // body('serialnum').isInt().withMessage('SN must be integer'),
+    body('it_num').isLength({min: 10, max: 10}).withMessage('Nr Działu IT musi zawierac 10 znaków!'),
+    body('serialnum').isLength({max: 30}).withMessage('Nr Seryjny musi zawierac  mniej niż 30 znaków!'),
+    body('user_new').isLength({max: 30}).withMessage('Pole użytkownik musi zawierac  mniej niż 30 znaków!'),
+    body('localization').isLength({max: 30}).withMessage('Pole lokalizacja musi zawierac  mniej niż 30 znaków!'),
+    body('category').isLength({max: 30}).withMessage('Pole Kategoria musi zawierac  mniej niż 30 znaków!'),
+    body('status').isLength({max: 30}).withMessage('Pole Status musi zawierac  mniej niż 30 znaków!'),
+    
+  
 
     ], function(req, res){
 
@@ -60,7 +67,7 @@ router.post('/assets', [
     }).then((asset)=>{
         res.send(asset)
     }).catch(()=>{
-        return res.status(400).json({ errors: [{ field: 'it_num', msg: 'It_num must be uniqe' }] })
+        return res.status(400).json({ errors: [{ field: 'it_num', msg: 'Nr działu IT musi byc unikalny!' }] })
     })
 })
 

@@ -11,7 +11,7 @@
 <template>
 
 <RouterLink class="asset-object" :to="{ name: 'asset-detalis', params: { id: asset.id}}">
-    Detalis    
+    Więcej
 </RouterLink>
 
 </template>
