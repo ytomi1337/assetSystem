@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
-var Category = require('../models/category.js');
+var Localization = require('../models/localization.js');
 const { Sequelize } = require('sequelize');
 const { body, validationResult } = require('express-validator')
 
 
 router.get('/localizations', function(req, res){
-    Category.findAll({
+    Localization.findAll({
     }).then((localizations) =>{
         res.send(localizations)
     })
