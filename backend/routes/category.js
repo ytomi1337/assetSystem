@@ -7,6 +7,7 @@ const { body, validationResult } = require('express-validator')
 
 router.get('/categories', function(req, res){
     Category.findAll({
+        order: [['name', 'asc']]
     }).then((categories) =>{
         res.send(categories)
     })
