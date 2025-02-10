@@ -31,6 +31,7 @@ testDatabaseConnection();
 
 var assetsRouter = require('./routes/assets.js');
 var categoriesRouter = require('./routes/category.js');
+var localizationsRouter = require('./routes/localizations.js');
 
 var app = express();
 app.use(cors())
@@ -47,6 +48,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', assetsRouter);
 app.use('/', categoriesRouter);
+app.use('/', localizationsRouter);
 
 
 // catch 404 and forward to error handler
