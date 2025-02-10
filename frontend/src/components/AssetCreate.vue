@@ -2,6 +2,8 @@
 import assetService from '@/services/assetService';
 import { GStore } from '@/main';
 import { ref, onMounted } from 'vue';
+import vSelect from 'vue-select'
+
     export default {
 
       emits: ['showCreate'],
@@ -9,6 +11,7 @@ import { ref, onMounted } from 'vue';
 
       setup() {
           const categories = ref([]);
+          const localizations = ref([])
 
           onMounted(() => {
             assetService.getCategories().then((response)=>{
@@ -17,10 +20,16 @@ import { ref, onMounted } from 'vue';
               }).catch((error) =>{
                   console.log(error);
               })
+
+            assetService.getLocalizations().then((response)=>{
+                  localizations.value = response.data
+              }).catch((error) =>{
+                  console.log(error);
+              })
           });
 
           return {
-            categories
+            categories, localizations
           };
   },
       data(){
@@ -116,7 +125,11 @@ import { ref, onMounted } from 'vue';
 
       <div class="formRecord">
       <label for="localization">Lokalizacja:</label>
-      <input type="text" v-model="newAsset.localization"/>
+      <select v-model="newAsset.localization" name="localization">
+          <option v-for="localization in localizations" :key="localization.id" :value="localization.name">
+            {{ localization.name }}
+          </option>
+      </select>
       </div>
 
       <div class="formRecord">

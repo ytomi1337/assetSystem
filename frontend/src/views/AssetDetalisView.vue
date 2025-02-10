@@ -18,6 +18,7 @@
     const orginalAsset = ref(null)
 
     const categories = ref(null)
+    const localizations = ref(null)
 
     const isLeaveEdited = ref(false)
     const isEdit = ref(true)
@@ -28,6 +29,13 @@
     
 
     onMounted(() => {
+
+        assetService.getLocalizations().then((response)=>{
+            localizations.value = response.data
+        }).catch((error) =>{
+            console.log(error);
+        })
+
         assetService.getCategories().then((response)=>{
             categories.value = response.data
         }).catch((error) =>{
@@ -161,14 +169,15 @@
                     </div>
                 
                     <div class="formRecord">
-                    <label for="name">Lokalizacja:</label>
-                    <input type="text" name="localization" :disabled="isDisabled" v-model="asset.localization"/>
+                    <label for="localization">Lokalizsacja:</label>
+                    <select :disabled="isDisabled" name="localization" v-model="asset.localization">
+                        <option v-for="localization in localizations" > {{ localization.name }}</option>
+                    </select>
                     </div>
 
                     <div class="formRecord">
                     <label for="category">Kategoria:</label>
                     <select :disabled="isDisabled" name="category" v-model="asset.category">
-                        
                         <option v-for="category in categories" > {{ category.name }}</option>
                     </select>
                     </div>

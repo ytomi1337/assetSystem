@@ -30,5 +30,8 @@ export default {
     },
     getCategories(){
         return apiAssetClient.get('/categories')
-    }
+    },
+    getLocalizations(){
+        return apiAssetClient.get('/localizations')
+    },
 }
