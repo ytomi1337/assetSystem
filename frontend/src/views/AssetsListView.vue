@@ -91,6 +91,7 @@
                 <th>Nazwa <button class="sortBtn" @click="toggleSort('name')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'name'"></ArrowIcons></button></th>
                 <th>Nr Seryjny <button class="sortBtn" @click="toggleSort('serialnum')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'serialnum'"></ArrowIcons></button></th>
                 <th>Użytkownik <button class="sortBtn" @click="toggleSort('user_new')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'user_new'"></ArrowIcons></button></th>
+                <th>Kategoria <button class="sortBtn" @click="toggleSort('category')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'category'"></ArrowIcons></button></th>
                 <th>Lokalizacja <button class="sortBtn" @click="toggleSort('localization')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'localization'"></ArrowIcons></button></th>
                 <th>Status <button class="sortBtn" @click="toggleSort('status')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'status'"></ArrowIcons></button></th>
                 <th>Data Gwarancji <button class="sortBtn" @click="toggleSort('warranty_date')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'warranty_date'"></ArrowIcons></button></th>
@@ -103,6 +104,7 @@
                 <td>{{ asset.name }}</td>
                 <td>{{ asset.serialnum }}</td>
                 <td>{{ asset.user_new }}</td>
+                <td>{{ asset.category }}</td>
                 <td>{{ asset.localization }}</td>
                 <td>{{ asset.status }}</td>
                 <td>{{ asset.warranty_date }}</td>

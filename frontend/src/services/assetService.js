@@ -27,5 +27,8 @@ export default {
     },
     updateAsset(id, changes){
         return apiAssetClient.patch('/assets/'+id, changes)
+    },
+    getCategories(){
+        return apiAssetClient.get('/categories')
     }
 }
