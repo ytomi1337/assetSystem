@@ -2,7 +2,7 @@
 import assetService from '@/services/assetService';
 import { GStore } from '@/main';
 import { ref, onMounted } from 'vue';
-import vSelect from 'vue-select'
+
 
     export default {
 
@@ -119,8 +119,7 @@ import vSelect from 'vue-select'
       </div>
 
       <div class="formRecord">
-      <label for="user_new">Użytkownik:</label>
-      <input type="text" v-model="newAsset.user_new" required/>
+      
       </div>
 
       <div class="formRecord">
