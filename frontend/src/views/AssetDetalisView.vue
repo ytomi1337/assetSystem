@@ -19,6 +19,7 @@
 
     const categories = ref(null)
     const localizations = ref(null)
+    const statuses = ref(null)
 
     const isLeaveEdited = ref(false)
     const isEdit = ref(true)
@@ -29,6 +30,12 @@
     
 
     onMounted(() => {
+        assetService.getStatus().then((response)=>{
+              statuses.value = response.data
+                  console.log(statuses.value)
+              }).catch((error) =>{
+                  console.log(error);
+              })
 
         assetService.getLocalizations().then((response)=>{
             localizations.value = response.data
@@ -183,8 +190,10 @@
                     </div>
 
                     <div class="formRecord">
-                    <label for="name">Status:</label>
-                    <input type="text" name="status" :disabled="isDisabled" v-model="asset.status"/>
+                    <label for="status">Status:</label>
+                    <select :disabled="isDisabled" name="status" v-model="asset.status">
+                        <option v-for="status in statuses" > {{ status.name }}</option>
+                    </select>
                     </div>
 
                     <div class="formRecord">

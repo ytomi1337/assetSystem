@@ -11,9 +11,17 @@ import { ref, onMounted } from 'vue';
 
       setup() {
           const categories = ref([]);
-          const localizations = ref([])
+          const localizations = ref([]);
+          const statuses = ref ([]);
 
           onMounted(() => {
+            assetService.getStatus().then((response)=>{
+              statuses.value = response.data
+                  console.log(statuses.value)
+              }).catch((error) =>{
+                  console.log(error);
+              })
+            
             assetService.getCategories().then((response)=>{
                   categories.value = response.data
                   console.log(categories.value)
@@ -29,7 +37,7 @@ import { ref, onMounted } from 'vue';
           });
 
           return {
-            categories, localizations
+            categories, localizations, statuses
           };
   },
       data(){
@@ -141,8 +149,12 @@ import { ref, onMounted } from 'vue';
       </div>
 
       <div class="formRecord">
-      <label for="warranty_date">Status:</label>
-      <input type="text" v-model="newAsset.status"/>
+      <label for="status">Status:</label>
+      <select v-model="newAsset.status" name="status">
+          <option v-for="status in statuses" :key="status.id" :value="status.name">
+            {{ status.name }}
+          </option>
+      </select>
       </div>
 
       <div class="formRecord">

@@ -34,4 +34,7 @@ export default {
     getLocalizations(){
         return apiAssetClient.get('/localizations')
     },
+    getStatus(){
+        return apiAssetClient.get('/status')
+    }
 }
