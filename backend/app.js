@@ -33,6 +33,7 @@ var assetsRouter = require('./routes/assets.js');
 var categoriesRouter = require('./routes/category.js');
 var localizationsRouter = require('./routes/localizations.js');
 var statusRouter = require('./routes/status.js')
+var usersRouter = require('./routes/users.js')
 
 
 var app = express();
@@ -52,6 +53,7 @@ app.use('/', assetsRouter);
 app.use('/', categoriesRouter);
 app.use('/', localizationsRouter);
 app.use('/', statusRouter);
+app.use('/', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
