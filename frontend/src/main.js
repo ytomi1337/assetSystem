@@ -17,7 +17,7 @@ import 'vue-select/dist/vue-select.css';
 
 const app = createApp(App)
 
-app.component('v-select', vSelect);
+
 app.use(createPinia())
 app.use(router)
 
@@ -28,6 +28,6 @@ export const GStore = reactive({
 })
 app.provide('GStore', GStore)
 
-
+app.component('v-select', vSelect);
 app.mount('#app')
 

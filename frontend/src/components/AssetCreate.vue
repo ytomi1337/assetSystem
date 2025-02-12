@@ -2,6 +2,11 @@
 import assetService from '@/services/assetService';
 import { GStore } from '@/main';
 import { ref, onMounted } from 'vue';
+import AutoComplete from './AutoComplete.vue'
+
+
+
+
 
 
     export default {
@@ -68,6 +73,9 @@ import { ref, onMounted } from 'vue';
           isError: ''
         }
     },
+    components:{
+      AutoComplete
+    },
     methods: {
       crtAssetFun(event){
         event.preventDefault()
@@ -127,7 +135,7 @@ import { ref, onMounted } from 'vue';
       </div>
 
       <div class="formRecord">
-      
+        <AutoComplete> </AutoComplete>
       </div>
 
       <div class="formRecord">

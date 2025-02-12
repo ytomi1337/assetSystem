@@ -36,5 +36,8 @@ export default {
     },
     getStatus(){
         return apiAssetClient.get('/status')
+    },
+    getUsers(userName){
+        return apiAssetClient.get('/users?userName='+ userName)
     }
 }
