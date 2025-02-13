@@ -68,6 +68,15 @@
         window.location.reload()
     }
 
+    const formatDate = (isoDate) => {
+        let date = new Date(isoDate);
+
+        if(isoDate != null){
+        return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
+        }
+        
+    }
+
 
 </script>
 
@@ -111,8 +120,8 @@
                 <td>{{ asset.category }}</td>
                 <td>{{ asset.localization }}</td>
                 <td>{{ asset.status }}</td>
-                <td>{{ asset.warranty_date }}</td>
-                <td>{{ asset.recipt_date }}</td>
+                <td>{{ formatDate(asset.warranty_date) }}</td>
+                <td>{{ formatDate(asset.recipt_date)}}</td>
                 <td><AssetActionData :asset="asset"></AssetActionData></td>
             </tr>
             

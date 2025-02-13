@@ -52,6 +52,7 @@
 
         assetService.getId(id.value).then((response) => {
             asset.value = response.data
+            console.log(asset.value);
         }).catch((error) => {
             console.log(error);
             router.push({
