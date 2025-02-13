@@ -61,7 +61,7 @@
     }  
     
     const disableShowCreateForm = () =>{
-        showCreateForm.value = false
+        showCreateForm.value = !showCreateForm.value
     }
 
     const refresh = () => {
@@ -74,11 +74,15 @@
 <template>
     <div id="flashMessage" v-if="GStore.flashMessage">{{ GStore.flashMessage }}</div>
     <div id="deletedMessage" v-if="GStore.deleteMessage">{{ GStore.deleteMessage }}</div>
-    <AssetCreate @showCreate="disableShowCreateForm" v-if="showCreateForm" class="transComp" ></AssetCreate>
+
+    <transition name="fade">
+        <AssetCreate @showCreate="disableShowCreateForm" v-if="showCreateForm"></AssetCreate>
+    </transition>
+
     <div class="containerBox">
         
         <div class="filterBar">
-            <button class="navbtn createBtn" @click="showCreateForm = true">Utworz</button>
+            <button class="navbtn createBtn" @click="disableShowCreateForm">Utworz</button>
             <button class="navbtn">Filtr</button>
             <button class="navbtn" @click="refresh">Refresh</button>
         </div>
@@ -130,6 +134,29 @@
 </template>
 
 <style>
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.fade-enter-from {
+  opacity: 0;
+}
+
+.fade-enter-to {
+  opacity: 1;
+}
+
+.fade-leave-from {
+  opacity: 1;
+}
+
+.fade-leave-to {
+  opacity: 0;
+}
+
+
+
     @keyframes yellowfade{
         from{
             background: rgb(144, 238, 144);

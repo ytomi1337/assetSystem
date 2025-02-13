@@ -4,6 +4,7 @@
     import { GStore } from '@/main';
     import router from '@/router/index';
     import { cloneDeep } from 'lodash';
+    import AutoComplete from '@/components/AutoComplete.vue';
     
 
     const props = defineProps({
@@ -62,6 +63,7 @@
         })
     })
 
+
     const deleteAsset =() =>{
 
         const deletedAsset = asset.name
@@ -88,11 +90,10 @@
         isEdit.value = false
         isLeaveEdited.value = true
         isDisabled.value = !isDisabled.value
-        orginalAsset.value = cloneDeep(asset.value)
-        
+        orginalAsset.value = cloneDeep(asset.value) 
     };
 
-    const detectChanges=() =>{
+    const detectChanges=() =>{ 
         const changes = {}
             for (let key in asset.value) {
                 if (asset.value[key] != orginalAsset.value[key]) {
@@ -103,6 +104,7 @@
     };
     const saveAsset = async () => {
        const changes = detectChanges()
+       console.log(changes);
        
        try{
         assetService.updateAsset(props.id, changes)
@@ -166,8 +168,7 @@
                     </div>
 
                     <div class="formRecord">
-                    <label for="name">Aktualny Użytkownik:</label>
-                    <input type="text" name="user_new" :disabled="isDisabled" v-model="asset.user_new"/>
+                    <AutoComplete> </AutoComplete>
                     </div>
 
                     <div class="formRecord">
