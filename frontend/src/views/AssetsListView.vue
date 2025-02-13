@@ -22,15 +22,20 @@
     const totalPages = ref(null)
 
     const showCreateForm = ref(false)
+    const isChange = ref(false)
 
 
     onMounted(() =>{
         watchEffect(()=>{ 
+
+            let change = showCreateForm.value
+            
             assetService.getAssets(page.value, limit.value, sortValue.value, sortKey.value)
             .then((response)=>{
                 assets.value = response.data.assets
                 totalNum.value = response.data.count
                 totalPages.value = totalNum.value / limit.value
+                
             }).catch((error)=>{
                 console.log(error);
                 console.log('wyzej error');
@@ -61,7 +66,8 @@
     }  
     
     const disableShowCreateForm = () =>{
-        showCreateForm.value = !showCreateForm.value
+        showCreateForm.value = false
+
     }
 
     const refresh = () => {
@@ -91,7 +97,7 @@
     <div class="containerBox">
         
         <div class="filterBar">
-            <button class="navbtn createBtn" @click="disableShowCreateForm">Utworz</button>
+            <button class="navbtn createBtn" @click="showCreateForm = true">Utworz</button>
             <button class="navbtn">Filtr</button>
             <button class="navbtn" @click="refresh">Refresh</button>
         </div>
