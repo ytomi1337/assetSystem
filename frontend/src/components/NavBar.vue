@@ -3,7 +3,7 @@
 
 </script>
 <template>
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg bg-body-tertiary fixed-nav">
   <div class="container-fluid">
     <RouterLink :to="{ name: 'home' }" class="navbar-brand me-5 ms-5" href="#"><img src="../assets/Boerner-Insulation-Logo-2.png" width="180px"></RouterLink>
 
@@ -50,3 +50,6 @@
 
 
 </template>
+<style>
+
+</style>

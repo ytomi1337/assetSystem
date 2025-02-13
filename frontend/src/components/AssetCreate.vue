@@ -11,7 +11,7 @@ import AutoComplete from './AutoComplete.vue'
 
     export default {
 
-      emits: ['showCreate'],
+      emits: ['showCreate', 'update-name'],
 
 
       setup() {
@@ -22,14 +22,12 @@ import AutoComplete from './AutoComplete.vue'
           onMounted(() => {
             assetService.getStatus().then((response)=>{
               statuses.value = response.data
-                  console.log(statuses.value)
               }).catch((error) =>{
                   console.log(error);
               })
             
             assetService.getCategories().then((response)=>{
                   categories.value = response.data
-                  console.log(categories.value)
               }).catch((error) =>{
                   console.log(error);
               })
@@ -77,6 +75,11 @@ import AutoComplete from './AutoComplete.vue'
       AutoComplete
     },
     methods: {
+
+      updateUser(receivedName) {
+      this.newAsset.user_new = receivedName
+    },
+
       crtAssetFun(event){
         event.preventDefault()
         assetService.createAsset(this.newAsset
@@ -135,7 +138,7 @@ import AutoComplete from './AutoComplete.vue'
       </div>
 
       <div class="formRecord">
-        <AutoComplete> </AutoComplete>
+        <AutoComplete @update-name="updateUser"> </AutoComplete>
       </div>
 
       <div class="formRecord">

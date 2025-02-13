@@ -12,7 +12,9 @@ export default {
       search: "",
       isLoading: false,
       arrowCounter: 0,
-      items: ['Apple', 'Bannana']
+      items: [],
+      heightValue: '',
+      isResponse: false,
     };
   },
 
@@ -32,20 +34,24 @@ export default {
     },
 
     filterResults() {
-      // first uncapitalize all the things
-      // this.results = this.items.filter(item => {
-      //   return item.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
-      // });
-
+  
       assetService.getUsers(this.search.toLowerCase()).then((response)=>{
-              this.results = response.data
-                  console.log(this.results)
+              if (response.data.length !== 0){
+                this.results = response.data.map(item => item.name)
+                this.heightValue = (response.data.length * 40) - response.data.length * 5
+                this.isResponse = true
+              }else{
+                this.isResponse = false
+                this.results = ["Brak uzytkownika w bazie..."]
+                this.heightValue = 40
+              }
               }).catch((error) =>{
                   console.log(error);
               })
     },
     setResult(result) {
       this.search = result;
+      this.$emit('update-name', this.search)
       this.isOpen = false;
     },
     onArrowDown(evt) {
@@ -83,6 +89,7 @@ export default {
     document.addEventListener("click", this.handleClickOutside);
   },
   destroyed() {
+    
     document.removeEventListener("click", this.handleClickOutside);
   }
 };
@@ -90,57 +97,64 @@ export default {
 </script>
 
 <template>
-<h1>Test</h1>
-<!-- <script type="text/x-template" id="autocomplete"> -->
+
+
   <div class="autocomplete">
-    <input type="text" @input="onChange" v-model="search" @keyup.down="onArrowDown" @keyup.up="onArrowUp" @keyup.enter="onEnter" />
-    <ul id="autocomplete-results" v-show="isOpen" class="autocomplete-results">
+    <label for="user">Uzytkownik:</label>
+    <input type="text" style="width: 100%; height: 35px;" name="user" placeholder="Podaj litere..." 
+    @input="onChange" v-model="search" @keyup.down="onArrowDown" @keyup.up="onArrowUp" @keyup.enter="onEnter" />
+
+    <ul id="autocomplete-results" v-show="isOpen" class="autocomplete-results" :style="{height: this.heightValue + 'px'}">
       <li class="loading" v-if="isLoading">
         Loading results...
       </li>
-      <li v-else v-for="(result, i) in results" :key="i" @click="setResult(result)" class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }">
+      <li v-if="isResponse" v-for="(result, i) in results"  :key="i" @click="setResult(result)" class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }">
+        {{ result }}
+      </li>
+      <li v-else v-for="(result) in results" class="autocomplete-result">
         {{ result }}
       </li>
     </ul>
 
   </div>
-<!-- </script> -->
+
 </template>
 
 <style>
-    #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-
+    
 .autocomplete {
   position: relative;
-  width: 130px;
+  width: 100%;
 }
 
 .autocomplete-results {
-  padding: 0;
+  max-height: 400px;
+  padding: 2px;
   margin: 0;
-  border: 1px solid #eeeeee;
-  height: 120px;
+  color: #000;
+  border: 1px solid #a8a6a6;
+  border-radius: 10px;
   overflow: auto;
   width: 100%;
+  z-index: 100;
+  position: absolute;
+  background-color: #faf9f9;
+  -webkit-box-shadow: 0px 4px 17px -12px rgba(66, 68, 90, 1);
+-moz-box-shadow: 0px 4px 17px -12px rgba(66, 68, 90, 1);
+box-shadow: 0px 4px 17px -12px rgba(66, 68, 90, 1);
 }
 
 .autocomplete-result {
   list-style: none;
   text-align: left;
+  border-radius: 5px;
   padding: 4px 2px;
   cursor: pointer;
 }
 
 .autocomplete-result.is-active,
 .autocomplete-result:hover {
-  background-color: #4aae9b;
-  color: white;
+  background-color: #a0c9c2;
 }
 
 </style>
