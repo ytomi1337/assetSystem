@@ -21,11 +21,11 @@
 
         <li class="nav-item dropdown me-3">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Protokoły przekazania
+            Akcje
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="#">Pzekazanie sprzetu</a></li>
+            <li><a class="dropdown-item" href="#">Przekazanie sprzetu miedzy uzytkownikami</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>

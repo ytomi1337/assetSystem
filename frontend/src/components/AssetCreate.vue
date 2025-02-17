@@ -42,7 +42,7 @@ import AutoComplete from './AutoComplete.vue'
           return {
             categories, localizations, statuses
           };
-  },
+    },
       data(){
         return{
 
@@ -71,10 +71,10 @@ import AutoComplete from './AutoComplete.vue'
           isError: ''
         }
     },
-    components:{
+      components:{
       AutoComplete
     },
-    methods: {
+      methods: {
 
       updateUser(receivedName) {
       this.newAsset.user_new = receivedName
@@ -190,7 +190,7 @@ import AutoComplete from './AutoComplete.vue'
    
 </template>
 
-<style>
+<style scoped>
 .box-overlay {
   transition: 0.5s;
   position: fixed;

@@ -2,6 +2,7 @@
     import assetService from '@/services/assetService';
     import AssetActionData from '@/components/AssetActionData.vue';
     import AssetCreate from '@/components/AssetCreate.vue';
+    import Filters from '@/components/Filters.vue';
     import ArrowIcons from '@/components/ArrowIcons.vue';
     import { ref, onMounted, watchEffect,  } from 'vue'
     import { GStore } from '@/main';
@@ -22,6 +23,7 @@
     const totalPages = ref(null)
 
     const showCreateForm = ref(false)
+    const showFilterForm = ref(false)
     const isChange = ref(false)
 
 
@@ -65,9 +67,20 @@
         limit.value = limitNum
     }  
     
-    const disableShowCreateForm = () =>{
-        showCreateForm.value = false
+    const disableShowCreateForm = (form) =>{
+        if(form == 'create'){
+            showCreateForm.value = false
+        }else{
+            showFilterForm.value = false
+        }
 
+    }
+    const enableShowCreateForm = (form) => {
+        if(form == 'create'){
+            showCreateForm.value = true
+        }else{
+            showFilterForm.value = true
+        }
     }
 
     const refresh = () => {
@@ -91,18 +104,18 @@
     <div id="deletedMessage" v-if="GStore.deleteMessage">{{ GStore.deleteMessage }}</div>
 
     <transition name="fade">
-        <AssetCreate @showCreate="disableShowCreateForm" v-if="showCreateForm"></AssetCreate>
+        <AssetCreate @showCreate="disableShowCreateForm('create')" v-if="showCreateForm"></AssetCreate>
     </transition>
-
     <div class="containerBox">
         
         <div class="filterBar">
-            <button class="navbtn createBtn" @click="showCreateForm = true">Utworz</button>
-            <button class="navbtn">Filtr</button>
+            <button class="navbtn createBtn" @click="enableShowCreateForm('create')">Utworz</button>
+            <button class="navbtn" @click="enableShowCreateForm('filter')" >Filtr</button>
             <button class="navbtn" @click="refresh">Refresh</button>
         </div>
-        
-        
+        <transition name="slide-down">
+             <Filters @showCreate="disableShowCreateForm('filter')" v-if="showFilterForm"></Filters>
+        </transition>
         <table id="mainTable" class="mainTable">
             <tr class="tableHeader">
                 <th>ID <button class="sortBtn" @click="toggleSort('id')" ><ArrowIcons :column="sortKey" :value="sortValue" :current="'id'"></ArrowIcons></button> </th>
@@ -151,7 +164,7 @@
 <style>
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 0.2s ease-in-out;
+  transition: opacity 0.1s ease-in-out;
 }
 
 .fade-enter-from {
@@ -170,6 +183,32 @@
   opacity: 0;
 }
 
+.slide-down-enter-active, 
+.slide-down-leave-active {
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.slide-down-enter-to {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+ .slide-down-leave-from {
+    opacity: 1;
+  transform: scaleY(1);
+}
+
+.slide-down-leave-to {
+    opacity: 0;
+  transform: scaleY(0);
+  transform-origin: top;
+} 
 
 
     @keyframes yellowfade{
@@ -217,13 +256,12 @@
     }
     .mainTable{
         width: 100%;
-        margin-top: 2%;
+        margin-top: 1%;
         border-top: 1px solid black;
     }
     .filterBar{
         margin-top: 3%;
         width: 100%;
-        padding: 10px;
 
         .navbtn{
             padding: 5px 15px;
