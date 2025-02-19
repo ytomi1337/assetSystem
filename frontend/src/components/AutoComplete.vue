@@ -101,7 +101,7 @@ export default {
 
   <div class="autocomplete">
     <label for="user">Uzytkownik:</label>
-    <input type="text" style="width: 100%; height: 35px;" name="user" placeholder="Podaj litere..." 
+    <input type="text" autocomplete="off" style="width: 100%; height: 35px;" name="user" placeholder="Podaj litere..." 
     @input="onChange" v-model="search" @keyup.down="onArrowDown" @keyup.up="onArrowUp" @keyup.enter="onEnter" />
 
     <ul id="autocomplete-results" v-show="isOpen" class="autocomplete-results" :style="{height: this.heightValue + 'px'}">

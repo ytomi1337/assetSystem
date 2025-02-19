@@ -115,7 +115,6 @@ import AutoComplete from './AutoComplete.vue'
 <div class="box-overlay">
   <div class="box">
     <h2 class="mb-4">Dodaj Urządzenie:</h2>
-
     <form @submit="crtAssetFun">
 
       <div class="errorSection">
@@ -190,7 +189,7 @@ import AutoComplete from './AutoComplete.vue'
    
 </template>
 
-<style scoped>
+<style>
 .box-overlay {
   transition: 0.5s;
   position: fixed;

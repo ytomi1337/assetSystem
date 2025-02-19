@@ -39,5 +39,8 @@ export default {
     },
     getUsers(userName){
         return apiAssetClient.get('/users?userName='+ userName)
+    },
+    applyFilters(page, limit, sortValue, sortKey, appliedFilters){
+        return apiAssetClient.post(`/assets/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
     }
 }

@@ -1,16 +1,29 @@
 <script>
 
 export default {
-    emits: ['showCreate'],
+    emits: ['showCreate', 'filterApply'],
 
     methods:{
             leaveComponent1(){
                this.$emit('showCreate')
+            },
+            applyFilters(event){
+                event.preventDefault()
+                this.$emit('filterApply', this.filters)
             }
         },
     data(){
         return{
-            selected: ''
+            filters:{
+              name: '',
+              it_num: '',
+              serialnum: '',
+              user_new: '',
+              localization:'' ,
+              category:'' ,
+              status: '',
+              isWarranty: '',
+            }
         }
     }
 }
@@ -18,21 +31,22 @@ export default {
 
 <template>
     <div class="filter-wrapper">
-        
-        <div class="filter-containter">
-            <v-select class="filterItem" multiple v-model="selected" :options="['Canada','United States']" placeholder="Nr It:"/>
-            <v-select class="filterItem" multiple v-model="selected" :options="['Canada','United States']" placeholder="Nr Seryjny:"/>
-            <v-select class="filterItem" multiple v-model="selected" :options="['Canada','United States']" placeholder="Uzytkownik:"/>
-            <v-select class="filterItem" multiple v-model="selected" :options="['Canada','United States']" placeholder="Kategoria:"/>
-            <v-select class="filterItem" multiple v-model="selected" :options="['Canada','United States']" placeholder="Lokalizacja:"/>
-            <v-select class="filterItem" multiple v-model="selected" :options="['Canada','United States']" placeholder="Status:"/>
-            <v-select class="filterItem" multiple v-model="selected" :options="['Canada','United States']" placeholder="Wydano:"/>
-            <v-select class="filterItem" multiple v-model="selected" :options="['Canada','United States']" placeholder="Gwarancja:"/>   
-         </div>
-         <div class="button-container">
-            <button type="button" class="applyBtn" @click="leaveComponent1">Zastosuj</button>
-            <button type="button" class="leaveBtn" @click="leaveComponent1">Zamknij</button>
-         </div>
+        <form @submit="applyFilters">
+            <div class="filter-containter">
+                <input type="text" class="filterItem" v-model="filters.name"  placeholder="Nazwa:"/>
+                <input type="text" class="filterItem" v-model="filters.it_num"  placeholder="Nr It:"/>
+                <input type="text" class="filterItem" v-model="filters.serialnum"  placeholder="Nr Seryjny:"/> 
+                <v-select class="filterItem" multiple v-model="filters.user_new" :options="['Canada','United States']" placeholder="Uzytkownik:"/>
+                <v-select class="filterItem" multiple v-model="filters.localization" :options="['Canada','United States']" placeholder="Lokalizacja:"/>
+                <v-select class="filterItem" multiple v-model="filters.category" :options="['Canada','United States']" placeholder="Kategoria:"/>
+                <v-select class="filterItem" multiple v-model="filters.status" :options="['Canada','United States']" placeholder="Status:"/>
+                <v-select class="filterItem" multiple v-model="filters.isWarranty" :options="['Canada','United States']" placeholder="Gwarancja:"/>   
+            </div>
+            <div class="button-container">
+                <button type="submit" class="applyBtn">Zastosuj</button>
+                <button type="button" class="leaveBtn" @click="leaveComponent1">Zamknij</button>
+            </div>
+        </form>
     </div>
 </template>
 
@@ -56,7 +70,11 @@ button{
     flex-wrap: wrap;
     gap: 10px;
 }
-
+input{
+    border-radius: 5px;
+    border: 1px solid rgba(60, 60, 60, .26);
+    padding: 0 2px;
+}
 .filterItem{
     width: calc(25% - 10px)
 }
