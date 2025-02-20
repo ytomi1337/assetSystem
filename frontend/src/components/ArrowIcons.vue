@@ -1,12 +1,13 @@
-<script>
+<script setup>
 
-    export default{
-        props: {
-            column: String,
-            value: String,
-            current: String
-        }
-    }
+import { defineProps } from 'vue'
+
+const props = defineProps({
+    column: String,
+    value: String,
+    current: String 
+})
+
 </script>
 
 <template>

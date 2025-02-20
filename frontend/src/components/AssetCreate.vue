@@ -1,113 +1,91 @@
-<script>
+<script setup>
 import assetService from '@/services/assetService';
 import { GStore } from '@/main';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineEmits } from 'vue';
 import AutoComplete from './AutoComplete.vue'
 
+const emits = defineEmits(['showCreate', 'update-name'])
 
+const categories = ref([]);
+const localizations = ref([]);
+const statuses = ref ([]);
 
+const defaultAsset = ref({
+  name: '',
+  it_num: '',
+  serialnum: '',
+  user_new: '',
+  localization:'' ,
+  category:'' ,
+  status: '',
+  recipt_date: '',
+  warranty_date: ''
+})
 
+const newAsset = ref({ ...defaultAsset.value })
 
+const isError = ref("")
 
-    export default {
+onMounted(() => {
+  assetService
+    .getStatus()
+    .then((response) => {
+      statuses.value = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
-      emits: ['showCreate', 'update-name'],
+  assetService
+    .getCategories()
+    .then((response) => {
+      categories.value = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
+  assetService
+    .getLocalizations()
+    .then((response) => {
+      localizations.value = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+})
 
-      setup() {
-          const categories = ref([]);
-          const localizations = ref([]);
-          const statuses = ref ([]);
+const updateUser = (receivedName) => {
+  newAsset.value.user_new = receivedName;
+}
 
-          onMounted(() => {
-            assetService.getStatus().then((response)=>{
-              statuses.value = response.data
-              }).catch((error) =>{
-                  console.log(error);
-              })
-            
-            assetService.getCategories().then((response)=>{
-                  categories.value = response.data
-              }).catch((error) =>{
-                  console.log(error);
-              })
+const crtAssetFun = (event) => {
+  event.preventDefault();
+  assetService
+    .createAsset(newAsset.value)
+    .then(() => {
+      GStore.flashMessage =
+        "Urządzenie " + newAsset.value.name + " zostało dodane prawidłowo";
+      setTimeout(() => {
+        GStore.flashMessage = "";
+      }, 5000);
+      console.log("Obiekt dodany poprawnie");
+      emits("showCreate");
+    })
+    .catch((error) => {
+      isError.value = error.response.data.errors[0].msg;
+    });
+};
 
-            assetService.getLocalizations().then((response)=>{
-                  localizations.value = response.data
-              }).catch((error) =>{
-                  console.log(error);
-              })
-          });
-
-          return {
-            categories, localizations, statuses
-          };
-    },
-      data(){
-        return{
-
-          defaultAsset: {
-              name: '',
-              it_num: '',
-              serialnum: '',
-              user_new: '',
-              localization:'' ,
-              category:'' ,
-              status: '',
-              recipt_date: '',
-              warranty_date: ''
-          },
-          newAsset: {
-              name: '',
-              it_num: '',
-              serialnum: '',
-              user_new: '',
-              localization:'' ,
-              category:'' ,
-              status: '',
-              recipt_date: '',
-              warranty_date: ''
-           },
-          isError: ''
-        }
-    },
-      components:{
-      AutoComplete
-    },
-      methods: {
-
-      updateUser(receivedName) {
-      this.newAsset.user_new = receivedName
-    },
-
-      crtAssetFun(event){
-        event.preventDefault()
-        assetService.createAsset(this.newAsset
-        )
-        .then(()=>{
-            GStore.flashMessage = 'Urządzenie ' + this.newAsset.name + ' zostało dodane prawidłowo'
-            setTimeout (() => {
-              GStore.flashMessage = ''
-            },5000)
-            console.log('object added sucesfly');
-            this.$emit('showCreate')
-        }).catch((error)=>{
-            this.isError = error.response.data.errors[0].msg
-        })
-  
-      }, 
-
-      leaveComponent(){
-        if(JSON.stringify(this.newAsset) !== JSON.stringify(this.defaultAsset)){
-          if(confirm('Masz wprowadzone dane czy napewno chcesz zamknac?')){
-            this.$emit('showCreate')
-          }
-        }else{
-          this.$emit('showCreate')
-        }
-      },
+const leaveComponent = () => {
+  if (JSON.stringify(newAsset.value) !== JSON.stringify(defaultAsset.value)) {
+    if (confirm("Masz wprowadzone dane, czy na pewno chcesz zamknąć?")) {
+      emits("showCreate");
     }
+  } else {
+    emits("showCreate");
   }
+};
 
 </script>
 
@@ -118,7 +96,7 @@ import AutoComplete from './AutoComplete.vue'
     <form @submit="crtAssetFun">
 
       <div class="errorSection">
-      <p v-if="isError" >{{ this.isError }}</p>
+      <p v-if="isError" >{{ isError.value }}</p>
       </div>
 
       <div class="formRecord">

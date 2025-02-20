@@ -32,7 +32,6 @@
     onMounted(() =>{
         watchEffect(()=>{ 
             let change = showCreateForm.value
-            console.log(filters.value);
             if (Object.keys(filters.value).length == 0)
                 assetService.getAssets(page.value, limit.value, sortValue.value, sortKey.value)
                 .then((response)=>{
@@ -44,17 +43,14 @@
                     console.log(error);
                     console.log('wyzej error');
                 })
-            else{
-                console.log('object');
-            }
+
         })
     })
     
     const filterAssets = (appliedFilters) =>{
         page.value = 1
         filters.value = appliedFilters
-        console.log(filters.value);
-        watchEffect(()=>{
+        // watchEffect(()=>{
             assetService.applyFilters(page.value, limit.value, sortValue.value, sortKey.value, filters.value)
                 .then((response)=>{
                     assets.value = response.data.assets
@@ -66,7 +62,7 @@
                     console.log('wyzej error');
                 }) 
                  
-    })  
+    // })  
     }
 
     const toggleSort = (column) => {
@@ -96,6 +92,7 @@
             showCreateForm.value = false
         }else{
             showFilterForm.value = false
+            console.log('wartosc przy wylaczaniu: ', filters.value);
         }
 
     }
@@ -138,7 +135,12 @@
             <button class="navbtn" @click="enableShowCreateForm('filter')" >Filtr</button>
         </div>
         <transition name="slide-down">
-             <Filters @showCreate="disableShowCreateForm('filter')" @filterApply="filterAssets" v-if="showFilterForm"></Filters>
+             <Filters 
+             @showCreate="disableShowCreateForm('filter')" 
+             @filterApply="filterAssets" 
+             v-if="showFilterForm"
+             v-model="filters.value">
+            </Filters>
         </transition>
         <table id="mainTable" class="mainTable">
             <tr class="tableHeader">

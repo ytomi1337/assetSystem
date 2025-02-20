@@ -1,123 +1,137 @@
-<script>
-
+<script setup>
+import { ref, watch, onMounted, onUnmounted, defineEmits } from "vue";
 import assetService from '@/services/assetService';
-export default {
-  name: "autocomplete",
-  
 
-  data() {
-    return {
-      isOpen: false,
-      results: [],
-      search: "",
-      isLoading: false,
-      arrowCounter: 0,
-      items: [],
-      heightValue: '',
-      isResponse: false,
-    };
-  },
+const emit = defineEmits(['update-name'])
 
-  methods: {
-    onChange() {
-      // Let's warn the parent that a change was made
-      this.$emit("input", this.search);
+const isOpen = ref(false);
+const results = ref([]);
+const search = ref("");
+const isLoading = ref(false);
+const arrowCounter = ref(0);
+const items = ref([]);
+const heightValue = ref("");
+const isResponse = ref(false);
 
-      // Is the data given by an outside ajax request?
-      if (this.isAsync) {
-        this.isLoading = true;
+const onChange = () =>{
+  emit("input", search.value);
+  filterResults();
+  isOpen.value = true
+}
+
+const filterResults = () => {
+  isLoading.value = true;
+  assetService
+    .getUsers(search.value.toLowerCase())
+    .then((response) => {
+      if (response.data.length !== 0) {
+        results.value = response.data.map((item) => item.name);
+        heightValue.value = response.data.length * 35;
+        isResponse.value = true;
       } else {
-        // Let's search our flat array
-        this.filterResults();
-        this.isOpen = true;
+        isResponse.value = false;
+        results.value = ["Brak użytkownika w bazie..."];
+        heightValue.value = 40;
       }
-    },
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
+};
 
-    filterResults() {
-  
-      assetService.getUsers(this.search.toLowerCase()).then((response)=>{
-              if (response.data.length !== 0){
-                this.results = response.data.map(item => item.name)
-                this.heightValue = (response.data.length * 40) - response.data.length * 5
-                this.isResponse = true
-              }else{
-                this.isResponse = false
-                this.results = ["Brak uzytkownika w bazie..."]
-                this.heightValue = 40
-              }
-              }).catch((error) =>{
-                  console.log(error);
-              })
-    },
-    setResult(result) {
-      this.search = result;
-      this.$emit('update-name', this.search)
-      this.isOpen = false;
-    },
-    onArrowDown(evt) {
-      if (this.arrowCounter < this.results.length) {
-        this.arrowCounter = this.arrowCounter + 1;
-      }
-    },
-    onArrowUp() {
-      if (this.arrowCounter > 0) {
-        this.arrowCounter = this.arrowCounter - 1;
-      }
-    },
-    onEnter() {
-      this.search = this.results[this.arrowCounter];
-      this.isOpen = false;
-      this.arrowCounter = -1;
-    },
-    handleClickOutside(evt) {
-      if (!this.$el.contains(evt.target)) {
-        this.isOpen = false;
-        this.arrowCounter = -1;
-      }
-    }
-  },
-  watch: {
-    items: function(val, oldValue) {
-      // actually compare them
-      if (val.length !== oldValue.length) {
-        this.results = val;
-        this.isLoading = false;
-      }
-    }
-  },
-  mounted() {
-    document.addEventListener("click", this.handleClickOutside);
-  },
-  destroyed() {
-    
-    document.removeEventListener("click", this.handleClickOutside);
+const setResult = (result) => {
+  search.value = result;
+  emit("update-name", search.value);
+  isOpen.value = false;
+};
+
+const onArrowDown = () => {
+  if (arrowCounter.value < results.value.length - 1) {
+    arrowCounter.value++;
   }
 };
 
+const onArrowUp = () => {
+  if (arrowCounter.value > 0) {
+    arrowCounter.value--;
+  }
+};
+
+const onEnter = () => {
+  if (results.value.length > 0) {
+    search.value = results.value[arrowCounter.value];
+    isOpen.value = false;
+    arrowCounter.value = 0;
+  }
+};
+
+const handleClickOutside = (event) => {
+  if (!event.target.closest(".autocomplete")) {
+    isOpen.value = false;
+    arrowCounter.value = -1;
+  }
+};
+
+watch(items, (newVal, oldVal) => {
+  if (newVal.length !== oldVal.length) {
+    results.value = newVal;
+    isLoading.value = false;
+  }
+});
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
+
 </script>
 
+
+
 <template>
-
-
   <div class="autocomplete">
-    <label for="user">Uzytkownik:</label>
-    <input type="text" autocomplete="off" style="width: 100%; height: 35px;" name="user" placeholder="Podaj litere..." 
-    @input="onChange" v-model="search" @keyup.down="onArrowDown" @keyup.up="onArrowUp" @keyup.enter="onEnter" />
+    <label for="user">Użytkownik:</label>
+    <input
+      type="text"
+      autocomplete="off"
+      style="width: 100%; height: 35px"
+      name="user"
+      placeholder="Podaj literę..."
+      @input="onChange"
+      v-model="search"
+      @keyup.down="onArrowDown"
+      @keyup.up="onArrowUp"
+      @keyup.enter="onEnter"
+    />
 
-    <ul id="autocomplete-results" v-show="isOpen" class="autocomplete-results" :style="{height: this.heightValue + 'px'}">
-      <li class="loading" v-if="isLoading">
-        Loading results...
-      </li>
-      <li v-if="isResponse" v-for="(result, i) in results"  :key="i" @click="setResult(result)" class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }">
+    <ul
+      id="autocomplete-results"
+      v-show="isOpen"
+      class="autocomplete-results"
+      :style="{ height: heightValue + 'px' }"
+    >
+      <li class="loading" v-if="isLoading">Ładowanie wyników...</li>
+      <li
+        v-if="isResponse"
+        v-for="(result, i) in results"
+        :key="i"
+        @click="setResult(result)"
+        class="autocomplete-result"
+        :class="{ 'is-active': i === arrowCounter }"
+      >
         {{ result }}
       </li>
-      <li v-else v-for="(result) in results" class="autocomplete-result">
+      <li v-else v-for="(result, i) in results" :key="'no-user-' + i" class="autocomplete-result">
         {{ result }}
       </li>
     </ul>
-
   </div>
-
 </template>
 
 <style>

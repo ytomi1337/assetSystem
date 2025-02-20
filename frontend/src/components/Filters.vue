@@ -1,32 +1,29 @@
-<script>
+<script setup>
 
-export default {
-    emits: ['showCreate', 'filterApply'],
+import { ref, defineEmits} from 'vue';
 
-    methods:{
-            leaveComponent1(){
-               this.$emit('showCreate')
-            },
-            applyFilters(event){
-                event.preventDefault()
-                this.$emit('filterApply', this.filters)
-            }
-        },
-    data(){
-        return{
-            filters:{
-              name: '',
-              it_num: '',
-              serialnum: '',
-              user_new: '',
-              localization:'' ,
-              category:'' ,
-              status: '',
-              isWarranty: '',
-            }
-        }
-    }
+const emits = defineEmits(['showCreate', 'filterApply'])
+
+const filters = ref({
+    name: '',
+    it_num: '',
+    serialnum: '',
+    user_new: '',
+    localization:'' ,
+    category:'' ,
+    status: '',
+    isWarranty: '',
+})
+
+const leaveComponent1 = () =>{
+    emits('showCreate')
 }
+
+const applyFilters = () =>{
+    event.preventDefault();
+    emits('filterApply', filters.value)
+}
+
 </script>
 
 <template>
