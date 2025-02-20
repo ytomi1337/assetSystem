@@ -2,6 +2,7 @@
 
 import { ref, defineEmits, defineProps, watch , onMounted, computed} from 'vue';
 import assetService from '@/services/assetService';
+
 const emits = defineEmits(['showCreate', 'filterApply', 'update:modelValue'])
 const props = defineProps(['modelValue'])
 
@@ -15,7 +16,8 @@ const filters = ref({
     status: props.modelValue?.status || '',
     isWarranty: props.modelValue?.isWarranty || '',
 })
-
+const users = ref([]);
+const userNames = computed(() => users.value.map(users => users.name));
 const categories = ref([]);
 const categoryNames = computed(() => categories.value.map(cat => cat.name));
 const localizations = ref([]);
@@ -25,6 +27,16 @@ const statusesNames = computed(() => statuses.value.map(stat => stat.name));
 const isWarranty = ref(['Aktywna', 'Wygaszona'])
 
 onMounted(() => {
+  assetService
+    .getAllUsers()
+    .then((response) => {
+        users.value = response.data
+        console.log('users', users.value);
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+
   assetService
     .getStatus()
     .then((response) => {
@@ -75,7 +87,7 @@ const applyFilters = () =>{
                 <input type="text" class="filterItem" v-model="filters.it_num"  placeholder="Nr It:"/>
                 <input type="text" class="filterItem" v-model="filters.name"  placeholder="Nazwa:"/>
                 <input type="text" class="filterItem" v-model="filters.serialnum"  placeholder="Nr Seryjny:"/> 
-                <v-select class="filterItem" multiple v-model="filters.user_new" :options="['Canada','United States']" placeholder="Uzytkownik:"/>
+                <v-select class="filterItem" multiple v-model="filters.user_new" :options="userNames" placeholder="Uzytkownik:"/>
                 <v-select class="filterItem" multiple v-model="filters.category" :options="categoryNames" placeholder="Kategoria:"/>
                 <v-select class="filterItem" multiple v-model="filters.localization" :options="localizationsNames" placeholder="Lokalizacja:"/>
                 <v-select class="filterItem" multiple v-model="filters.status" :options="statusesNames" placeholder="Status:"/>

@@ -98,7 +98,7 @@
             showCreateForm.value = true
             showFilterForm.value = false
         }else{
-            showFilterForm.value = true
+            showFilterForm.value = !showFilterForm.value
         }
     }
 

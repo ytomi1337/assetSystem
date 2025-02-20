@@ -38,7 +38,11 @@ export default {
         return apiAssetClient.get('/status')
     },
     getUsers(userName){
+        console.log('name',userName);
         return apiAssetClient.get('/users?userName='+ userName)
+    },
+    getAllUsers(){
+        return apiAssetClient.get('/users')
     },
     applyFilters(page, limit, sortValue, sortKey, appliedFilters){
         return apiAssetClient.post(`/assets/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
