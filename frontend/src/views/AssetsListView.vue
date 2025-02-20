@@ -50,7 +50,6 @@
     const filterAssets = (appliedFilters) =>{
         page.value = 1
         filters.value = appliedFilters
-        // watchEffect(()=>{
             assetService.applyFilters(page.value, limit.value, sortValue.value, sortKey.value, filters.value)
                 .then((response)=>{
                     assets.value = response.data.assets
@@ -61,8 +60,6 @@
                     console.log(error);
                     console.log('wyzej error');
                 }) 
-                 
-    // })  
     }
 
     const toggleSort = (column) => {
@@ -139,7 +136,7 @@
              @showCreate="disableShowCreateForm('filter')" 
              @filterApply="filterAssets" 
              v-if="showFilterForm"
-             v-model="filters.value">
+             v-model="filters">
             </Filters>
         </transition>
         <table id="mainTable" class="mainTable">

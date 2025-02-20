@@ -1,19 +1,61 @@
 <script setup>
 
-import { ref, defineEmits} from 'vue';
-
-const emits = defineEmits(['showCreate', 'filterApply'])
+import { ref, defineEmits, defineProps, watch , onMounted, computed} from 'vue';
+import assetService from '@/services/assetService';
+const emits = defineEmits(['showCreate', 'filterApply', 'update:modelValue'])
+const props = defineProps(['modelValue'])
 
 const filters = ref({
-    name: '',
-    it_num: '',
-    serialnum: '',
-    user_new: '',
-    localization:'' ,
-    category:'' ,
-    status: '',
-    isWarranty: '',
+    name: props.modelValue?.name || '',
+    it_num: props.modelValue?.it_num || '',
+    serialnum: props.modelValue?.serialnum || '',
+    user_new: props.modelValue?.user_new || '',
+    localization: props.modelValue?.localization || '',
+    category: props.modelValue?.category || '',
+    status: props.modelValue?.status || '',
+    isWarranty: props.modelValue?.isWarranty || '',
 })
+
+const categories = ref([]);
+const categoryNames = computed(() => categories.value.map(cat => cat.name));
+const localizations = ref([]);
+const localizationsNames = computed(() => localizations.value.map(loc => loc.name));
+const statuses = ref ([]);
+const statusesNames = computed(() => statuses.value.map(stat => stat.name));
+const isWarranty = ref(['Aktywna', 'Wygaszona'])
+
+onMounted(() => {
+  assetService
+    .getStatus()
+    .then((response) => {
+      statuses.value = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  assetService
+    .getCategories()
+    .then((response) => {
+      categories.value = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  assetService
+    .getLocalizations()
+    .then((response) => {
+      localizations.value = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+})
+
+watch(filters, (newFilters) => {
+    emits('update:modelValue', newFilters);
+}, { deep: true });
 
 const leaveComponent1 = () =>{
     emits('showCreate')
@@ -30,14 +72,14 @@ const applyFilters = () =>{
     <div class="filter-wrapper">
         <form @submit="applyFilters">
             <div class="filter-containter">
-                <input type="text" class="filterItem" v-model="filters.name"  placeholder="Nazwa:"/>
                 <input type="text" class="filterItem" v-model="filters.it_num"  placeholder="Nr It:"/>
+                <input type="text" class="filterItem" v-model="filters.name"  placeholder="Nazwa:"/>
                 <input type="text" class="filterItem" v-model="filters.serialnum"  placeholder="Nr Seryjny:"/> 
                 <v-select class="filterItem" multiple v-model="filters.user_new" :options="['Canada','United States']" placeholder="Uzytkownik:"/>
-                <v-select class="filterItem" multiple v-model="filters.localization" :options="['Canada','United States']" placeholder="Lokalizacja:"/>
-                <v-select class="filterItem" multiple v-model="filters.category" :options="['Canada','United States']" placeholder="Kategoria:"/>
-                <v-select class="filterItem" multiple v-model="filters.status" :options="['Canada','United States']" placeholder="Status:"/>
-                <v-select class="filterItem" multiple v-model="filters.isWarranty" :options="['Canada','United States']" placeholder="Gwarancja:"/>   
+                <v-select class="filterItem" multiple v-model="filters.category" :options="categoryNames" placeholder="Kategoria:"/>
+                <v-select class="filterItem" multiple v-model="filters.localization" :options="localizationsNames" placeholder="Lokalizacja:"/>
+                <v-select class="filterItem" multiple v-model="filters.status" :options="statusesNames" placeholder="Status:"/>
+                <v-select class="filterItem" v-model="filters.isWarranty" :options="isWarranty" placeholder="Gwarancja:"/>   
             </div>
             <div class="button-container">
                 <button type="submit" class="applyBtn">Zastosuj</button>

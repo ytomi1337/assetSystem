@@ -77,11 +77,17 @@ router.post('/assets/filter', function(req, res){
     const sortKey = req.query.sortKey || 'id'
     const sortValue = req.query.sortValue || 'asc'
     const filter = {}
+
+    
     if (req.body.name){
-        filter.name = req.body.name
+        filter.name = {
+            [Op.iLike]: `%${req.body.name}%`
+        }
     }
     if (req.body.it_num){
-        filter.it_num = req.body.it_num
+        filter.it_num = {
+            [Op.iLike]: `%${req.body.it_num}%`
+        }
     }
     if (req.body.serialnum){
         filter.serialnum = req.body.serialnum
@@ -105,6 +111,19 @@ router.post('/assets/filter', function(req, res){
     if (req.body.status && req.body.status.length){
         filter.status = {
             [Op.in]: req.body.status
+        }
+    }
+
+    if (req.body.isWarranty){
+        const actualyDate = new Date().toISOString().split('T')[0]
+        if(req.body.isWarranty == 'Aktywna'){
+            filter.warranty_date ={
+                [Op.gt]: actualyDate
+            }
+        }else{
+            filter.warranty_date ={
+                [Op.lt]: actualyDate
+            }
         }
     }
     Promise.all([
