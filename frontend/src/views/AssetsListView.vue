@@ -4,6 +4,7 @@
     import AssetCreate from '@/components/AssetCreate.vue';
     import Filters from '@/components/Filters.vue';
     import ArrowIcons from '@/components/ArrowIcons.vue';
+    import UserToUser from '@/components/actions/UserToUser.vue';
     import { ref, onMounted, watchEffect,  } from 'vue'
     import { GStore } from '@/main';
 
@@ -123,14 +124,19 @@
     <div id="deletedMessage" v-if="GStore.deleteMessage">{{ GStore.deleteMessage }}</div>
 
     <transition name="fade">
-        <AssetCreate @showCreate="disableShowCreateForm('create')" v-if="showCreateForm"></AssetCreate>
+        <AssetCreate
+         @showCreate="disableShowCreateForm('create')" 
+         v-if="showCreateForm">
+         </AssetCreate>
     </transition>
+
     <div class="containerBox">
         
         <div class="filterBar">
             <button class="navbtn createBtn" @click="enableShowCreateForm('create')">Utworz</button>
             <button class="navbtn" @click="enableShowCreateForm('filter')" >Filtr</button>
         </div>
+
         <transition name="slide-down">
              <Filters 
              @showCreate="disableShowCreateForm('filter')" 
@@ -139,6 +145,7 @@
              v-model="filters">
             </Filters>
         </transition>
+
         <table id="mainTable" class="mainTable">
             <tr class="tableHeader">
                 <th>ID <button class="sortBtn" @click="toggleSort('id')" ><ArrowIcons :column="sortKey" :value="sortValue" :current="'id'"></ArrowIcons></button> </th>

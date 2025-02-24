@@ -168,7 +168,7 @@
                     </div>
 
                     <div class="formRecord">
-                    <AutoComplete> </AutoComplete>
+                    <AutoComplete>test </AutoComplete>
                     </div>
 
                     <div class="formRecord">

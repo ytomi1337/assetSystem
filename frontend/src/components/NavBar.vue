@@ -1,4 +1,17 @@
+<script setup>
+import { ref, } from 'vue'
+import UserToUser from '@/components/actions/UserToUser.vue';
 
+
+const showActionForm = ref(false)
+
+const enableShowCreateForm = (form) => {
+        if(form == 'userToUser'){
+            showActionForm.value = true
+    }
+  }
+
+</script>
 <template>
 <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-nav">
   <div class="container-fluid">
@@ -21,7 +34,7 @@
             Akcje
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Pzekazanie sprzetu</a></li>
+            <button class="dropdown-item" @click="enableShowCreateForm('userToUser')" >Przekazanie sprzetu miedzy uzytkownikami</button>
             <li><a class="dropdown-item" href="#">Przekazanie sprzetu miedzy uzytkownikami</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
@@ -44,6 +57,13 @@
     </div>
   </div>
 </nav>
+
+<transition name="fade">
+        <UserToUser 
+        @showCreate="disableShowCreateForm('action')" 
+        v-if="showActionForm">
+        </UserToUser>
+    </transition>
 
 
 </template>
