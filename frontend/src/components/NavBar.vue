@@ -5,11 +5,9 @@ import UserToUser from '@/components/actions/UserToUser.vue';
 
 const showActionForm = ref(false)
 
-const enableShowCreateForm = (form) => {
-        if(form == 'userToUser'){
-            showActionForm.value = true
-    }
-  }
+const disableUserToUser = () =>{
+  showActionForm.value = false
+}
 
 </script>
 <template>
@@ -34,7 +32,7 @@ const enableShowCreateForm = (form) => {
             Akcje
           </a>
           <ul class="dropdown-menu">
-            <button class="dropdown-item" @click="enableShowCreateForm('userToUser')" >Przekazanie sprzetu miedzy uzytkownikami</button>
+            <button class="dropdown-item" @click="showActionForm = !showActionForm" >Przekazanie sprzetu miedzy uzytkownikami</button>
             <li><a class="dropdown-item" href="#">Przekazanie sprzetu miedzy uzytkownikami</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
@@ -60,7 +58,7 @@ const enableShowCreateForm = (form) => {
 
 <transition name="fade">
         <UserToUser 
-        @showCreate="disableShowCreateForm('action')" 
+        @showCreate="disableUserToUser" 
         v-if="showActionForm">
         </UserToUser>
     </transition>

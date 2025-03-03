@@ -4,39 +4,83 @@ import assetService from '@/services/assetService';
 import AutoComplete from '../AutoComplete.vue';
 const emits = defineEmits(['showCreate', 'update-name'])
 
-const users = ref({
-  name: ''
-});
+const userSending = ref('');
+const userReciving = ref('');
 
-const filters = ref({})
+const assets = ref([])
+const selectedAssets = ref([])
 
-const userFromAssets = ref(null)
+const recivedAssets = ref([])
+const recivedSelectedAssets = ref ([])
 
 const setUserFrom = (receivedName) => {
-  users.value.name = receivedName;
-  console.log('nowy uzytkownik', users.value);
+  userSending.value = receivedName;
 }
 
+const setUserTo = (receivedName) => {
+  userReciving.value = receivedName;
+}
 
   watchEffect(() =>{
-    if(users.value.name == ''){
-      console.log('test');
-    }else{
-      console.log(users.value);
-      assetService.getUserAssets(users.value.name)
+    selectedAssets.value = []
+    recivedSelectedAssets.value = []
+    recivedAssets.value = []
+      assetService.getUserAssets(userSending.value)
                 .then((response)=>{
-                  userFromAssets.value = response.data
-                  console.log(userFromAssets.value);
+                  assets.value = response.data
                 }).catch((error)=>{
                     console.log(error);
                     console.log('wyzej error');
                 }) 
-    }
     
   })
 
+  const allSelected = computed(() => 
+  selectedAssets.value.length === assets.value.length && assets.value.length > 0
+);
 
+const allSelectedRecived = computed(() => 
+recivedSelectedAssets.value.length === recivedAssets.value.length && recivedAssets.value.length > 0
+);
 
+const toggleAll = (event) => {
+  if (event.target.checked) {
+    selectedAssets.value = [...assets.value];
+  } else {
+    selectedAssets.value = []; 
+  }
+};
+
+const toggleAllRecived = (event) => {
+  if (event.target.checked) {
+    recivedSelectedAssets.value = [...recivedAssets.value];
+  } else {
+    recivedSelectedAssets.value = []; 
+  }
+};
+
+const transferAssets = () => {
+  recivedAssets.value.push(...selectedAssets.value)
+
+  assets.value = assets.value.filter(asset => 
+    !selectedAssets.value.some(selected => selected.id == asset.id)
+  )
+  
+  selectedAssets.value = []
+}
+
+const transferBack = () => {
+  assets.value.push(...recivedSelectedAssets.value)
+  
+  recivedAssets.value = recivedAssets.value.filter(rAsset => 
+    !recivedSelectedAssets.value.some(rSelected => rSelected.id == rAsset.id)
+  )
+
+  recivedSelectedAssets.value = []
+}
+const leaveComponent = () => {
+  emits("showCreate");
+};
 
 </script>
 
@@ -44,9 +88,16 @@ const setUserFrom = (receivedName) => {
  <div class="box-overlay">
     <div class="box">
         <h3>Przekazanie między użytkownikami</h3>
+        <!-- <p v-if="errors.length != 0">Użytkownik przekazujacy nie może być za razem użytkownikiem odbierającym !</p> -->
         <div class="navUserDiv">
-          <AutoComplete @update-name="setUserFrom" > </AutoComplete>
-          <AutoComplete > </AutoComplete>
+          <div class="item">
+            <label name="userFrom"><b>Użytkownik od:</b></label>
+          <AutoComplete @update-name="setUserFrom" name="userFrom" > </AutoComplete>
+          </div>
+          <div class="item">
+            <label name="userTo"><b>Użytkownik do:</b></label>
+            <AutoComplete @update-name="setUserTo" name="userTo"> </AutoComplete>
+          </div>
         </div>
        
         <hr>
@@ -55,44 +106,74 @@ const setUserFrom = (receivedName) => {
           <div class="tableBox leftBox">
             <table id="mainTable" class="mainTable">
               <tr>
-                <th><input type="checkbox"></th>
+                <th><input type="checkbox" @change="toggleAll" :checked="allSelected"></th>
                 <th>Nr IT</th>
                 <th>Nazwa</th>
                 <th>Nr Serii</th>
                 <th>Kategoria</th>
               </tr>
-              <tr v-for="asset in userFromAssets">
-                <td><input type="checkbox"></td>
+              <tr v-for="asset in assets" :key="asset.id">
+                <td>
+                  <input type="checkbox" 
+                  :value="asset" 
+                  v-model="selectedAssets">
+                </td>
                 <td>{{ asset.it_num }}</td>
                 <td>{{ asset.name }}</td>
                 <td>{{ asset.serialnum }}</td>
                 <td>{{ asset.category }}</td>
               </tr>
+              
             </table>
           </div>
           <div class="midBox">
-            <button class="userToUserBtn">></button>
-            <button class="userToUserBtn">>></button>
-            <button class="userToUserBtn"><</button>
-            <button class="userToUserBtn"><<</button>
+            <button class="userToUserBtn" @click="transferAssets" >></button>
+            <button class="userToUserBtn" @click="transferBack"><</button>
           </div>
           <div class="tableBox rightBox">
             <table id="mainTable" class="mainTable">
               <tr>
-                <th><input type="checkbox"></th>
+                <th><input type="checkbox" @change="toggleAllRecived" :checked="allSelectedRecived"></th>
                 <th>Nr IT</th>
                 <th>Nazwa</th>
                 <th>Nr Serii</th>
                 <th>Kategoria</th>
               </tr>
+              <tr v-for="rAsset in recivedAssets" :key="rAsset.id">
+                <td>
+                  <input type="checkbox" 
+                  :value="rAsset" 
+                  v-model="recivedSelectedAssets">
+                </td>
+                <td>{{ rAsset.it_num }}</td>
+                <td>{{ rAsset.name }}</td>
+                <td>{{ rAsset.serialnum }}</td>
+                <td>{{ rAsset.category }}</td>
+              </tr>
+    
             </table>
           </div>
         </div>
+        
+        <div class="btnSection">
+          <button class="applyBtn">Zastosuj</button>
+          <button type="button" class="closeBtn" @click="leaveComponent">Zamknij</button>
+        </div>
+
         </div>
         </div>
 </template>
 
 <style scoped> 
+
+p{
+  font-weight: 500;
+  color: red;
+}
+
+input:hover{
+  cursor: pointer;
+}
 .box-overlay {
   transition: 0.5s;
   position: fixed;
@@ -107,6 +188,8 @@ const setUserFrom = (receivedName) => {
 }
 
 .box {
+  display: flex;
+  flex-direction: column;
   text-align: center;
   background: white;
   padding: 20px;
@@ -117,9 +200,15 @@ const setUserFrom = (receivedName) => {
 
 .navUserDiv{
   display: flex;
-  gap: 25%;
+  justify-content: space-between;
+  gap: 10%;
   margin-top: 5%;
   padding: 2px 0;
+  
+}
+.item{
+  width: 100%;
+  text-align: left;
 }
 
 .tableContainer{
@@ -166,4 +255,28 @@ const setUserFrom = (receivedName) => {
   width: 50%;
   transition: 0.3s;
 }
+.btnSection{
+  display: flex;
+  justify-content: end;
+  gap: 2%;
+  margin-top: 2%;
+
+  button{
+    border: 1px solid rgba(180, 179, 179, 0.781);
+    padding: 5px 10px;
+    border-radius: 8px;
+    text-align: center;
+    transition: 0.3s;
+  }
+
+  .applyBtn{
+    background-color: #7af14b;
+  }
+
+  .closeBtn{
+    background-color: #eb1414d7;
+    color: white;
+  }
+}
+
 </style>

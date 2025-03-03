@@ -43,7 +43,7 @@ const corsOptions = {
     callback(null, origin);
   },
   credentials: true, // 👈 Obsługa ciasteczek / nagłówków autoryzacji
-  methods: "GET,POST,PUT,DELETE,OPTIONS", // 👈 Zezwalamy na WSZYSTKIE metody
+  methods: "GET,POST,PATCH,PUT,DELETE,OPTIONS", // 👈 Zezwalamy na WSZYSTKIE metody
   allowedHeaders: "Content-Type,Authorization", // 👈 Pozwalamy na nagłówki JSON i autoryzacji
 };
 
