@@ -144,6 +144,20 @@ router.post('/assets/filter', function(req, res){
     })
 })
 
+router.post('/assets/user', function(req, res){
+
+    console.log('backend: ',req.body.userName);
+    
+        Asset.findAll({
+            where:{
+                user_new: req.body.userName
+            }
+        })
+    .then((assets) => {
+        res.send(assets)
+    })
+})
+
 router.delete('/assets/:id', function(req, res){
 
     Asset.destroy({

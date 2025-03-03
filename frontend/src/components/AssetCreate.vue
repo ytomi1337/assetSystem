@@ -115,7 +115,8 @@ const leaveComponent = () => {
       </div>
 
       <div class="formRecord">
-        <AutoComplete @update-name="updateUser"> </AutoComplete>
+        <label for="user">Użytkownik:</label>
+        <AutoComplete @update-name="updateUser" name="user"> </AutoComplete>
       </div>
 
       <div class="formRecord">

@@ -2,8 +2,8 @@
 import { ref, watch, onMounted, onUnmounted, defineEmits } from "vue";
 import assetService from '@/services/assetService';
 
-const emit = defineEmits(['update-name'])
-
+const emit = defineEmits(['update-name', 'update:modelValue'])
+const props = defineProps(['modelValue', 'isDisabled'])
 const isOpen = ref(false);
 const results = ref([]);
 const search = ref("");
@@ -13,8 +13,8 @@ const items = ref([]);
 const heightValue = ref("");
 const isResponse = ref(false);
 
+
 const onChange = () =>{
-  emit("input", search.value);
   filterResults();
   isOpen.value = true
 }
@@ -96,13 +96,14 @@ onUnmounted(() => {
 
 <template>
   <div class="autocomplete">
-    <label for="user">Użytkownik:</label>
+    
     <input
       type="text"
       autocomplete="off"
       style="width: 100%; height: 35px"
       name="user"
-      placeholder="Podaj literę..."
+      :disabled="props.isDisabled"
+      :placeholder="modelValue ? modelValue : 'Podaj litere...'"
       @input="onChange"
       v-model="search"
       @keyup.down="onArrowDown"
@@ -156,6 +157,11 @@ onUnmounted(() => {
   -webkit-box-shadow: 0px 4px 17px -12px rgba(66, 68, 90, 1);
 -moz-box-shadow: 0px 4px 17px -12px rgba(66, 68, 90, 1);
 box-shadow: 0px 4px 17px -12px rgba(66, 68, 90, 1);
+}
+input{
+    border-radius: 5px;
+    border: 1px solid rgba(60, 60, 60, .26);
+    padding: 0 2px;
 }
 
 .autocomplete-result {

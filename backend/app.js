@@ -7,6 +7,7 @@ var cors = require('cors')
 require('dotenv').config();
 
 const { Sequelize } = require('sequelize');
+const basicAuth = require('express-basic-auth')
 
 global.sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -34,10 +35,25 @@ var categoriesRouter = require('./routes/category.js');
 var localizationsRouter = require('./routes/localizations.js');
 var statusRouter = require('./routes/status.js')
 var usersRouter = require('./routes/users.js')
-
-
 var app = express();
-app.use(cors())
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, "*"); // Zezwala na dostęp np. z Postmana
+    callback(null, origin);
+  },
+  credentials: true, // 👈 Obsługa ciasteczek / nagłówków autoryzacji
+  methods: "GET,POST,PUT,DELETE,OPTIONS", // 👈 Zezwalamy na WSZYSTKIE metody
+  allowedHeaders: "Content-Type,Authorization", // 👈 Pozwalamy na nagłówki JSON i autoryzacji
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
+app.use(basicAuth({
+  users: { admin: 'test123' },
+  challenge: true 
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -48,6 +64,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 app.use('/', assetsRouter);
 app.use('/', categoriesRouter);

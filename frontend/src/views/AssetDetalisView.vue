@@ -6,11 +6,11 @@
     import { cloneDeep } from 'lodash';
     import AutoComplete from '@/components/AutoComplete.vue';
     
-
+const emits = defineEmits(['showCreate', 'update-name'])
     const props = defineProps({
         id:{
             required: true,
-        }
+        },
     })
 
     const id = computed(()=> props.id)
@@ -62,7 +62,9 @@
             })
         })
     })
-
+    const updateUser = (receivedName) => {
+    asset.value.user_new = receivedName;
+}
 
     const deleteAsset =() =>{
 
@@ -168,7 +170,13 @@
                     </div>
 
                     <div class="formRecord">
-                    <AutoComplete>test </AutoComplete>
+                        <label for="user">Użytkownik:</label>
+                        <AutoComplete 
+                        @update-name="updateUser" 
+                        v-model="asset.user_new"
+                        v-model:isDisabled="isDisabled"
+                        name="user">
+                        </AutoComplete>
                     </div>
 
                     <div class="formRecord">

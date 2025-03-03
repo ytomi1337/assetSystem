@@ -4,7 +4,7 @@ import { ref, defineEmits, defineProps, watch , onMounted, computed} from 'vue';
 import assetService from '@/services/assetService';
 
 const emits = defineEmits(['showCreate', 'filterApply', 'update:modelValue'])
-const props = defineProps(['modelValue'])
+const props = defineProps(['modelValue',])
 
 const filters = ref({
     name: props.modelValue?.name || '',
@@ -101,7 +101,7 @@ const applyFilters = () =>{
     </div>
 </template>
 
-<style > 
+<style scoped> 
 
 button{
     padding: 5px 15px;

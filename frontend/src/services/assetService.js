@@ -2,7 +2,7 @@ import axios from "axios";
 
 const apiAssetClient = axios.create({
     baseURL: 'http://10.5.1.60:3001',
-    withCredentials: false,
+    withCredentials: true,
     headers:{
         Accept: 'application/json',
         'Content-Type': 'application/json'
@@ -38,7 +38,6 @@ export default {
         return apiAssetClient.get('/status')
     },
     getUsers(userName){
-        console.log('name',userName);
         return apiAssetClient.get('/users?userName='+ userName)
     },
     getAllUsers(){
@@ -46,5 +45,8 @@ export default {
     },
     applyFilters(page, limit, sortValue, sortKey, appliedFilters){
         return apiAssetClient.post(`/assets/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
+    },
+    getUserAssets(userName){
+        return apiAssetClient.post('/assets/user', { userName })
     }
 }

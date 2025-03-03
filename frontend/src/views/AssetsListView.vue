@@ -103,10 +103,6 @@
         }
     }
 
-    const refresh = () => {
-        window.location.reload()
-    }
-
     const formatDate = (isoDate) => {
         let date = new Date(isoDate);
 
@@ -191,7 +187,7 @@
   
 </template>
 
-<style>
+<style scoped>
 
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.1s ease-in-out;
