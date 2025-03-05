@@ -72,7 +72,13 @@ const handleClickOutside = (event) => {
   if (!event.target.closest(".autocomplete")) {
     isOpen.value = false;
     arrowCounter.value = -1;
+
+    if(!search.value){
+      emit("update-name", '');
+    }
   }
+
+  
 };
 
 watch(items, (newVal, oldVal) => {

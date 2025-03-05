@@ -66,8 +66,10 @@ const crtAssetFun = (event) => {
     .then(() => {
       GStore.flashMessage =
         "Urządzenie " + newAsset.value.name + " zostało dodane prawidłowo";
+        GStore.wasChange = true
       setTimeout(() => {
-        GStore.flashMessage = "";
+        GStore.flashMessage = "",
+        GStore.wasChange = false;
       }, 5000);
       console.log("Obiekt dodany poprawnie");
       emits("showCreate");

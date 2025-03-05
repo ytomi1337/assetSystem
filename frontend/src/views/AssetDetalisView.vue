@@ -18,6 +18,8 @@ const emits = defineEmits(['showCreate', 'update-name'])
     const asset = ref(null)
     const orginalAsset = ref(null)
 
+    
+
     const categories = ref(null)
     const localizations = ref(null)
     const statuses = ref(null)
@@ -33,7 +35,6 @@ const emits = defineEmits(['showCreate', 'update-name'])
     onMounted(() => {
         assetService.getStatus().then((response)=>{
               statuses.value = response.data
-                  console.log(statuses.value)
               }).catch((error) =>{
                   console.log(error);
               })
@@ -243,6 +244,14 @@ const emits = defineEmits(['showCreate', 'update-name'])
 </template>
 
 <style>
+@keyframes yellowfade{
+        from{
+            background: rgb(144, 238, 144);
+        }
+        to{
+            background: rgba(144, 238, 144, 0.185);
+        }
+    }
 #editMessage{
      animation-name: yellowfade;
         text-align: center;

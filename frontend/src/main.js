@@ -24,7 +24,8 @@ app.use(router)
 export const GStore = reactive({
     flashMessage: '',
     deleteMessage: '',
-    editMessage: ''
+    editMessage: '',
+    wasChange: false
 })
 app.provide('GStore', GStore)
 

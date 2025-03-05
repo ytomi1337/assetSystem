@@ -33,9 +33,6 @@ const disableUserToUser = () =>{
           </a>
           <ul class="dropdown-menu">
             <button class="dropdown-item" @click="showActionForm = !showActionForm" >Przekazanie sprzetu miedzy uzytkownikami</button>
-            <li><a class="dropdown-item" href="#">Przekazanie sprzetu miedzy uzytkownikami</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
         </li>
 
@@ -44,7 +41,8 @@ const disableUserToUser = () =>{
             Raporty
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
+            
+            <li><RouterLink :to="{ name: 'transfer-protocol' }" class="dropdown-item" href="#">Protokół Przekazania</RouterLink></li>
             <li><a class="dropdown-item" href="#">Another action</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
@@ -56,12 +54,12 @@ const disableUserToUser = () =>{
   </div>
 </nav>
 
-<transition name="fade">
+
         <UserToUser 
         @showCreate="disableUserToUser" 
         v-if="showActionForm">
         </UserToUser>
-    </transition>
+   
 
 
 </template>

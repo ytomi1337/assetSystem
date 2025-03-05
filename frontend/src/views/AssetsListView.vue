@@ -4,7 +4,6 @@
     import AssetCreate from '@/components/AssetCreate.vue';
     import Filters from '@/components/Filters.vue';
     import ArrowIcons from '@/components/ArrowIcons.vue';
-    import UserToUser from '@/components/actions/UserToUser.vue';
     import { ref, onMounted, watchEffect,  } from 'vue'
     import { GStore } from '@/main';
 
@@ -32,7 +31,7 @@
 
     onMounted(() =>{
         watchEffect(()=>{ 
-            let change = showCreateForm.value
+            GStore.wasChange
             if (Object.keys(filters.value).length == 0)
                 assetService.getAssets(page.value, limit.value, sortValue.value, sortKey.value)
                 .then((response)=>{
@@ -90,7 +89,6 @@
             showCreateForm.value = false
         }else{
             showFilterForm.value = false
-            console.log('wartosc przy wylaczaniu: ', filters.value);
         }
 
     }

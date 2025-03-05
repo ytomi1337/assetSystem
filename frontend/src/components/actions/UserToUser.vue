@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineEmits, defineProps, watch , onMounted, computed, watchEffect} from 'vue';
+import { ref, defineEmits, computed, watchEffect} from 'vue';
 import { GStore } from '@/main';
 import assetService from '@/services/assetService';
 import AutoComplete from '../AutoComplete.vue';
@@ -100,13 +100,16 @@ const applyFunction = () => {
       .then((response)=>{
         console.log(response.data.message);
 
-        GStore.flashMessage =
-        "Operacja Aktualizacji przebiegła pomyślnie!";
+        GStore.flashMessage = "Operacja Aktualizacji przebiegła pomyślnie!";
+        GStore.wasChange = true
       setTimeout(() => {
-        GStore.flashMessage = "";
+        GStore.flashMessage = "",
+        GStore.wasChange = false;
       }, 5000);
+      
 
         emits("showCreate");
+
       }).catch((error) =>{
         console.log(error);
       })

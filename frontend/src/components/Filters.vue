@@ -31,7 +31,6 @@ onMounted(() => {
     .getAllUsers()
     .then((response) => {
         users.value = response.data
-        console.log('users', users.value);
     })
     .catch((error) => {
         console.log(error);
