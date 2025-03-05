@@ -190,6 +190,22 @@ router.patch('/assets/:id', async(req, res) => {
     }
 })
 
+router.put('/assets/changeOwner', async(req, res) =>{
+    const ids = req.body.recivedAssets.map(asset => asset.id)
+    const user = req.body.user
+    try{
+        Asset.update(
+            { user_new: user },
+            { where: { id: ids}}
+        )
+        res.status(200).json({ message: "Asset updated correctly"})
+    }catch(error){
+        console.log("Update Error:", error);
+        res.status(500).json({message: "Wystapił błąd podczas aktualizacji", error})
+    }
+
+})
+
 
 
 module.exports = router;

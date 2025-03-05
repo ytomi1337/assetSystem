@@ -48,5 +48,8 @@ export default {
     },
     getUserAssets(userName){
         return apiAssetClient.post('/assets/user', { userName })
+    },
+    updateAssetfromUser(recivedAssets, user){
+        return apiAssetClient.put('/assets/changeOwner', { recivedAssets, user})
     }
 }

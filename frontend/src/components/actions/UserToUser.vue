@@ -1,5 +1,6 @@
 <script setup>
 import { ref, defineEmits, defineProps, watch , onMounted, computed, watchEffect} from 'vue';
+import { GStore } from '@/main';
 import assetService from '@/services/assetService';
 import AutoComplete from '../AutoComplete.vue';
 const emits = defineEmits(['showCreate', 'update-name'])
@@ -12,6 +13,10 @@ const selectedAssets = ref([])
 
 const recivedAssets = ref([])
 const recivedSelectedAssets = ref ([])
+
+const errors = ref([])
+
+const isDisabled = computed (()=> userReciving.value == '' || userReciving.value == '')
 
 const setUserFrom = (receivedName) => {
   userSending.value = receivedName;
@@ -82,13 +87,45 @@ const leaveComponent = () => {
   emits("showCreate");
 };
 
+const applyFunction = () => {
+
+  if(userReciving.value != '' && userSending.value != ''){
+    if(userReciving.value == userSending.value){
+      errors.value.push('Użytkownik odbierający i wysyłający nie mogą być tacy sami !');
+    setTimeout(() => {
+      errors.value = []
+    }, 5000)
+    }else{
+        assetService.updateAssetfromUser(recivedAssets.value, userReciving.value)
+      .then((response)=>{
+        console.log(response.data.message);
+
+        GStore.flashMessage =
+        "Operacja Aktualizacji przebiegła pomyślnie!";
+      setTimeout(() => {
+        GStore.flashMessage = "";
+      }, 5000);
+
+        emits("showCreate");
+      }).catch((error) =>{
+        console.log(error);
+      })
+    }
+  }else{
+    errors.value.push('Pole użytkownika odbierającego i wysyłającego musi byc wypełnione !');
+    setTimeout(() => {
+      errors.value = []
+    }, 5000)
+    
+  }
+}
 </script>
 
 <template>
  <div class="box-overlay">
     <div class="box">
         <h3>Przekazanie między użytkownikami</h3>
-        <!-- <p v-if="errors.length != 0">Użytkownik przekazujacy nie może być za razem użytkownikiem odbierającym !</p> -->
+        <p v-if="errors.length != 0">{{ errors[0] }}</p>
         <div class="navUserDiv">
           <div class="item">
             <label name="userFrom"><b>Użytkownik od:</b></label>
@@ -127,8 +164,8 @@ const leaveComponent = () => {
             </table>
           </div>
           <div class="midBox">
-            <button class="userToUserBtn" @click="transferAssets" >></button>
-            <button class="userToUserBtn" @click="transferBack"><</button>
+            <button class="userToUserBtn" @click="transferAssets" :disabled="isDisabled">></button>
+            <button class="userToUserBtn" @click="transferBack" :disabled="isDisabled"><</button>
           </div>
           <div class="tableBox rightBox">
             <table id="mainTable" class="mainTable">
@@ -156,7 +193,7 @@ const leaveComponent = () => {
         </div>
         
         <div class="btnSection">
-          <button class="applyBtn">Zastosuj</button>
+          <button class="applyBtn" @click="applyFunction">Zastosuj</button>
           <button type="button" class="closeBtn" @click="leaveComponent">Zamknij</button>
         </div>
 
