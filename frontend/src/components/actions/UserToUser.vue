@@ -3,7 +3,7 @@ import { ref, defineEmits, computed, watchEffect} from 'vue';
 import { GStore } from '@/main';
 import assetService from '@/services/assetService';
 import AutoComplete from '../AutoComplete.vue';
-const emits = defineEmits(['showCreate', 'update-name'])
+const emits = defineEmits(['disableWindow', 'update-name'])
 
 const userSending = ref('');
 const userReciving = ref('');
@@ -84,7 +84,7 @@ const transferBack = () => {
   recivedSelectedAssets.value = []
 }
 const leaveComponent = () => {
-  emits("showCreate");
+  emits("disableWindow");
 };
 
 const applyFunction = () => {
@@ -244,6 +244,7 @@ input:hover{
   gap: 10%;
   margin-top: 5%;
   padding: 2px 0;
+  
   
 }
 .item{

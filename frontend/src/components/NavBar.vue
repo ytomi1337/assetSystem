@@ -1,13 +1,19 @@
 <script setup>
 import { ref, } from 'vue'
 import UserToUser from '@/components/actions/UserToUser.vue';
+import TransferProtocol from './protocols/TransferProtocol.vue';
 
 
 const showActionForm = ref(false)
+const activeForm = ref(null);
 
-const disableUserToUser = () =>{
-  showActionForm.value = false
+const disableActiveform = () =>{
+  activeForm.value = null
 }
+
+const toggleForm = (formName) => {
+  activeForm.value = activeForm.value === formName ? null : formName;
+};
 
 </script>
 <template>
@@ -32,7 +38,7 @@ const disableUserToUser = () =>{
             Akcje
           </a>
           <ul class="dropdown-menu">
-            <button class="dropdown-item" @click="showActionForm = !showActionForm" >Przekazanie sprzetu miedzy uzytkownikami</button>
+            <button class="dropdown-item" @click="toggleForm('userToUser')" >Przekazanie sprzetu miedzy uzytkownikami</button>
           </ul>
         </li>
 
@@ -42,8 +48,7 @@ const disableUserToUser = () =>{
           </a>
           <ul class="dropdown-menu">
             
-            <li><RouterLink :to="{ name: 'transfer-protocol' }" class="dropdown-item" href="#">Protokół Przekazania</RouterLink></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="#" @click="toggleForm('przekazanie')">Protokol Przekazania</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
@@ -56,9 +61,14 @@ const disableUserToUser = () =>{
 
 
         <UserToUser 
-        @showCreate="disableUserToUser" 
-        v-if="showActionForm">
+        @disableWindow="disableActiveform" 
+        v-if="activeForm === 'userToUser'">
         </UserToUser>
+
+        <TransferProtocol
+        @disableWindow="disableActiveform" 
+        v-if="activeForm === 'przekazanie'">
+        </TransferProtocol>
    
 
 
