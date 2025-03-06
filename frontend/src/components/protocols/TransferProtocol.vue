@@ -7,8 +7,13 @@ import assetService from '@/services/assetService';
 const assets = ref(['test'])
 const selectedAssets = ref([])
 const user = ref('');
-
+const userData = ref([])
+const isDisabled = computed (() => user.value == '')
+const errors = ref([])
 const emits = defineEmits(['disableWindow',])
+const date = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+
+
 
 const allSelected = computed(() => 
   selectedAssets.value.length === assets.value.length && assets.value.length > 0
@@ -26,12 +31,14 @@ const setUserFrom = (receivedName) => {
   user.value = receivedName;
 }
 
+const setUserData = (recivedData) =>{
+  userData.value = recivedData
+}
 watchEffect(() =>{
   selectedAssets.value = []
       assetService.getUserAssets(user.value)
                 .then((response)=>{
                   assets.value = response.data
-                  console.log(assets.value);
                 }).catch((error)=>{
                     console.log(error);
                     console.log('wyzej error');
@@ -39,22 +46,29 @@ watchEffect(() =>{
     
   })
 
-
-const userData = ref({
-  name: 'Nikola Kruk',
-  position: 'Młodszy Specjalista ds. Administracji',
-  department: 'Administracja',
-  company: 'Boerner Insulation Sp. z o.o.',
-  date: new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-});
-
 const downloadPDF = async () => {
+  if(selectedAssets.value.length == 0){
+    errors.value.push('Brak wybranego sprzętu do wydruku')
+    setTimeout(() => {
+      errors.value = []
+    }, 5000)
+    return false
+  }
   const { default: html2pdf } = await import('html2pdf.js');
   const element = document.getElementById('pdf-template');
   html2pdf().from(element).save('Protokol_Przekazania.pdf');
 };
 
 const printForm = async () => {
+
+  if(selectedAssets.value.length == 0){
+    errors.value.push('Brak wybranego sprzętu do wydruku')
+    setTimeout(() => {
+      errors.value = []
+    }, 5000)
+    return false
+  }
+
   const { default: html2pdf } = await import('html2pdf.js');
   const element = document.getElementById('pdf-template');
 
@@ -83,16 +97,17 @@ const leaveComponent = () => {
         <label for="autoUser"><b>Podaj Użytkownika:</b></label>
         <AutoComplete 
         name="autoUser"
-        @update-name="setUserFrom">
+        @update-name="setUserFrom"
+        @userinfo="setUserData">
 
         </AutoComplete>
         </div>
         <div class="rightItem">
-          <button @click="downloadPDF" class="printBtn">📥 Pobierz PDF</button>
-          <button @click="printForm" class="printBtn">🖨️ Drukuj zaznaczone</button>
+          <button type="button" @click="downloadPDF" class="printBtn" :disabled="isDisabled">📥 Pobierz PDF</button>
+          <button type="button" @click="printForm" class="printBtn" :disabled="isDisabled">🖨️ Drukuj zaznaczone</button>
         </div>
       </div>
-
+      <p v-if="errors.length != 0" class="errorTag">{{ errors[0] }}</p>
       <div class="tableBox">
             <table id="mainTable" class="mainTable">
               <tr>
@@ -135,12 +150,12 @@ const leaveComponent = () => {
       <div class="user-info">
         <div class="leftSection">
             <p><strong>Imię i Nazwisko:</strong> {{ user }}</p>
-            <p><strong>Stanowisko:</strong> {{ userData.position }}</p>
+            <p><strong>Stanowisko:</strong> {{ userData.profession }}</p>
             <p><strong>Dział:</strong> {{ userData.department }}</p>
         </div>
         <div class="rightSection">
             <p><strong>{{ userData.company }}</strong></p>
-            <p>{{ userData.date }}</p>
+            <p>{{ date }}</p>
         </div>
       </div>
 
@@ -148,6 +163,7 @@ const leaveComponent = () => {
       <table>
         <thead>
           <tr>
+            <th>ID</th>
             <th>Nr działu IT</th>
             <th>Nazwa</th>
             <th>Nr Seryjny</th>
@@ -156,6 +172,7 @@ const leaveComponent = () => {
         </thead>
         <tbody>
           <tr v-for="(selectedAsset, index) in selectedAssets" :key="index">
+            <td>{{ index + 1 }}</td>
             <td>{{ selectedAsset.it_num }}</td>
             <td>{{ selectedAsset.name }}</td>
             <td>{{ selectedAsset.serialnum }}</td>
@@ -167,7 +184,7 @@ const leaveComponent = () => {
       <!-- Miejsce na podpisy -->
       <div class="signatures">
         <div>
-          <p>Podpis / data osoby przekazującej</p>
+           <p>Podpis / data osoby przekazującej</p>
           <div class="signature-line"></div>
         </div>
         <div>
@@ -180,6 +197,12 @@ const leaveComponent = () => {
 </template>
 
 <style scoped>
+
+.errorTag{
+  font-weight: 600;
+  color: rgb(235, 46, 46);
+  transition: all 0.2s ease-in;
+}
 input:hover{
   cursor: pointer;
 }

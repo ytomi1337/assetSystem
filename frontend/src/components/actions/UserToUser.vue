@@ -96,6 +96,13 @@ const applyFunction = () => {
       errors.value = []
     }, 5000)
     }else{
+      if(recivedAssets.value.length == 0){
+        console.log('test');
+        errors.value.push('Niezostał wybrany żaden sprzęt do transferu!');
+    setTimeout(() => {
+      errors.value = []
+    }, 5000)
+      }else{
         assetService.updateAssetfromUser(recivedAssets.value, userReciving.value)
       .then((response)=>{
         console.log(response.data.message);
@@ -108,11 +115,13 @@ const applyFunction = () => {
       }, 5000);
       
 
-        emits("showCreate");
+        emits("disableWindow");
 
       }).catch((error) =>{
         console.log(error);
       })
+      }
+     
     }
   }else{
     errors.value.push('Pole użytkownika odbierającego i wysyłającego musi byc wypełnione !');

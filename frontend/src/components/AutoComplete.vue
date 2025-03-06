@@ -2,7 +2,7 @@
 import { ref, watch, onMounted, onUnmounted, defineEmits } from "vue";
 import assetService from '@/services/assetService';
 
-const emit = defineEmits(['update-name', 'update:modelValue'])
+const emit = defineEmits(['update-name', 'update:modelValue', 'userinfo'])
 const props = defineProps(['modelValue', 'isDisabled'])
 const isOpen = ref(false);
 const results = ref([]);
@@ -25,12 +25,12 @@ const filterResults = () => {
     .getUsers(search.value.toLowerCase())
     .then((response) => {
       if (response.data.length !== 0) {
-        results.value = response.data.map((item) => item.name);
+        results.value = response.data;
         heightValue.value = response.data.length * 35;
         isResponse.value = true;
       } else {
         isResponse.value = false;
-        results.value = ["Brak użytkownika w bazie..."];
+        results.value = [];
         heightValue.value = 40;
       }
     })
@@ -42,22 +42,11 @@ const filterResults = () => {
     });
 };
 
-const setResult = (result) => {
-  search.value = result;
-  emit("update-name", search.value);
+const setResult = (user) => {
+  search.value = user.name; // Nadal przypisujemy nazwę do pola
+  emit("update-name", user.name); // Emitujemy samą nazwę użytkownika
+  emit("userinfo", user); // Emitujemy cały obiekt użytkownika (np. ID, stanowisko)
   isOpen.value = false;
-};
-
-const onArrowDown = () => {
-  if (arrowCounter.value < results.value.length - 1) {
-    arrowCounter.value++;
-  }
-};
-
-const onArrowUp = () => {
-  if (arrowCounter.value > 0) {
-    arrowCounter.value--;
-  }
 };
 
 const onEnter = () => {
@@ -112,8 +101,6 @@ onUnmounted(() => {
       :placeholder="modelValue ? modelValue : 'Podaj litere...'"
       @input="onChange"
       v-model="search"
-      @keyup.down="onArrowDown"
-      @keyup.up="onArrowUp"
       @keyup.enter="onEnter"
     />
 
@@ -125,18 +112,19 @@ onUnmounted(() => {
     >
       <li class="loading" v-if="isLoading">Ładowanie wyników...</li>
       <li
-        v-if="isResponse"
-        v-for="(result, i) in results"
-        :key="i"
-        @click="setResult(result)"
-        class="autocomplete-result"
-        :class="{ 'is-active': i === arrowCounter }"
-      >
-        {{ result }}
-      </li>
-      <li v-else v-for="(result, i) in results" :key="'no-user-' + i" class="autocomplete-result">
-        {{ result }}
-      </li>
+          v-if="isResponse"
+          v-for="(user, i) in results"
+          :key="user.id"
+          @click="setResult(user)" 
+          class="autocomplete-result"
+          :class="{ 'is-active': i === arrowCounter }"
+        >
+          {{ user.name }}
+        </li>
+
+        <li v-else class="autocomplete-result no-user">
+          Brak użytkownika w bazie...
+        </li>
     </ul>
   </div>
 </template>
@@ -174,8 +162,12 @@ input{
   list-style: none;
   text-align: left;
   border-radius: 5px;
-  padding: 4px 2px;
+  padding: 2px;
   cursor: pointer;
+}
+
+.no-user{
+  padding: 4px 2px;
 }
 
 .autocomplete-result.is-active,
