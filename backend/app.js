@@ -35,16 +35,18 @@ var categoriesRouter = require('./routes/category.js');
 var localizationsRouter = require('./routes/localizations.js');
 var statusRouter = require('./routes/status.js')
 var usersRouter = require('./routes/users.js')
+var phonesRouter = require('./routes/phones.js')
+
 var app = express();
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin) return callback(null, "*"); // Zezwala na dostęp np. z Postmana
+    if (!origin) return callback(null, "*");
     callback(null, origin);
   },
-  credentials: true, // 👈 Obsługa ciasteczek / nagłówków autoryzacji
-  methods: "GET,POST,PATCH,PUT,DELETE,OPTIONS", // 👈 Zezwalamy na WSZYSTKIE metody
-  allowedHeaders: "Content-Type,Authorization", // 👈 Pozwalamy na nagłówki JSON i autoryzacji
+  credentials: true,
+  methods: "GET,POST,PATCH,PUT,DELETE,OPTIONS",
+  allowedHeaders: "Content-Type,Authorization",
 };
 
 app.use(cors(corsOptions));
@@ -72,6 +74,7 @@ app.use('/', categoriesRouter);
 app.use('/', localizationsRouter);
 app.use('/', statusRouter);
 app.use('/', usersRouter);
+app.use('/', phonesRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

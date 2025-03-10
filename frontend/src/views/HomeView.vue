@@ -4,7 +4,7 @@
 
 <template>
   <div class="mainbox">
-    ja
+    
   </div>
 </template>
 
@@ -18,9 +18,9 @@
 
 .mainbox{
   width: 100%;
-  height: 100vh;
-  background-image: linear-gradient(rgba(47, 214, 186, 0.671), rgba(4, 5, 5, 0.8)), url(../assets/Background.jpg);
-  background-position: center;
+  height: 80vh;
+  background-image: linear-gradient(rgba(244, 253, 252, 0.068), rgba(18, 19, 19, 0.658)), url(../assets/BG.jpg);
+  background-position: center 50%;
   background-size: cover;
   position: relative;
 }

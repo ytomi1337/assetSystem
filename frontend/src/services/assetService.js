@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiAssetClient = axios.create({
-    baseURL: 'http://10.5.1.60:3001',
+    baseURL: 'http://10.5.1.60:3000',
     withCredentials: true,
     headers:{
         Accept: 'application/json',
