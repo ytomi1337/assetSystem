@@ -6,12 +6,12 @@ module.exports = {
     await queryInterface.bulkInsert('phones', [
       {
        user: 'Bartosz Łaniocha',
-       name: 'Galaxy S25 5G',
-       category: 'Telefon',
+       name: 'Plus',
+       category: 'Karta',
        imei: "1234567890123456",
-       nr_tel: 607488583,
-       puk: 12345678,
-       pin: 3333,
+       nr_tel: "607488583",
+       puk: "88888888",
+       pin: "1234",
        stan: 'Wydane',
        status: 'Dobry',
        recipt_date: new Date(),

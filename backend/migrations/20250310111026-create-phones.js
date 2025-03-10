@@ -24,13 +24,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       nr_tel: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       puk: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       pin: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       stan: {
         type: Sequelize.STRING

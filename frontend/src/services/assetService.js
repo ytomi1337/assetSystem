@@ -51,5 +51,11 @@ export default {
     },
     updateAssetfromUser(recivedAssets, user){
         return apiAssetClient.put('/assets/changeOwner', { recivedAssets, user})
-    }
+    },
+    getPhones(page, limit, sortValue, sortKey){
+        return apiAssetClient.get(`/phones?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)
+    },
+    applyPhoneFilters(page, limit, sortValue, sortKey, appliedFilters){
+        return apiAssetClient.post(`/phones/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
+    },
 }
