@@ -8,8 +8,14 @@ const emits = defineEmits(['disableWindow', 'update-name'])
 const userSending = ref('');
 const userReciving = ref('');
 
+const page = ref(1)
+const limit = ref(9)
+
 const assets = ref([])
 const selectedAssets = ref([])
+
+const totalNum = ref(null)
+const totalPages = ref(null)
 
 const recivedAssets = ref([])
 const recivedSelectedAssets = ref ([])
@@ -20,6 +26,7 @@ const isDisabled = computed (()=> userReciving.value == '' || userReciving.value
 
 const setUserFrom = (receivedName) => {
   userSending.value = receivedName;
+  page.value = 1
 }
 
 const setUserTo = (receivedName) => {
@@ -30,9 +37,11 @@ const setUserTo = (receivedName) => {
     selectedAssets.value = []
     recivedSelectedAssets.value = []
     recivedAssets.value = []
-      assetService.getUserAssets(userSending.value)
+      assetService.getUserAssets(page.value, limit.value, userSending.value)
                 .then((response)=>{
-                  assets.value = response.data
+                  assets.value = response.data.assets
+                  totalNum.value = response.data.count
+                  totalPages.value = totalNum.value / limit.value
                 }).catch((error)=>{
                     console.log(error);
                     console.log('wyzej error');
@@ -40,9 +49,17 @@ const setUserTo = (receivedName) => {
     
   })
 
+  const pagePlus = () =>{
+        page.value = page.value + 1
+    }
+
+  const pageMinus = () =>{
+      page.value = page.value - 1
+  }
+
   const allSelected = computed(() => 
   selectedAssets.value.length === assets.value.length && assets.value.length > 0
-);
+  ) ;
 
 const allSelectedRecived = computed(() => 
 recivedSelectedAssets.value.length === recivedAssets.value.length && recivedAssets.value.length > 0
@@ -205,8 +222,14 @@ const applyFunction = () => {
         </div>
         
         <div class="btnSection">
-          <button class="applyBtn" @click="applyFunction">Zastosuj</button>
-          <button type="button" class="closeBtn" @click="leaveComponent">Zamknij</button>
+          <div>
+            <button class="paginationBtn" @click="pageMinus" v-if="page != 1"><</button>
+            <button class="paginationBtn" type="button"  @click="pagePlus" v-if="totalPages > page ">></button>
+          </div>
+          <div>
+            <button class="applyBtn" @click="applyFunction">Zastosuj</button>
+            <button type="button" class="closeBtn" @click="leaveComponent">Zamknij</button>
+          </div>
         </div>
 
         </div>
@@ -305,9 +328,17 @@ input:hover{
   width: 50%;
   transition: 0.3s;
 }
+.paginationBtn{
+  border: 1px solid rgba(180, 179, 179, 0.781);
+  background-color: transparent;
+  border-radius: 8px;
+  text-align: center;
+  width: 100%;
+  transition: 0.3s;
+}
 .btnSection{
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
   gap: 2%;
   margin-top: 2%;
 

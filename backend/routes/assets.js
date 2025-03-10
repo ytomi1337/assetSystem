@@ -145,16 +145,28 @@ router.post('/assets/filter', function(req, res){
 })
 
 router.post('/assets/user', function(req, res){
+    const page = Number(req.query.page) || 1
+    const limit = Number(req.query.limit) || 3
 
     console.log('backend: ',req.body.userName);
-    
+    Promise.all([
+        Asset.count({
+            where:{
+                user_new: req.body.userName
+            }
+        }),
         Asset.findAll({
+            offset: (page -1) * limit,
+            limit: (limit),
             where:{
                 user_new: req.body.userName
             }
         })
-    .then((assets) => {
-        res.send(assets)
+    ]).then(([count, assets]) => {
+        res.send({
+            count: count,
+            assets: assets
+        })
     })
 })
 

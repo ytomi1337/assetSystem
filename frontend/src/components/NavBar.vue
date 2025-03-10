@@ -2,7 +2,7 @@
 import { ref, } from 'vue'
 import UserToUser from '@/components/actions/UserToUser.vue';
 import TransferProtocol from './protocols/TransferProtocol.vue';
-
+import ReturnProtocol from './protocols/ReturnProtocol.vue';
 
 const showActionForm = ref(false)
 const activeForm = ref(null);
@@ -44,13 +44,12 @@ const toggleForm = (formName) => {
 
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Raporty
+            Protokoły
           </a>
           <ul class="dropdown-menu">
             
             <li><a class="dropdown-item" href="#" @click="toggleForm('przekazanie')">Protokol Przekazania</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li><a class="dropdown-item" href="#" @click="toggleForm('zwrot')">Protokol Zwrotu</a></li>
           </ul>
         </li>
 
@@ -66,13 +65,21 @@ const toggleForm = (formName) => {
         </UserToUser>
 
         <TransferProtocol
-        @disableWindow="disableActiveform" 
+        @disableWindow="disableActiveform"
+       
         v-if="activeForm === 'przekazanie'">
         </TransferProtocol>
+
+        <ReturnProtocol
+        @disableWindow="disableActiveform"
+       
+        v-if="activeForm === 'zwrot'">
+        </ReturnProtocol>
    
 
 
 </template>
 <style>
+
 
 </style>

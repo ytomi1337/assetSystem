@@ -5,7 +5,7 @@
     import router from '@/router/index';
     import { cloneDeep } from 'lodash';
     import AutoComplete from '@/components/AutoComplete.vue';
-    
+
 const emits = defineEmits(['showCreate', 'update-name'])
     const props = defineProps({
         id:{
@@ -176,6 +176,7 @@ const emits = defineEmits(['showCreate', 'update-name'])
                         @update-name="updateUser" 
                         v-model="asset.user_new"
                         v-model:isDisabled="isDisabled"
+                        
                         name="user">
                         </AutoComplete>
                     </div>
@@ -257,6 +258,10 @@ const emits = defineEmits(['showCreate', 'update-name'])
         text-align: center;
         animation-duration: 7s;
 }
+
+.autoCompleteClass{
+    z-index: 0;
+}
 .formRecordImg{
     display: flex;
     flex-direction: column;
@@ -300,5 +305,5 @@ const emits = defineEmits(['showCreate', 'update-name'])
     .btnSectionNew.editBtn{
         background-color: rgb(62, 157, 212);
     }
-
+    
 </style>

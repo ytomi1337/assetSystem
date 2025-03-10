@@ -11,8 +11,8 @@ const page = ref(1)
 const limit = ref(10)
 const user = ref('');
 const userData = ref([])
-const header = ref('Protokół przekazania')
-const isDisabled = computed (() => user.value == '')
+const header = ref('Protokół Zwrotu')
+const isDisabled = computed (() => selectedAssets.value.length == 0)
 const errors = ref([])
 const emits = defineEmits(['disableWindow',])
 const date = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
@@ -40,7 +40,7 @@ const setUserData = (recivedData) =>{
 }
 watchEffect(() =>{
   selectedAssets.value = []
-      assetService.getUserAssets(page.value, limit.value, user.value)
+  assetService.getUserAssets(page.value, limit.value, user.value)
                 .then((response)=>{
                   assets.value = response.data.assets
                 }).catch((error)=>{
@@ -51,27 +51,12 @@ watchEffect(() =>{
   })
 
 const downloadPDF = async () => {
-  if(selectedAssets.value.length == 0){
-    errors.value.push('Brak wybranego sprzętu do wydruku')
-    setTimeout(() => {
-      errors.value = []
-    }, 5000)
-    return false
-  }
   const { default: html2pdf } = await import('html2pdf.js');
   const element = printTemplateRef.value.printContent;
-  html2pdf().from(element).save('Protokol_Przekazania.pdf');
+  html2pdf().from(element).save('Protokol_Zwrotu.pdf');
 };
 
 const printForm = async () => {
-
-  if(selectedAssets.value.length == 0){
-    errors.value.push('Brak wybranego sprzętu do wydruku')
-    setTimeout(() => {
-      errors.value = []
-    }, 5000)
-    return false
-  }
 
   const { default: html2pdf } = await import('html2pdf.js');
   const element = printTemplateRef.value.printContent;
@@ -96,7 +81,7 @@ const leaveComponent = () => {
   <div class="box-overlay">
     <div class="box">
       
-      <h2>Protokół przekazania do użytkownika</h2>
+      <h2>Protokół Zwrotu Od Użytkownika</h2>
 
       <div class="headerNav">
         <div class="item" style="text-align: left;">

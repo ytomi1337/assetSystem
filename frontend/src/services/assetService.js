@@ -46,8 +46,8 @@ export default {
     applyFilters(page, limit, sortValue, sortKey, appliedFilters){
         return apiAssetClient.post(`/assets/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
     },
-    getUserAssets(userName){
-        return apiAssetClient.post('/assets/user', { userName })
+    getUserAssets(page, limit, userName){
+        return apiAssetClient.post(`/assets/user?page=${page}&limit=${limit}`, { userName })
     },
     updateAssetfromUser(recivedAssets, user){
         return apiAssetClient.put('/assets/changeOwner', { recivedAssets, user})
