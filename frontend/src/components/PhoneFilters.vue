@@ -6,6 +6,10 @@ import assetService from '@/services/assetService';
 const emits = defineEmits(['showCreate', 'filterApply', 'update:modelValue'])
 const props = defineProps(['modelValue',])
 
+const users = ref([]);
+const categories = ref([]);
+const statuses = ref ([]);
+
 const phoneFilters = ref({
     name: props.modelValue?.name || '',
     category: props.modelValue?.category || '',
@@ -22,6 +26,36 @@ const applyFilters = () =>{
     emits('filterApply', phoneFilters.value)
 }
 
+onMounted(() => {
+    assetService
+    .getAllUsers()
+    .then((response) => {
+        users.value = response.data.map(users => users.name)
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+
+    assetService
+    .getStatus()
+    .then((response) => {
+      statuses.value = response.data.map(stat => stat.name);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+    assetService
+    .getCategories()
+    .then((response) => {
+        categories.value = response.data.map(cat => cat.name)
+        .filter((cat)=> cat == "Telefon" || cat == "Karta Sim");
+      
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+})
 </script>
 
 <template>
@@ -29,17 +63,17 @@ const applyFilters = () =>{
         <form @submit="applyFilters">
             <div class="filter-containter">
                 <input type="text" class="filterItem" v-model="phoneFilters.name"  placeholder="Nazwa:"/>
-                <v-select class="filterItem" multiple v-model="phoneFilters.category" placeholder="Kategoria:"/>
-                <v-select class="filterItem" multiple v-model="phoneFilters.user" placeholder="Uzytkownik:"/>
+                <v-select class="filterItem" multiple v-model="phoneFilters.category" :options="categories" placeholder="Kategoria:"/>
+                <v-select class="filterItem" multiple v-model="phoneFilters.user" :options="users" placeholder="Uzytkownik:"/>
                 <input type="text" class="filterItem" v-model="phoneFilters.nr_tel"  placeholder="Nr Tel:"/>
                 <input type="text" class="filterItem" v-model="phoneFilters.imei"  placeholder="IMEI:"/>
                 <input type="text" class="filterItem" v-model="phoneFilters.puk"  placeholder="PUK:"/>
                 <input type="text" class="filterItem" v-model="phoneFilters.pin"  placeholder="PIN:"/>
-                <v-select class="filterItem" multiple v-model="phoneFilters.status" placeholder="Status:"/> 
+                <v-select class="filterItem" multiple v-model="phoneFilters.status" :options="statuses" placeholder="Status:"/> 
             </div>
             <div class="button-container">
                 <button type="submit" class="applyBtn">Zastosuj</button>
-                <button type="button" class="leaveBtn" @click="leaveComponent1">Zamknij</button>
+                <button type="button" class="leaveBtn" @click="emits('showCreate')">Zamknij</button>
             </div>
         </form>
     </div>

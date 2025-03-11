@@ -19,7 +19,6 @@ const filters = ref({
 const users = ref([]);
 const userNames = computed(() => users.value.map(users => users.name));
 const categories = ref([]);
-const categoryNames = computed(() => categories.value.map(cat => cat.name));
 const localizations = ref([]);
 const localizationsNames = computed(() => localizations.value.map(loc => loc.name));
 const statuses = ref ([]);
@@ -48,7 +47,8 @@ onMounted(() => {
   assetService
     .getCategories()
     .then((response) => {
-      categories.value = response.data;
+      categories.value = response.data.map(cat => cat.name)
+        .filter((cat)=> cat != "Telefon" && cat != "Karta Sim");
     })
     .catch((error) => {
       console.log(error);
@@ -64,17 +64,14 @@ onMounted(() => {
     });
 })
 
-watch(filters, (newFilters) => {
-    emits('update:modelValue', newFilters);
-}, { deep: true });
-
-const leaveComponent1 = () =>{
-    emits('showCreate')
-}
+// watch(filters, (newFilters) => {
+//     emits('update:modelValue', newFilters);
+// }, { deep: true });
 
 const applyFilters = () =>{
     event.preventDefault();
     emits('filterApply', filters.value)
+    console.log(statusesNames.value);
 }
 
 </script>
@@ -87,14 +84,14 @@ const applyFilters = () =>{
                 <input type="text" class="filterItem" v-model="filters.name"  placeholder="Nazwa:"/>
                 <input type="text" class="filterItem" v-model="filters.serialnum"  placeholder="Nr Seryjny:"/> 
                 <v-select class="filterItem" multiple v-model="filters.user_new" :options="userNames" placeholder="Uzytkownik:"/>
-                <v-select class="filterItem" multiple v-model="filters.category" :options="categoryNames" placeholder="Kategoria:"/>
+                <v-select class="filterItem" multiple v-model="filters.category" :options="categories" placeholder="Kategoria:"/>
                 <v-select class="filterItem" multiple v-model="filters.localization" :options="localizationsNames" placeholder="Lokalizacja:"/>
                 <v-select class="filterItem" multiple v-model="filters.status" :options="statusesNames" placeholder="Status:"/>
                 <v-select class="filterItem" v-model="filters.isWarranty" :options="isWarranty" placeholder="Gwarancja:"/>   
             </div>
             <div class="button-container">
                 <button type="submit" class="applyBtn">Zastosuj</button>
-                <button type="button" class="leaveBtn" @click="leaveComponent1">Zamknij</button>
+                <button type="button" class="leaveBtn" @click="emits('showCreate')">Zamknij</button>
             </div>
         </form>
     </div>
