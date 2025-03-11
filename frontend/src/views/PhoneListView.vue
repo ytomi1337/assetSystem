@@ -1,7 +1,7 @@
 <script setup>
 import assetService from '@/services/assetService';
-import AssetActionData from '@/components/AssetActionData.vue';
-import AssetCreate from '@/components/AssetCreate.vue';
+import PhoneActionData from '@/components/PhoneActionData.vue';
+import PhoneCreate from '@/components/PhoneCreate.vue';
 import PhoneFilters from '@/components/PhoneFilters.vue';
 import ArrowIcons from '@/components/ArrowIcons.vue';
 import { ref, onMounted, watchEffect,  } from 'vue'
@@ -107,10 +107,10 @@ import { GStore } from '@/main';
     <div id="deletedMessage" v-if="GStore.deleteMessage">{{ GStore.deleteMessage }}</div>
 
     <transition name="fade">
-        <AssetCreate
+        <PhoneCreate
          @showCreate="disableShowCreateForm('create')" 
          v-if="showCreateForm">
-         </AssetCreate>
+         </PhoneCreate>
     </transition>
 
     <div class="containerBox">
@@ -154,7 +154,7 @@ import { GStore } from '@/main';
                 <td>{{ phone.pin }}</td>
                 <td>{{ phone.status }}</td>
                 <td>{{ formatDate(phone.recipt_date)}}</td>
-                <!-- <td><AssetActionData :phone="phone"></AssetActionData></td> -->
+                <td><PhoneActionData :phone="phone"></PhoneActionData></td>
             </tr>
             
         </table>

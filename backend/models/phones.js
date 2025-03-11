@@ -16,7 +16,7 @@ const Phones = sequelize.define(
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     category: {
       type: DataTypes.STRING
@@ -42,16 +42,20 @@ const Phones = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isNumeric: true,
         len: [8, 8]
+      },
+      set(value) {
+        this.setDataValue('puk', value === "" ? null : value);
       }
     },
     pin: {
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isNumeric: true,
         len: [4, 4]
+      },
+      set(value) {
+        this.setDataValue('pin', value === "" ? null : value);
       }
     },
     stan: {
@@ -61,7 +65,8 @@ const Phones = sequelize.define(
       type: DataTypes.STRING
     },
     recipt_date: {
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
+      allowNull: true,
     },
     createdAt: {
       allowNull: false,

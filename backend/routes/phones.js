@@ -27,6 +27,15 @@ router.get('/phones', function(req, res){
     })
 })
 
+router.get('/phones/:id', function(req, res){
+    
+    Phones.findByPk(Number(req.params.id)).then((phone) => {
+        res.send(phone)
+    }).catch((error) =>{
+        res.status(500).send({ error: 'Not found asset in database', details: error.message });
+    })
+})
+
 router.post('/phones/filter', function(req, res){
     const page = Number(req.query.page) || 1
     const limit = Number(req.query.limit) || 10
@@ -105,5 +114,37 @@ router.post('/phones/filter', function(req, res){
             phones: phones
         })
     })
+})
+
+router.post('/phones', function(req, res){
+    if(req.body.category == "Telefon"){
+        Phones.create({
+            name: req.body.name,
+            category: req.body.category,
+            user: req.body.user,
+            imei: req.body.imei,
+            status: req.body.status,
+            recipt_date: req.body.recipt_date?new Date(req.body.recipt_date):null
+        }).then((phone)=>{
+            res.send(phone)
+        }).catch((error)=>{
+            return res.status(500).json({message: "Wystapił błąd podczas dodawania Telefonu", error})
+        })
+    }else{
+        Phones.create({
+            name: "Plus",
+            category: req.body.category,
+            user: req.body.user,
+            nr_tel: req.body.nr_tel,
+            puk: req.body.puk,
+            pin: req.body.pin,
+            status: req.body.status,
+            recipt_date: req.body.recipt_date?new Date(req.body.recipt_date):null
+        }).then((phone)=>{
+            res.send(phone)
+        }).catch((error)=>{
+            return res.status(500).json({message: "Wystapił błąd podczas dodawania Karty", error})
+        })
+    }
 })
 module.exports = router;

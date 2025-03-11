@@ -1,7 +1,8 @@
 <script setup>
 
-import { ref, defineEmits, defineProps, watch , onMounted, computed} from 'vue';
+import { ref, defineEmits, defineProps, onMounted,} from 'vue';
 import assetService from '@/services/assetService';
+
 
 const emits = defineEmits(['showCreate', 'filterApply', 'update:modelValue'])
 const props = defineProps(['modelValue',])

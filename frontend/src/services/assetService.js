@@ -58,4 +58,11 @@ export default {
     applyPhoneFilters(page, limit, sortValue, sortKey, appliedFilters){
         return apiAssetClient.post(`/phones/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
     },
+    createPhone(newPhone){
+        console.log(newPhone);
+        return apiAssetClient.post('/phones',newPhone)
+    },
+    getPhoneId(id){
+        return apiAssetClient.get('/phones/'+id)
+    },
 }

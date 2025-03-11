@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AssetsListView from '@/views/AssetsListView.vue'
 import PhoneListView from '@/views/PhoneListView.vue'
 import AssetDetalisView from '@/views/AssetDetalisView.vue'
-import TransferProtocol from '@/components/protocols/TransferProtocol.vue'
+import PhoneDetalisView from '@/views/PhoneDetalisView.vue'
 import NotFound from '@/views/NotFound.vue'
 
 const router = createRouter({
@@ -44,11 +44,12 @@ const router = createRouter({
       component: NotFound,
       props: true
     },
-    // {
-    //   path: '/assets/transferProtocol',
-    //   name: 'transfer-protocol',
-    //   component: TransferProtocol
-    // },
+    {
+      path: '/phones/:id',
+      name: 'phone-detalis',
+      props: true,
+      component: PhoneDetalisView
+    },
     
   ],
 
