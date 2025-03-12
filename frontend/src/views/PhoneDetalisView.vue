@@ -15,7 +15,7 @@ const emits = defineEmits(['showCreate', 'update-name'])
 const id = computed(()=> props.id)
 const phone = ref([])
 
-const orginalAsset = ref(null)
+const orginalPhone = ref(null)
 
 const categories = ref([])
 const localizations = ref([])
@@ -25,8 +25,18 @@ const isLeaveEdited = ref(false)
 const isEdit = ref(true)
 const isSave = ref(false)
 const isDelete = ref(true)
-const isDisabled = ref(true)
+const isDisabled = computed (() => isEdit.value)
 
+const formattedDate = computed({
+  get() {
+    return phone.value.recipt_date
+      ? phone.value.recipt_date.split("T")[0]
+      : "";
+  },
+  set(value) {
+    phone.value.recipt_date = value;
+  },
+});
 onMounted(() => {
     assetService.getStatus().then((response)=>{
         statuses.value = response.data
@@ -36,12 +46,73 @@ onMounted(() => {
     assetService.getPhoneId(id.value)
     .then((response) =>{
         phone.value = response.data
-        console.log(phone.value);
     }).catch((error)=>{
         console.log(error);
     })
 })
-   
+const updateUser = (receivedName) => {
+        phone.value.user = receivedName;
+        }
+
+const editPhone = () => {
+        isSave.value = true
+        isDelete.value = false
+        isEdit.value = false
+        isLeaveEdited.value = true
+        orginalPhone.value = cloneDeep(phone.value) 
+    };
+
+const leaveEdit = () => {
+        if(JSON.stringify(phone.value) !== JSON.stringify(orginalPhone.value)){
+            if(confirm('Masz wprowadzone dane czy napewno chcesz oposcic Edycje?')){
+                asset.value = orginalAsset.value
+
+                isSave.value = false
+                isDelete.value = true
+                isEdit.value = true
+                isLeaveEdited.value = false
+            }
+            console.log('kontyuje');
+        }else{
+            isSave.value = false
+            isDelete.value = true
+            isEdit.value = true
+            isLeaveEdited.value = false
+        }   
+};
+
+const detectChanges=() =>{ 
+        const changes = {}
+            for (let key in phone.value) {
+                if (phone.value[key] != orginalPhone.value[key]) {
+                    changes[key] = phone.value[key];
+                }
+            }
+        return changes;
+    };
+
+const saveAsset = async () => {
+    const changes = detectChanges()
+    console.log(changes);
+    
+    try{
+    assetService.updatePhone(props.id, changes)
+    GStore.editMessage = 'Urządzenie: ' + phone.value.name + ' Zostało prawidło zakutalizowane'
+    setTimeout (() => {
+        GStore.editMessage = ''
+    },5000)
+
+    isSave.value = false
+    isDelete.value = true
+    isEdit.value = true
+    isLeaveEdited.value = false
+
+    }catch(error){
+    console.log("Unable to upddate asset", error);
+    }
+
+}
+
 </script>
 
 <template>
@@ -77,13 +148,18 @@ onMounted(() => {
                 
                     <div class="formRecord">
                     <label for="status">Status:</label>
-                    <select :disabled="isDisabled" name="status" v-model="phone.name">
+                    <select :disabled="isDisabled" name="status" v-model="phone.status">
                         <option v-for="status in statuses" > {{ status.name }}</option>
                     </select>
                     </div>
                     <div class="formRecord">
                     <label for="name">Data Wydania:</label>
-                    <input type="text" name="recipt_date" :disabled="isDisabled" :placeholder="phone.name" />
+
+                    <input type="date" name="recipt_date" 
+                    :disabled="isDisabled" 
+                    v-model="formattedDate" 
+                    />
+
                     </div>
 
                     <div class="formRecord">
@@ -106,7 +182,7 @@ onMounted(() => {
                     </div>
                     
                     <div class="buttonsSection mt-4">
-                        <button v-if="isEdit" class="btnSectionNew editBtn" @click="editAsset">Edycja</button>
+                        <button v-if="isEdit" class="btnSectionNew editBtn" @click="editPhone">Edycja</button>
                         <button type="button" v-if="isLeaveEdited" class="btnSectionNew deleteBtn" @click="leaveEdit">Opuść Edycje</button>
                         <button type="button" v-if="isSave" class="btnSectionNew safeBtn"  @click="saveAsset">Zapisz</button>
                         <button type="button" v-if="isDelete" class="btnSectionNew deleteBtn" @click="deleteAsset">Usuń</button>

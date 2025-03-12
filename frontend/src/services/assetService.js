@@ -65,4 +65,10 @@ export default {
     getPhoneId(id){
         return apiAssetClient.get('/phones/'+id)
     },
+    deletePhone(id){
+        return apiAssetClient.delete('/phones/'+id)
+    },
+    updatePhone(id, changes){
+        return apiAssetClient.patch('/phones/'+id, changes)
+    },
 }

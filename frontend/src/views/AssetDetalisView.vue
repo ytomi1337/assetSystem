@@ -64,8 +64,8 @@ const emits = defineEmits(['showCreate', 'update-name'])
         })
     })
     const updateUser = (receivedName) => {
-    asset.value.user_new = receivedName;
-}
+        asset.value.user_new = receivedName;
+        }
 
     const deleteAsset =() =>{
 

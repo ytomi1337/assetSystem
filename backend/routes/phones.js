@@ -147,4 +147,36 @@ router.post('/phones', function(req, res){
         })
     }
 })
+
+router.delete('/phones/:id', function(req, res){
+
+    Phones.destroy({
+        where:{
+            id: req.params.id
+        },
+        force: true,
+    }).then(()=>{
+        res.send('success')
+    })
+})
+
+router.patch('/phones/:id', async(req, res) => {
+    const  id  = req.params.id
+    const  changes  = req.body
+
+    try{
+        const phone = await Phones.findByPk(id)
+
+        if(!phone){
+            return res.status(400).json({ message: "Asset not found"})
+        }
+
+        await phone.update(changes)
+
+        res.status(200).json({ message: "Asset updated correctly", phone });
+    }catch(error){
+        console.log("Update Error:", error);
+        res.status(500).json({message: "Wystapił błąd podczas aktualizacji", error})
+    }
+})
 module.exports = router;
