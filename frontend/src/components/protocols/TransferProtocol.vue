@@ -182,6 +182,7 @@ input:hover{
 
 .box {
   display: flex;
+  z-index: 3;
   flex-direction: column;
   text-align: center;
   background: white;
