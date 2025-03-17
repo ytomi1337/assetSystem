@@ -167,6 +167,7 @@ input:hover{
   cursor: pointer;
 }
 .box-overlay {
+  z-index: 3;
   transition: 0.5s;
   position: fixed;
   top: 0;
@@ -181,6 +182,7 @@ input:hover{
 
 .box {
   display: flex;
+  z-index: 3;
   flex-direction: column;
   text-align: center;
   background: white;

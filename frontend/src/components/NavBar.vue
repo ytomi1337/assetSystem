@@ -33,6 +33,10 @@ const toggleForm = (formName) => {
             <RouterLink :to="{ name: 'phone-list' }" class="nav-link" href="#">Telefony</RouterLink>
         </li>
 
+        <li class="nav-item me-3">
+            <a href="#" class="nav-link disabled">Inwentaryzacja</a>
+        </li>
+
         <li class="nav-item dropdown me-3">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Akcje

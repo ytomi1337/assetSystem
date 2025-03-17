@@ -176,7 +176,6 @@ const emits = defineEmits(['showCreate', 'update-name'])
                         @update-name="updateUser" 
                         v-model="asset.user_new"
                         v-model:isDisabled="isDisabled"
-                        
                         name="user">
                         </AutoComplete>
                     </div>
