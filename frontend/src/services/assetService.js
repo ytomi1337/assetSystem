@@ -71,4 +71,13 @@ export default {
     updatePhone(id, changes){
         return apiAssetClient.patch('/phones/'+id, changes)
     },
+    getReminder(){
+        return apiAssetClient.get('/reminders')
+    },
+    createReminder(newReminder){
+        return apiAssetClient.post('/reminders',newReminder)
+    },
+    deleteReminder(id){
+        return apiAssetClient.delete(`/reminders/` + id)
+    },
 }
