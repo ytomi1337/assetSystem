@@ -1,23 +1,171 @@
 <script setup>
-import { ref, } from 'vue';
+import { ref,onMounted, computed } from 'vue';
+import AutoComplete from '@/components/AutoComplete.vue';
+import assetService from '@/services/assetService';
+import { GStore } from '@/main';
 
 const reminders = ref([])
+const newReminder = ref({
+  title: '',
+  author: '',
+  content: '',
+  expiryDate: '',
+})
+
+const localDate = ref({
+  time: '',
+  date: '',
+});
+
+const updateTime = () => {
+      localDate.value.time = new Date().toLocaleTimeString();
+      localDate.value.date = new Date().toLocaleDateString();
+    };
+
+onMounted(()=>{
+
+  updateTime();
+  setInterval(updateTime, 1000);
+
+  assetService.getReminder()
+  .then((response)=>{
+    reminders.value = response.data
+  }).catch((error) =>{
+    console.log(error);
+  })
+})
+
+const crtReminder = (event) =>{
+  // event.preventDefault();
+
+  assetService.createReminder(newReminder.value)
+    .then(() =>{
+    }).catch((error)=>{
+      console.log(error);
+    })
+}
+
+const updateUser = (receivedName) => {
+  newReminder.value.author = receivedName;
+}
+const deleteReminder = (id) =>{
+  if(confirm('Napewno chcesz usunać przypomnienie?')){
+    assetService.deleteReminder(id)
+    .then((response) => {
+      console.log('succses', response);
+    }).catch((error)=>{
+      console.log(error);
+    })
+  }else{
+    return false
+  }
+  
+}
+
 </script>
 
 <template>
   <div class="mainbox">
-      <div class="someContainer ">
-        <h1></h1>
+      <div class="timeContainer ">
+        <p>{{ localDate.time }}</p>
+        <h3>{{ localDate.date }}</h3>
       </div>
 
       <div class="reminderContainer">
-        <h2 v-if="reminders.length == 0">Brak Przypomnień na dzisiaj</h2>
-        <h2 v-else>Aktualne Przypomnienia</h2>
-        <hr>
+        <div class="accordion " 
+        id="reminderAccordion">
 
-        
+          <div class="accordion-item" 
+          v-for="(reminder, index) in reminders"
+          :key="index">
+          <form @submit="deleteReminder(reminder.id)">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            :data-bs-target="'#collapse' + index" 
+            :aria-controls="'collapse' + index">
+            {{reminder.title}} 
+            </button>
+          </h2>
+
+          <div :id="'collapse' + index" 
+          class="accordion-collapse collapse" 
+          data-bs-parent="#reminderAccordion">
+          <div class="accordion-body">
+          <p><b>Osoba Zgłaszająca:</b> {{ reminder.author }}, <br> <b>Data Zgłaszająca:</b> {{ reminder.createdAt }}</p>
+
+          <p>{{ reminder.content }}</p>
+
+          <button type="submit" 
+          class="deleteReminderBtn">Usun</button>
+          </div>
+        </div>
+        </form>
       </div>
-  </div>
+
+      <div class="accordion-item">
+
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed createReminder" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#collapse" 
+            aria-controls="collapse"
+            style="font-size: 1.2rem;">
+            <b>Dodaj Przypomnienie</b>
+            </button>
+          </h2>
+
+          <div id="collapse" 
+          class="accordion-collapse collapse" 
+          data-bs-parent="#reminderAccordion">
+          <div class="accordion-body">
+            <form @submit="crtReminder">
+              <div class="mb-3">
+              <label for="userAutoComplete" class="form-label">Użytkownik:</label>
+              <AutoComplete id="userAutoComplete" @update-name="updateUser"></AutoComplete>
+            </div>
+
+            <div class="mb-3">
+              <label for="author"class="form-label">Temat:</label>
+              <input type="text" 
+              class="form-control"
+              id="author" 
+              rows="3"
+              v-model="newReminder.title"
+              required>
+            </div>
+
+            <div class="mb-3">
+              <label for="content"class="form-label">Treść Przypomnienia:</label>
+              <textarea class="form-control"
+              id="content" 
+              rows="2"
+              v-model="newReminder.content"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="dateTicekt" class="form-label">Data zakończenia: </label>
+              <input type="date" 
+              class="form-control" 
+              id="dateTicekt"
+              v-model="newReminder.expiryDate"
+              required>
+            </div>
+
+            <div class="mb-3">
+              <button type="submit" class="addReminderBtn">Dodaj</button>
+            </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+        </div>
+
+      </div>
+      </div>
 </template>
 
 <style>
@@ -30,38 +178,79 @@ const reminders = ref([])
 
 .mainbox{
   width: 100%;
-  height: 80vh;
+  height: 82vh;
   background-image: linear-gradient(rgba(244, 253, 252, 0.068), rgba(18, 19, 19, 0.658)), url(../assets/BG.jpg);
   background-position: center 50%;
   background-size: cover;
-  position: fixed;
+  position: relative;
   transition: 0.5s;
   display: flex;
   justify-content: space-between;
 }
-.someContainer{
+.timeContainer{
   background-color: #fff;
   margin-left: 10%;
   width: 30%;
   height: 30%;
   border-radius: 20px 20px 0 0;
   align-self: flex-end;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 6rem;
+  font-weight: 600;
+  text-shadow: -1px 1px 6px rgba(66, 68, 90, 1);
+
+  p{
+    margin: 0;
+  }
 }
 
 .reminderContainer{
   background-color: rgba(248, 249, 250);
+  border-top: 1px solid rgb(240, 235, 235);
   margin-right: 10%;
   width: 30%;
-  height: 30%;
+  height:min-content;
   border-radius: 0 0 20px 20px;
   display: flex;
   flex-direction: column;
-  text-align: center;
-
-  hr{
-    color: black;
-    width: 100%;
-  }
 }
-
+.createReminder{
+    background-color: #8dd66c;
+  }
+#dateTicekt:hover{
+  cursor: pointer;
+}
+.createReminder:not(.collapsed) {
+  background-color: #8dd66c;
+}
+.addReminderBtn{
+  padding: 5px 20px;
+  border-radius: 5px;
+  border: 1px solid rgb(209, 207, 207);
+  background-color: #8dd66c;
+  transition: 0.2s;
+  display: flex;
+  justify-self: flex-end;
+}
+.addReminderBtn:hover{
+  scale: 1.1;
+  background-color: #a5e986;
+}
+.deleteReminderBtn{
+  padding: 5px 20px;
+  border-radius: 5px;
+  border: 1px solid rgb(209, 207, 207);
+  background-color: #eb1414d7;
+  color: #fff;
+  transition: 0.2s;
+  display: flex;
+  justify-self: flex-end;
+}
+.deleteReminderBtn:hover{
+  scale: 1.1;
+  background-color: #e92b24d7;
+}
 </style>
