@@ -2,14 +2,17 @@
 import { ref,onMounted, computed } from 'vue';
 import AutoComplete from '@/components/AutoComplete.vue';
 import assetService from '@/services/assetService';
-import { GStore } from '@/main';
+import { utilsStore } from '@/stores/mainStorege';
 
+
+const useUtilsStore = utilsStore()
 const reminders = ref([])
 const newReminder = ref({
   title: '',
   author: '',
   content: '',
   expiryDate: '',
+  createdAt: ''
 })
 
 const localDate = ref({
@@ -25,7 +28,7 @@ const updateTime = () => {
 onMounted(()=>{
 
   updateTime();
-  setInterval(updateTime, 1000);
+  setInterval(updateTime, 60000);
 
   assetService.getReminder()
   .then((response)=>{
@@ -34,6 +37,8 @@ onMounted(()=>{
     console.log(error);
   })
 })
+
+
 
 const crtReminder = (event) =>{
   // event.preventDefault();
@@ -93,7 +98,9 @@ const deleteReminder = (id) =>{
           class="accordion-collapse collapse" 
           data-bs-parent="#reminderAccordion">
           <div class="accordion-body">
-          <p><b>Osoba Zgłaszająca:</b> {{ reminder.author }}, <br> <b>Data Zgłaszająca:</b> {{ reminder.createdAt }}</p>
+          <p><b>Osoba Zgłaszająca:</b> {{ reminder.author }}, 
+          <br><b>Data Zgłoszenia:</b> {{ useUtilsStore.formatDate(reminder.createdAt) }}
+          <br><b>Data Końca:</b> {{ useUtilsStore.formatDate(reminder.expiryDate) }}</p>
 
           <p>{{ reminder.content }}</p>
 
@@ -175,6 +182,10 @@ const deleteReminder = (id) =>{
   font-family: "Montserrat", sans-serif;
   box-sizing: border-box;
 }
+p{
+    margin: 0;
+    padding: 0;
+  }
 
 .mainbox{
   width: 100%;
@@ -201,10 +212,6 @@ const deleteReminder = (id) =>{
   font-size: 6rem;
   font-weight: 600;
   text-shadow: -1px 1px 6px rgba(66, 68, 90, 1);
-
-  p{
-    margin: 0;
-  }
 }
 
 .reminderContainer{

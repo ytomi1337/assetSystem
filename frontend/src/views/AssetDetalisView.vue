@@ -5,8 +5,10 @@
     import router from '@/router/index';
     import { cloneDeep } from 'lodash';
     import AutoComplete from '@/components/AutoComplete.vue';
+    import { utilsStore } from '@/stores/mainStorege';
 
-const emits = defineEmits(['showCreate', 'update-name'])
+    const useUtilsStore = utilsStore()
+    const emits = defineEmits(['showCreate', 'update-name'])
     const props = defineProps({
         id:{
             required: true,
@@ -18,38 +20,29 @@ const emits = defineEmits(['showCreate', 'update-name'])
     const asset = ref(null)
     const orginalAsset = ref(null)
 
-    
-
-    const categories = ref(null)
-    const localizations = ref(null)
-    const statuses = ref(null)
-
     const isLeaveEdited = ref(false)
     const isEdit = ref(true)
     const isSave = ref(false)
     const isDelete = ref(true)
     const isDisabled = ref(true)
 
-    
+    const useDateField = (field) => {
+        return computed({
+            get() {
+            return asset.value[field] ? asset.value[field].split("T")[0] : "";
+            },
+            set(value) {
+            asset.value[field] = value;
+            },
+        });
+        };
+
+    const recipt_date = useDateField("recipt_date");
+    const return_date = useDateField("return_date");
+    const warranty_date = useDateField("warranty_date");
 
     onMounted(() => {
-        assetService.getStatus().then((response)=>{
-              statuses.value = response.data
-              }).catch((error) =>{
-                  console.log(error);
-              })
-
-        assetService.getLocalizations().then((response)=>{
-            localizations.value = response.data
-        }).catch((error) =>{
-            console.log(error);
-        })
-
-        assetService.getCategories().then((response)=>{
-            categories.value = response.data
-        }).catch((error) =>{
-            console.log(error);
-        })
+       useUtilsStore.loadAllData()
 
         assetService.getId(id.value).then((response) => {
             asset.value = response.data
@@ -188,21 +181,21 @@ const emits = defineEmits(['showCreate', 'update-name'])
                     <div class="formRecord">
                     <label for="localization">Lokalizsacja:</label>
                     <select :disabled="isDisabled" name="localization" v-model="asset.localization">
-                        <option v-for="localization in localizations" > {{ localization.name }}</option>
+                        <option v-for="localization in useUtilsStore.localizations" > {{ localization }}</option>
                     </select>
                     </div>
 
                     <div class="formRecord">
                     <label for="category">Kategoria:</label>
                     <select :disabled="isDisabled" name="category" v-model="asset.category">
-                        <option v-for="category in categories" > {{ category.name }}</option>
+                        <option v-for="category in useUtilsStore.categories" > {{ category }}</option>
                     </select>
                     </div>
 
                     <div class="formRecord">
                     <label for="status">Status:</label>
                     <select :disabled="isDisabled" name="status" v-model="asset.status">
-                        <option v-for="status in statuses" > {{ status.name }}</option>
+                        <option v-for="status in useUtilsStore.statuses" > {{ status }}</option>
                     </select>
                     </div>
 
@@ -223,17 +216,26 @@ const emits = defineEmits(['showCreate', 'update-name'])
 
                     <div class="formRecord">
                     <label for="name">Data Wydania:</label>
-                    <input type="text" name="recipt_date" :disabled="isDisabled" :placeholder="asset.recipt_date" />
+                    <input type="date" name="recipt_date" 
+                    :disabled="isDisabled" 
+                    v-model="recipt_date" 
+                    />
                     </div>
 
                     <div class="formRecord">
-                    <label for="name">Data Zwrotu:</label>
-                    <input type="text" name="return_date" :disabled="isDisabled" :placeholder="asset.return_date" />
+                    <label for="return_date">Data Zwrotu:</label>
+                    <input type="date" name="return_date" 
+                    :disabled="isDisabled" 
+                    v-model="return_date" 
+                    />
                     </div>
 
                     <div class="formRecord">
-                    <label for="name">Data Gwarancji:</label>
-                    <input type="text" name="warranty_date" :disabled="isDisabled" :placeholder="asset.warranty_date" />
+                    <label for="warranty_date">Data Gwarancji:</label>
+                    <input type="date" name="warranty_date" 
+                    :disabled="isDisabled" 
+                    v-model="warranty_date" 
+                    />
                     </div>
 
                 </div>

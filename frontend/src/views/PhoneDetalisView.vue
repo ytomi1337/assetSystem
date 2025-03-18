@@ -27,16 +27,18 @@ const isSave = ref(false)
 const isDelete = ref(true)
 const isDisabled = computed (() => isEdit.value)
 
-const formattedDate = computed({
-  get() {
-    return phone.value.recipt_date
-      ? phone.value.recipt_date.split("T")[0]
-      : "";
-  },
-  set(value) {
-    phone.value.recipt_date = value;
-  },
-});
+const useDateField = (field) => {
+  return computed({
+    get() {
+      return phone.value[field] ? phone.value[field].split("T")[0] : "";
+    },
+    set(value) {
+      phone.value[field] = value;
+    },
+  });
+};
+
+const recipt_date = useDateField("recipt_date");
 onMounted(() => {
     assetService.getStatus().then((response)=>{
         statuses.value = response.data
@@ -157,14 +159,8 @@ const saveAsset = async () => {
 
                     <input type="date" name="recipt_date" 
                     :disabled="isDisabled" 
-                    v-model="formattedDate" 
+                    v-model="recipt_date" 
                     />
-
-                    </div>
-
-                    <div class="formRecord">
-                    <label for="name">Data Zwrotu:</label>
-                    <input type="text" name="return_date" :disabled="isDisabled" :placeholder="phone.name" />
                     </div>
                     
                     <div class="formRecord">

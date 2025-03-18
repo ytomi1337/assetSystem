@@ -3,12 +3,10 @@ import assetService from '@/services/assetService';
 import { GStore } from '@/main';
 import { ref, onMounted, defineEmits } from 'vue';
 import AutoComplete from './AutoComplete.vue'
+import { utilsStore } from '@/stores/mainStorege';
 
+const useUtilsStore = utilsStore()
 const emits = defineEmits(['showCreate', 'update-name'])
-
-const categories = ref([]);
-const localizations = ref([]);
-const statuses = ref ([]);
 
 const defaultAsset = ref({
   name: '',
@@ -27,32 +25,7 @@ const newAsset = ref({ ...defaultAsset.value })
 const isError = ref("")
 
 onMounted(() => {
-  assetService
-    .getStatus()
-    .then((response) => {
-      statuses.value = response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  assetService
-    .getCategories()
-    .then((response) => {
-      categories.value = response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  assetService
-    .getLocalizations()
-    .then((response) => {
-      localizations.value = response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  useUtilsStore.loadAllData()
 })
 
 const updateUser = (receivedName) => {
@@ -124,8 +97,8 @@ const leaveComponent = () => {
       <div class="formRecord">
       <label for="localization">Lokalizacja:</label>
       <select v-model="newAsset.localization" name="localization">
-          <option v-for="localization in localizations" :key="localization.id" :value="localization.name">
-            {{ localization.name }}
+          <option v-for="localization in useUtilsStore.localizations" :key="localization.id" :value="localization">
+            {{ localization }}
           </option>
       </select>
       </div>
@@ -133,8 +106,8 @@ const leaveComponent = () => {
       <div class="formRecord">
       <label for="category">Kategoria:</label>
       <select v-model="newAsset.category" name="category">
-          <option v-for="category in categories" :key="category.id" :value="category.name">
-            {{ category.name }}
+          <option v-for="category in useUtilsStore.categories" :key="category.id" :value="category">
+            {{ category }}
           </option>
       </select>
       </div>
@@ -142,8 +115,8 @@ const leaveComponent = () => {
       <div class="formRecord">
       <label for="status">Status:</label>
       <select v-model="newAsset.status" name="status">
-          <option v-for="status in statuses" :key="status.id" :value="status.name">
-            {{ status.name }}
+          <option v-for="status in useUtilsStore.statuses" :key="status.id" :value="status">
+            {{ status }}
           </option>
       </select>
       </div>
