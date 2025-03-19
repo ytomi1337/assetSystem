@@ -71,11 +71,6 @@ const deleteReminder = (id) =>{
 
 <template>
   <div class="mainbox">
-      <div class="timeContainer ">
-        <p>{{ localDate.time }}</p>
-        <h3>{{ localDate.date }}</h3>
-      </div>
-
       <div class="reminderContainer">
         <div class="accordion " 
         id="reminderAccordion">
@@ -196,22 +191,7 @@ p{
   position: relative;
   transition: 0.5s;
   display: flex;
-  justify-content: space-between;
-}
-.timeContainer{
-  background-color: #fff;
-  margin-left: 10%;
-  width: 30%;
-  height: 30%;
-  border-radius: 20px 20px 0 0;
-  align-self: flex-end;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-size: 6rem;
-  font-weight: 600;
-  text-shadow: -1px 1px 6px rgba(66, 68, 90, 1);
+  justify-content: flex-end;
 }
 
 .reminderContainer{
@@ -233,6 +213,7 @@ p{
 .createReminder:not(.collapsed) {
   background-color: #8dd66c;
 }
+
 .addReminderBtn{
   padding: 5px 20px;
   border-radius: 5px;
@@ -259,5 +240,19 @@ p{
 .deleteReminderBtn:hover{
   scale: 1.1;
   background-color: #e92b24d7;
+}
+
+@media only screen and (max-width: 600px) {
+  .reminderContainer{
+    margin-right: 0;
+    width: 100%;
+  }
+  .timeContainer{
+  display: none;
+  }
+  .accordion-button{
+    font-size: 0.7rem;
+    height: 40px;
+  }
 }
 </style>

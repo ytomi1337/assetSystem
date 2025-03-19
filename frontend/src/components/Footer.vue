@@ -20,12 +20,20 @@ html, body {
 
 .footer {
     position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     bottom: 0;
     left: 0;
     width: 100%;
     text-align: center;
     padding: 10px;
 }
-
+@media only screen and (max-width: 600px) {
+  .footer{
+    font-size: 0.7rem;
+    padding-top: 50px;
+  }
+}
 
 </style>

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, onMounted } from "vue";
+import { ref,  } from "vue";
 import assetService from "@/services/assetService";
 
 export const utilsStore = defineStore("utlisStore", () =>{
@@ -10,7 +10,6 @@ export const utilsStore = defineStore("utlisStore", () =>{
   const localizations = ref([]);
   const users = ref([]);
   const isWarranty = ref(['Aktywna', 'Wygaszona']);
-  const loading = ref(false);
   const error = ref(null);
 
   
@@ -36,8 +35,7 @@ export const utilsStore = defineStore("utlisStore", () =>{
     }
   };
   
-  const loadAllData = async () => {
-    loading.value = true;  
+  const loadAllData = async () => { 
     try {
       await Promise.all([
         fetchData("getStatus", statuses),
@@ -47,9 +45,7 @@ export const utilsStore = defineStore("utlisStore", () =>{
       ]);
     } catch (err) {
       console.error("Error during data loading:", err);
-    } finally {
-      loading.value = false;
-    }
+    } 
   };
 
   const formatDate = (dateString) => {
@@ -64,7 +60,6 @@ export const utilsStore = defineStore("utlisStore", () =>{
     phoneCategories,
     users,
     localizations,
-    loading,
     error,
     isWarranty,
     loadAllData,

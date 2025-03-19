@@ -169,6 +169,18 @@
             </tr>
             
         </table>
+        <div class="card" style="width: 18rem;"
+        v-for="asset in assets">
+            <div class="card-body">
+                <h5 class="card-title">{{asset.name}}</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">{{asset.it_num}}</h6>
+                <p class="card-text">{{ asset.user_new }}</p>
+                <p class="card-text">{{ asset.serialnum }}</p>
+                <a href="#" class="card-link"><AssetActionData :asset="asset"></AssetActionData></a>
+                
+            </div>
+        </div>
+        
         <div class="tableFotter">
             <div class="paginationSection">
                 <button @click="pageMinus" v-if="page != 1"> < </button>
@@ -180,6 +192,8 @@
                 <button @click="changeLimit(limitThree)">{{ limitThree }}</button>
             </div>
         </div>
+
+        
         
     </div>
   
@@ -333,5 +347,14 @@
             color: #fff;
         }
     }
-
+    @media only screen and (min-width: 600px) {
+        .card{
+            display: none;
+        }
+    }
+    @media only screen and (max-width: 600px) {
+        .mainTable{
+            display: none;
+        }
+    }
 </style>

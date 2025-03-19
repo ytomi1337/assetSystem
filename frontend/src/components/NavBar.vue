@@ -84,6 +84,8 @@ const toggleForm = (formName) => {
 
 </template>
 <style>
-
+.navbar{
+  background-color: #fff;
+}
 
 </style>

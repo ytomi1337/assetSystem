@@ -8,7 +8,9 @@
     import { utilsStore } from '@/stores/mainStorege';
 
     const useUtilsStore = utilsStore()
+
     const emits = defineEmits(['showCreate', 'update-name'])
+
     const props = defineProps({
         id:{
             required: true,
@@ -57,7 +59,13 @@
         })
     })
     const updateUser = (receivedName) => {
-        asset.value.user_new = receivedName;
+        if(receivedName == ''){
+            return false
+        }
+        asset.value.user_new = receivedName
+
+        console.log('orginal:', orginalAsset.value.user_new);
+        console.log('New:', asset.value.user_new);
         }
 
     const deleteAsset =() =>{
@@ -80,13 +88,30 @@
         }
     }
    
-    const editAsset = () => {
-        isSave.value = true
-        isDelete.value = false
-        isEdit.value = false
-        isLeaveEdited.value = true
-        isDisabled.value = !isDisabled.value
-        orginalAsset.value = cloneDeep(asset.value) 
+    const toggleEditMode = (isEditing) => {
+        isSave.value = isEditing;
+        isDelete.value = !isEditing;
+        isEdit.value = !isEditing;
+        isLeaveEdited.value = isEditing;
+        isDisabled.value = !isEditing;
+
+        if (isEditing) {
+            orginalAsset.value = cloneDeep(asset.value);
+        } else {
+            asset.value = cloneDeep(orginalAsset.value);
+        }
+    };
+
+    const editAsset = () => toggleEditMode(true);
+
+    const leaveEdit = () => {
+        if (JSON.stringify(asset.value) !== JSON.stringify(orginalAsset.value)) {
+            if (confirm('Masz wprowadzone dane, czy na pewno chcesz opuścić edycję?')) {
+                toggleEditMode(false);
+            }
+        } else {
+            toggleEditMode(false);
+        }
     };
 
     const detectChanges=() =>{ 
@@ -96,14 +121,21 @@
                     changes[key] = asset.value[key];
                 }
             }
+
+            if(changes.user_new != undefined){
+                changes.user_old = orginalAsset.value.user_new
+            }
+
         return changes;
     };
     const saveAsset = async () => {
        const changes = detectChanges()
-       console.log(changes);
+
        
        try{
-        assetService.updateAsset(props.id, changes)
+        const response = await assetService.updateAsset(props.id, changes)
+        asset.value = response.data.asset
+
         GStore.editMessage = 'Urządzenie: ' + asset.value.it_num + ' Zostało prawidło zakutalizowane'
         setTimeout (() => {
             GStore.editMessage = ''
@@ -114,33 +146,12 @@
         isEdit.value = true
         isLeaveEdited.value = false
         isDisabled.value = !isDisabled.value
+
        }catch(error){
-        console.log("Unable to upddate asset", error);
+        console.error("Unable to upddate asset", error);
        }
 
     }
-
-    const leaveEdit = () => {
-
-        if(JSON.stringify(asset.value) !== JSON.stringify(orginalAsset.value)){
-            if(confirm('Masz wprowadzone dane czy napewno chcesz oposcic Edycje?')){
-                asset.value = orginalAsset.value
-
-                isSave.value = false
-                isDelete.value = true
-                isEdit.value = true
-                isLeaveEdited.value = false
-                isDisabled.value = !isDisabled.value
-            }
-            console.log('kontyuje');
-        }else{
-            isSave.value = false
-            isDelete.value = true
-            isEdit.value = true
-            isLeaveEdited.value = false
-            isDisabled.value = !isDisabled.value
-        }   
-    };
     
 </script>
 
@@ -175,7 +186,7 @@
 
                     <div class="formRecord">
                     <label for="name">Poprzedni Użytkownik:</label>
-                    <input type="text" name="user_old" :disabled="isDisabled" v-model="asset.user_old"/>
+                    <input type="text" name="user_old" disabled v-model="asset.user_old"/>
                     </div>
                 
                     <div class="formRecord">
