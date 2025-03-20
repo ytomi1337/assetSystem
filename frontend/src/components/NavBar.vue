@@ -4,7 +4,6 @@ import UserToUser from '@/components/actions/UserToUser.vue';
 import TransferProtocol from './protocols/TransferProtocol.vue';
 import ReturnProtocol from './protocols/ReturnProtocol.vue';
 
-const showActionForm = ref(false)
 const activeForm = ref(null);
 
 const disableActiveform = () =>{
