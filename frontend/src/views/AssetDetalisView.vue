@@ -63,28 +63,21 @@
             return false
         }
         asset.value.user_new = receivedName
-
-        console.log('orginal:', orginalAsset.value.user_new);
-        console.log('New:', asset.value.user_new);
         }
 
     const deleteAsset =() =>{
-
-        const deletedAsset = asset.name
-        const checkConfirm = confirm(`Czy jestes pewien że chcesz usunąć TRWALE urządzenie ${deletedAsset} ta operacja jest nieodwracalna!!!`)
-        
-        if(checkConfirm){
+        if(confirm(`Czy jestes pewien że chcesz usunąć TRWALE urządzenie ${asset.value.name} ta operacja jest nieodwracalna!!!`)){
             assetService.deleteAsset(props.id)
-        .then(()=>{
-            GStore.deleteMessage = 'Urządzenie ' + deletedAsset + ' Zostało usunięte'
-            setTimeout (() => {
-              GStore.deleteMessage = ''
-            },5000)
-            router.push({name: 'asset-list'})
-            console.log('Success');
-        }).catch((error)=>{
-            console.log('error');
-        })
+            .then(()=>{
+                GStore.deleteMessage = 'Urządzenie ' + asset.value.name + ' Zostało usunięte'
+                setTimeout (() => {
+                GStore.deleteMessage = ''
+                },5000)
+                router.push({name: 'asset-list'})
+                console.log('Success');
+            }).catch((error)=>{
+                console.log('error', error);
+            })
         }
     }
    
@@ -212,7 +205,11 @@
 
                     <div class="formRecord">
                     <label for="comment">Uwagi:</label>
-                    <textarea name="comment" id="comment" :disabled="isDisabled" placeholder="Uwagi"></textarea>
+                    <textarea name="comment" 
+                    id="comment" 
+                    :disabled="isDisabled" 
+                    v-model="asset.note"
+                    placeholder="Wpisz komentarz.."></textarea>
                     </div>
                 </div>
                 <div class="rightSectionForm">

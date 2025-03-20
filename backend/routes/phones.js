@@ -168,7 +168,7 @@ router.patch('/phones/:id', async(req, res) => {
         const phone = await Phones.findByPk(id)
 
         if(!phone){
-            return res.status(400).json({ message: "Asset not found"})
+            return res.status(400).json({ message: "Phone not found"})
         }
 
         await phone.update(changes)

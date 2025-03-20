@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes, TEXT } = require('sequelize');
 const sequelize = global.sequelize;
 
 const Phones = sequelize.define(
@@ -68,6 +68,10 @@ const Phones = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    return_date: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE
@@ -75,6 +79,14 @@ const Phones = sequelize.define(
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE
+    },
+    user_old: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    note: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }
 );

@@ -5,164 +5,94 @@ import assetService from '@/services/assetService';
 import AutoComplete from '../AutoComplete.vue';
 const emits = defineEmits(['disableWindow', 'update-name'])
 
-const userSending = ref('');
-const userReciving = ref('');
+const users = ref({ sending: '', receiving: '' });
+const pagination = ref({ page: 1, limit: 9 });
+const assetsData = ref({ assets: [], selected: [] });
+const receivedData = ref({ assets: [], selected: [] });
+const total = ref({ count: null, pages: null });
+const errors = ref([]);
 
-const page = ref(1)
-const limit = ref(9)
+const isDisabled = computed (()=> !users.value.sending || !users.value.receiving)
 
-const assets = ref([])
-const selectedAssets = ref([])
-
-const totalNum = ref(null)
-const totalPages = ref(null)
-
-const recivedAssets = ref([])
-const recivedSelectedAssets = ref ([])
-
-const errors = ref([])
-
-const isDisabled = computed (()=> userReciving.value == '' || userReciving.value == '')
-
-const setUserFrom = (receivedName) => {
-  userSending.value = receivedName;
-  page.value = 1
-}
-
-const setUserTo = (receivedName) => {
-  userReciving.value = receivedName;
+const setUser = (type, name) => {
+  users.value[type] = name
+  pagination.value.page = 1
 }
 
   watchEffect(() =>{
-    selectedAssets.value = []
-    recivedSelectedAssets.value = []
-    recivedAssets.value = []
-      assetService.getUserAssets(page.value, limit.value, userSending.value)
+    if(!users.value.sending) return;
+
+    assetsData.value.selected = []
+    receivedData.value.selected = []
+    receivedData.value.assets = []
+
+      assetService.getUserAssets(pagination.value.page, pagination.value.limit, users.value.sending)
                 .then((response)=>{
-                  assets.value = response.data.assets
-                  totalNum.value = response.data.count
-                  totalPages.value = totalNum.value / limit.value
+                  assetsData.value.assets = response.data.assets
+                  total.value.count = response.data.count
+                  total.value.pages = Math.ceil(total.value.count / pagination.value.limit);
                 }).catch((error)=>{
-                    console.log(error);
-                    console.log('wyzej error');
+                    console.error('Bład Przy pobieraniu danych wchodzacych: ', error)
                 }) 
     
   })
 
-  const pagePlus = () =>{
-        page.value = page.value + 1
-    }
+  const changePage = (direction) => {
+    pagination.value.page = Math.max(1, Math.min(total.value.pages, pagination.value.page + direction));
+  };
 
-  const pageMinus = () =>{
-      page.value = page.value - 1
+  const allSelected = (data) => data.selected.length === data.assets.length && data.assets.length > 0;
+
+  const toggleAll = (data, event) => {
+    data.selected = event.target.checked ? [...data.assets] : []
+  };
+
+  const transferAssets = (from, to) => {
+    to.assets.push(...from.selected);
+    from.assets = from.assets.filter(asset => !from.selected.some(selected => selected.id === asset.id));
+    from.selected = [];
   }
 
-  const allSelected = computed(() => 
-  selectedAssets.value.length === assets.value.length && assets.value.length > 0
-  ) ;
+    const applyFunction = () => {
+      const { sending, receiving } = users.value;
+      if (!sending || !receiving) return showError('Pole użytkownika odbierającego i wysyłającego musi być wypełnione!');
+      if (sending === receiving) return showError('Użytkownik odbierający i wysyłający nie mogą być tacy sami!');
+      if (receivedData.value.assets.length === 0) return showError('Nie został wybrany żaden sprzęt do transferu!');
 
-const allSelectedRecived = computed(() => 
-recivedSelectedAssets.value.length === recivedAssets.value.length && recivedAssets.value.length > 0
-);
-
-const toggleAll = (event) => {
-  if (event.target.checked) {
-    selectedAssets.value = [...assets.value];
-  } else {
-    selectedAssets.value = []; 
-  }
-};
-
-const toggleAllRecived = (event) => {
-  if (event.target.checked) {
-    recivedSelectedAssets.value = [...recivedAssets.value];
-  } else {
-    recivedSelectedAssets.value = []; 
-  }
-};
-
-const transferAssets = () => {
-  recivedAssets.value.push(...selectedAssets.value)
-
-  assets.value = assets.value.filter(asset => 
-    !selectedAssets.value.some(selected => selected.id == asset.id)
-  )
-  
-  selectedAssets.value = []
-}
-
-const transferBack = () => {
-  assets.value.push(...recivedSelectedAssets.value)
-  
-  recivedAssets.value = recivedAssets.value.filter(rAsset => 
-    !recivedSelectedAssets.value.some(rSelected => rSelected.id == rAsset.id)
-  )
-
-  recivedSelectedAssets.value = []
-}
-const leaveComponent = () => {
-  emits("disableWindow");
-};
-
-const applyFunction = () => {
-
-  if(userReciving.value != '' && userSending.value != ''){
-    if(userReciving.value == userSending.value){
-      errors.value.push('Użytkownik odbierający i wysyłający nie mogą być tacy sami !');
-    setTimeout(() => {
-      errors.value = []
-    }, 5000)
-    }else{
-      if(recivedAssets.value.length == 0){
-        console.log('test');
-        errors.value.push('Niezostał wybrany żaden sprzęt do transferu!');
-    setTimeout(() => {
-      errors.value = []
-    }, 5000)
-      }else{
-        assetService.updateAssetfromUser(recivedAssets.value, userReciving.value)
-      .then((response)=>{
-        console.log(response.data.message);
-
-        GStore.flashMessage = "Operacja Aktualizacji przebiegła pomyślnie!";
-        GStore.wasChange = true
-      setTimeout(() => {
-        GStore.flashMessage = "",
-        GStore.wasChange = false;
-      }, 5000);
-      
-
-        emits("disableWindow");
-
-      }).catch((error) =>{
-        console.log(error);
-      })
-      }
-     
-    }
-  }else{
-    errors.value.push('Pole użytkownika odbierającego i wysyłającego musi byc wypełnione !');
-    setTimeout(() => {
-      errors.value = []
-    }, 5000)
+      assetService.updateAssetfromUser(receivedData.value.assets, receiving)
+        .then(() => {
+          GStore.flashMessage = 'Operacja Aktualizacji przebiegła pomyślnie!';
+          GStore.wasChange = true;
+          setTimeout(() => (GStore.flashMessage = '', GStore.wasChange = false), 5000);
+          emits('disableWindow');
+        })
+        .catch((error) => console.error('Błąd przy aktualizacji aktyw:', error));
+      };
     
-  }
-}
+    const showError = (message) => {
+    errors.value.push(message);
+    setTimeout(() => (errors.value = []), 5000);
+    };
+
+    const leaveComponent = () => {
+      emits("disableWindow");
+  };
 </script>
 
 <template>
  <div class="box-overlay">
     <div class="box">
         <h3>Przekazanie między użytkownikami</h3>
-        <p v-if="errors.length != 0">{{ errors[0] }}</p>
+        <p v-if="errors.length">{{ errors[0] }}</p>
+
         <div class="navUserDiv">
           <div class="item">
-            <label name="userFrom"><b>Użytkownik od:</b></label>
-          <AutoComplete @update-name="setUserFrom" name="userFrom" > </AutoComplete>
+            <label><b>Użytkownik od:</b></label>
+          <AutoComplete @update-name="(name) => setUser('sending', name)"> </AutoComplete>
           </div>
           <div class="item">
-            <label name="userTo"><b>Użytkownik do:</b></label>
-            <AutoComplete @update-name="setUserTo" name="userTo"> </AutoComplete>
+            <label><b>Użytkownik do:</b></label>
+            <AutoComplete @update-name="(name) => setUser('receiving', name)"> </AutoComplete>
           </div>
         </div>
        
@@ -170,19 +100,23 @@ const applyFunction = () => {
 
         <div class="tableContainer">
           <div class="tableBox leftBox">
-            <table id="mainTable" class="mainTable">
+            <table class="mainTable">
               <tr>
-                <th><input type="checkbox" @change="toggleAll" :checked="allSelected"></th>
+                <th>
+                   <input type="checkbox"
+                   @change="(event) => toggleAll(assetsData, event)" 
+                   :checked="allSelected(assetsData)">
+                </th>
                 <th>Nr IT</th>
                 <th>Nazwa</th>
                 <th>Nr Serii</th>
                 <th>Kategoria</th>
               </tr>
-              <tr v-for="asset in assets" :key="asset.id">
+              <tr v-for="asset in assetsData.assets" :key="asset.id">
                 <td>
                   <input type="checkbox" 
                   :value="asset" 
-                  v-model="selectedAssets">
+                  v-model="assetsData.selected" />
                 </td>
                 <td>{{ asset.it_num }}</td>
                 <td>{{ asset.name }}</td>
@@ -193,23 +127,23 @@ const applyFunction = () => {
             </table>
           </div>
           <div class="midBox">
-            <button class="userToUserBtn" @click="transferAssets" :disabled="isDisabled">></button>
-            <button class="userToUserBtn" @click="transferBack" :disabled="isDisabled"><</button>
+            <button @click="transferAssets(assetsData, receivedData)" :disabled="isDisabled">></button>
+            <button @click="transferAssets(receivedData, assetsData)" :disabled="isDisabled"><</button>
           </div>
           <div class="tableBox rightBox">
-            <table id="mainTable" class="mainTable">
+            <table class="mainTable">
               <tr>
-                <th><input type="checkbox" @change="toggleAllRecived" :checked="allSelectedRecived"></th>
+                <th><input type="checkbox" @change="(e) => toggleAll(receivedData, e)" :checked="allSelected(receivedData)" /></th>
                 <th>Nr IT</th>
                 <th>Nazwa</th>
                 <th>Nr Serii</th>
                 <th>Kategoria</th>
               </tr>
-              <tr v-for="rAsset in recivedAssets" :key="rAsset.id">
+              <tr v-for="rAsset in receivedData.assets" :key="rAsset.id">
                 <td>
                   <input type="checkbox" 
                   :value="rAsset" 
-                  v-model="recivedSelectedAssets">
+                  v-model="receivedData.selected">
                 </td>
                 <td>{{ rAsset.it_num }}</td>
                 <td>{{ rAsset.name }}</td>
@@ -223,8 +157,8 @@ const applyFunction = () => {
         
         <div class="btnSection">
           <div>
-            <button class="paginationBtn" @click="pageMinus" v-if="page != 1"><</button>
-            <button class="paginationBtn" type="button"  @click="pagePlus" v-if="totalPages > page ">></button>
+            <button id="paginationBtn1" @click="changePage(-1)" v-if="pagination.page > 1"><</button>
+            <button id="paginationBtn" @click="changePage(1)" v-if="total.pages > pagination.page">></button>
           </div>
           <div>
             <button class="applyBtn" @click="applyFunction">Zastosuj</button>
@@ -329,13 +263,15 @@ input:hover{
   width: 50%;
   transition: 0.3s;
 }
-.paginationBtn{
+.paginationBtn1{
   border: 1px solid rgba(180, 179, 179, 0.781);
   background-color: transparent;
+  padding: 10px 20px;
   border-radius: 8px;
   text-align: center;
   width: 100%;
   transition: 0.3s;
+  
 }
 .btnSection{
   display: flex;

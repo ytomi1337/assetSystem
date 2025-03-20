@@ -1,6 +1,6 @@
 <script setup>
 
-import { ref, defineEmits, defineProps, watch , onMounted, computed} from 'vue';
+import { ref, defineEmits, defineProps, onMounted, } from 'vue';
 import { utilsStore } from '@/stores/mainStorege';
 
 const useUtilsStore = utilsStore()
