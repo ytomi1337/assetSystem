@@ -1,62 +1,64 @@
 <script setup>
-import { ref, computed, watchEffect, defineEmits } from 'vue';
-import AutoComplete from '../AutoComplete.vue';
-import assetService from '@/services/assetService';
-import printTemplate from './printTemplate.vue';
+  import { ref, computed, watchEffect, defineEmits } from 'vue';
+  import AutoComplete from '../AutoComplete.vue';
+  import assetService from '@/services/assetService';
+  import printTemplate from './printTemplate.vue';
 
-
-const assets = ref(['test'])
-const selectedAssets = ref([])
-const page = ref(1)
-const limit = ref(10)
-const user = ref('');
-const userData = ref([])
-const header = ref('Protokół Zwrotu')
-const isDisabled = computed (() => selectedAssets.value.length == 0)
-const errors = ref([])
-const emits = defineEmits(['disableWindow',])
-const date = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-
-const printTemplateRef = ref(null);
+  const emits = defineEmits(['disableWindow',])
+  const assetData = ref({ assets: [], selected: []})
+  const pagination = ref({ count: 1, limit: 10})
+  const userData = ref([])
+  const header = ref('Protokół Zwrotu')
+  const isDisabled = computed (() => !userData.value.name )
+  const errors = ref([])
+  const printTemplateRef = ref(null);
+  const date = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 
 const allSelected = computed(() => 
-  selectedAssets.value.length === assets.value.length && assets.value.length > 0
+  assetData.value.selected.length === assetData.value.assets.length && assetData.value.assets.length > 0
 );
 
 const toggleAll = (event) => {
-  if (event.target.checked) {
-    selectedAssets.value = [...assets.value];
-  } else {
-    selectedAssets.value = []; 
-  }
+    assetData.value.selected = event.target.checked ? [...assetData.value.assets] : []
 };
-
-const setUserFrom = (receivedName) => {
-  user.value = receivedName;
-}
 
 const setUserData = (recivedData) =>{
   userData.value = recivedData
 }
 watchEffect(() =>{
-  selectedAssets.value = []
-  assetService.getUserAssets(page.value, limit.value, user.value)
+  assetData.value.selected = []
+    if(!userData.value.name) return
+      assetService.getUserAssets(pagination.value.count, pagination.value.limit, userData.value.name)
                 .then((response)=>{
-                  assets.value = response.data.assets
+                  assetData.value.assets = response.data.assets
                 }).catch((error)=>{
-                    console.log(error);
-                    console.log('wyzej error');
+                    console.error('Bład podczas ładowania urzedzen uzytkownika: ', error)
                 }) 
     
   })
 
 const downloadPDF = async () => {
+  if(!assetData.value.selected){
+    errors.value.push('Brak wybranego sprzętu')
+    setTimeout(() => {
+      errors.value = []
+    }, 5000)
+    return false
+  }
   const { default: html2pdf } = await import('html2pdf.js');
   const element = printTemplateRef.value.printContent;
-  html2pdf().from(element).save('Protokol_Zwrotu.pdf');
+  html2pdf().from(element).save('Protokol_Przekazania.pdf');
 };
 
 const printForm = async () => {
+
+  if(!assetData.value.selected.length){
+    errors.value.push('Brak wybranego sprzętu do wydruku')
+    setTimeout(() => {
+      errors.value = []
+    }, 5000)
+    return false
+  }
 
   const { default: html2pdf } = await import('html2pdf.js');
   const element = printTemplateRef.value.printContent;
@@ -66,8 +68,8 @@ const printForm = async () => {
     .toPdf()
     .get('pdf')
     .then(pdf => {
-      pdf.autoPrint(); // Wymusza okno drukowania
-      window.open(pdf.output('bloburl'), '_blank'); // Otwiera PDF w nowym oknie
+      pdf.autoPrint();
+      window.open(pdf.output('bloburl'), '_blank'); 
     });
 };
 
@@ -75,6 +77,7 @@ const leaveComponent = () => {
   emits("disableWindow");
 };
 </script>
+
 
 <template>
 
@@ -88,7 +91,6 @@ const leaveComponent = () => {
         <label for="autoUser"><b>Podaj Użytkownika:</b></label>
         <AutoComplete 
         name="autoUser"
-        @update-name="setUserFrom"
         @userinfo="setUserData">
 
         </AutoComplete>
@@ -100,7 +102,7 @@ const leaveComponent = () => {
       </div>
       <p v-if="errors.length != 0" class="errorTag">{{ errors[0] }}</p>
       <div class="tableBox">
-            <table id="mainTable" class="mainTable">
+        <table id="mainTable" class="mainTable">
               <tr>
                 <th><input type="checkbox" @change="toggleAll" :checked="allSelected" > </th>
                 <th>Nr IT</th>
@@ -108,11 +110,11 @@ const leaveComponent = () => {
                 <th>Nr Serii</th>
                 <th>Kategoria</th>
               </tr>
-              <tr v-for="asset in assets" :key="asset.id">
+              <tr v-for="asset in assetData.assets" :key="asset.id">
                 <td>
                   <input type="checkbox" 
                   :value="asset" 
-                  v-model="selectedAssets">
+                  v-model="assetData.selected">
                 </td>
                 <td>{{ asset.it_num }}</td>
                 <td>{{ asset.name }}</td>
@@ -130,9 +132,8 @@ const leaveComponent = () => {
   <div class="hidden-print" style="display: none;">
     <printTemplate 
     ref="printTemplateRef"
-    :user="user"
     :userData="userData"
-    :selectedAssets="selectedAssets"
+    :selectedAssets="assetData.selected"
     :date="date"
     :header="header"
   />

@@ -50,6 +50,10 @@ const Asset = sequelize.define(
         type: DataTypes.DATE,
         allowNull: true
     },
+    note:{
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
   },
 );
  

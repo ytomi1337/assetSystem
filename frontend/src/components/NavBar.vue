@@ -4,7 +4,6 @@ import UserToUser from '@/components/actions/UserToUser.vue';
 import TransferProtocol from './protocols/TransferProtocol.vue';
 import ReturnProtocol from './protocols/ReturnProtocol.vue';
 
-const showActionForm = ref(false)
 const activeForm = ref(null);
 
 const disableActiveform = () =>{
@@ -43,6 +42,7 @@ const toggleForm = (formName) => {
           </a>
           <ul class="dropdown-menu">
             <button class="dropdown-item" @click="toggleForm('userToUser')" >Przekazanie sprzetu miedzy uzytkownikami</button>
+            <button class="dropdown-item disabled" @click="toggleForm('userToUser')" >Przekazanie Telefonów miedzy uzytkownikami</button>
           </ul>
         </li>
 
@@ -84,6 +84,8 @@ const toggleForm = (formName) => {
 
 </template>
 <style>
-
+.navbar{
+  background-color: #fff;
+}
 
 </style>

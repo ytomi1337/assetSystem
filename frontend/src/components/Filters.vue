@@ -1,8 +1,9 @@
 <script setup>
 
-import { ref, defineEmits, defineProps, watch , onMounted, computed} from 'vue';
-import assetService from '@/services/assetService';
+import { ref, defineEmits, defineProps, onMounted, } from 'vue';
+import { utilsStore } from '@/stores/mainStorege';
 
+const useUtilsStore = utilsStore()
 const emits = defineEmits(['showCreate', 'filterApply', 'update:modelValue'])
 const props = defineProps(['modelValue',])
 
@@ -16,62 +17,15 @@ const filters = ref({
     status: props.modelValue?.status || '',
     isWarranty: props.modelValue?.isWarranty || '',
 })
-const users = ref([]);
-const userNames = computed(() => users.value.map(users => users.name));
-const categories = ref([]);
-const localizations = ref([]);
-const localizationsNames = computed(() => localizations.value.map(loc => loc.name));
-const statuses = ref ([]);
-const statusesNames = computed(() => statuses.value.map(stat => stat.name));
-const isWarranty = ref(['Aktywna', 'Wygaszona'])
+
 
 onMounted(() => {
-  assetService
-    .getAllUsers()
-    .then((response) => {
-        users.value = response.data
-    })
-    .catch((error) => {
-        console.log(error);
-    });
-
-  assetService
-    .getStatus()
-    .then((response) => {
-      statuses.value = response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  assetService
-    .getCategories()
-    .then((response) => {
-      categories.value = response.data.map(cat => cat.name)
-        .filter((cat)=> cat != "Telefon" && cat != "Karta Sim");
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  assetService
-    .getLocalizations()
-    .then((response) => {
-      localizations.value = response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    useUtilsStore.loadAllData()
 })
-
-// watch(filters, (newFilters) => {
-//     emits('update:modelValue', newFilters);
-// }, { deep: true });
 
 const applyFilters = () =>{
     event.preventDefault();
     emits('filterApply', filters.value)
-    console.log(statusesNames.value);
 }
 
 </script>
@@ -83,11 +37,11 @@ const applyFilters = () =>{
                 <input type="text" class="filterItem" v-model="filters.it_num"  placeholder="Nr It:"/>
                 <input type="text" class="filterItem" v-model="filters.name"  placeholder="Nazwa:"/>
                 <input type="text" class="filterItem" v-model="filters.serialnum"  placeholder="Nr Seryjny:"/> 
-                <v-select class="filterItem" multiple v-model="filters.user_new" :options="userNames" placeholder="Uzytkownik:"/>
-                <v-select class="filterItem" multiple v-model="filters.category" :options="categories" placeholder="Kategoria:"/>
-                <v-select class="filterItem" multiple v-model="filters.localization" :options="localizationsNames" placeholder="Lokalizacja:"/>
-                <v-select class="filterItem" multiple v-model="filters.status" :options="statusesNames" placeholder="Status:"/>
-                <v-select class="filterItem" v-model="filters.isWarranty" :options="isWarranty" placeholder="Gwarancja:"/>   
+                <v-select class="filterItem" multiple v-model="filters.user_new" :options="useUtilsStore.users" placeholder="Uzytkownik:"/>
+                <v-select class="filterItem" multiple v-model="filters.category" :options="useUtilsStore.categories" placeholder="Kategoria:"/>
+                <v-select class="filterItem" multiple v-model="filters.localization" :options="useUtilsStore.localizations" placeholder="Lokalizacja:"/>
+                <v-select class="filterItem" multiple v-model="filters.status" :options="useUtilsStore.statuses" placeholder="Status:"/>
+                <v-select class="filterItem" v-model="filters.isWarranty" :options="useUtilsStore.isWarranty" placeholder="Gwarancja:"/>   
             </div>
             <div class="button-container">
                 <button type="submit" class="applyBtn">Zastosuj</button>

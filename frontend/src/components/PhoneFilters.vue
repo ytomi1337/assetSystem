@@ -1,15 +1,12 @@
 <script setup>
 
 import { ref, defineEmits, defineProps, onMounted,} from 'vue';
-import assetService from '@/services/assetService';
+import { utilsStore } from '@/stores/mainStorege';
 
+const useUtilsStore = utilsStore()
 
 const emits = defineEmits(['showCreate', 'filterApply', 'update:modelValue'])
 const props = defineProps(['modelValue',])
-
-const users = ref([]);
-const categories = ref([]);
-const statuses = ref ([]);
 
 const phoneFilters = ref({
     name: props.modelValue?.name || '',
@@ -28,34 +25,7 @@ const applyFilters = () =>{
 }
 
 onMounted(() => {
-    assetService
-    .getAllUsers()
-    .then((response) => {
-        users.value = response.data.map(users => users.name)
-    })
-    .catch((error) => {
-        console.log(error);
-    });
-
-    assetService
-    .getStatus()
-    .then((response) => {
-      statuses.value = response.data.map(stat => stat.name);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-    assetService
-    .getCategories()
-    .then((response) => {
-        categories.value = response.data.map(cat => cat.name)
-        .filter((cat)=> cat == "Telefon" || cat == "Karta Sim");
-      
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    useUtilsStore.loadAllData();
 })
 </script>
 
@@ -64,13 +34,13 @@ onMounted(() => {
         <form @submit="applyFilters">
             <div class="filter-containter">
                 <input type="text" class="filterItem" v-model="phoneFilters.name"  placeholder="Nazwa:"/>
-                <v-select class="filterItem" multiple v-model="phoneFilters.category" :options="categories" placeholder="Kategoria:"/>
-                <v-select class="filterItem" multiple v-model="phoneFilters.user" :options="users" placeholder="Uzytkownik:"/>
+                <v-select class="filterItem" multiple v-model="phoneFilters.category" :options="useUtilsStore.phoneCategories" placeholder="Kategoria:"/>
+                <v-select class="filterItem" multiple v-model="phoneFilters.user" :options="useUtilsStore.users" placeholder="Uzytkownik:"/>
                 <input type="text" class="filterItem" v-model="phoneFilters.nr_tel"  placeholder="Nr Tel:"/>
                 <input type="text" class="filterItem" v-model="phoneFilters.imei"  placeholder="IMEI:"/>
                 <input type="text" class="filterItem" v-model="phoneFilters.puk"  placeholder="PUK:"/>
                 <input type="text" class="filterItem" v-model="phoneFilters.pin"  placeholder="PIN:"/>
-                <v-select class="filterItem" multiple v-model="phoneFilters.status" :options="statuses" placeholder="Status:"/> 
+                <v-select class="filterItem" multiple v-model="phoneFilters.status" :options="useUtilsStore.statuses" placeholder="Status:"/> 
             </div>
             <div class="button-container">
                 <button type="submit" class="applyBtn">Zastosuj</button>

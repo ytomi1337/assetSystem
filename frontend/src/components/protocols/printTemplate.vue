@@ -2,7 +2,6 @@
 import { ref, defineProps } from 'vue';
 
 defineProps({
-  user: String,
   userData: Object,
   selectedAssets: Array,
   date: String,
@@ -25,7 +24,7 @@ defineExpose({ printContent });
       <!-- Dane użytkownika -->
       <div class="user-info">
         <div class="leftSection">
-            <p><strong>Imię i Nazwisko:</strong> {{ user }}</p>
+            <p><strong>Imię i Nazwisko:</strong> {{ userData.name }}</p>
             <p><strong>Stanowisko:</strong> {{ userData.profession }}</p>
             <p><strong>Dział:</strong> {{ userData.department }}</p>
         </div>

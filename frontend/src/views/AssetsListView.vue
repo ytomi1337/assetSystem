@@ -24,7 +24,6 @@
 
     const showCreateForm = ref(false)
     const showFilterForm = ref(false)
-    const isChange = ref(false)
 
     const filters = ref({})
 
@@ -71,35 +70,23 @@
 
     };
     
-    const pagePlus = () =>{
-        page.value = page.value + 1
-    }
-
-    const pageMinus = () =>{
-        page.value = page.value - 1
-    }
+    const changePage = (direction) => {
+        page.value = Math.max(1, Math.min(totalPages.value, page.value + direction));
+    };
 
     const changeLimit = (limitNum) =>  {
         page.value = 1
         limit.value = limitNum
     }  
     
-    const disableShowCreateForm = (form) =>{
-        if(form == 'create'){
-            showCreateForm.value = false
-        }else{
-            showFilterForm.value = false
+    const toggleFormVisibility = (form) => {
+        if (form === 'create') {
+            showCreateForm.value = !showCreateForm.value;
+            showFilterForm.value = false;
+        } else if (form === 'filter') {
+            showFilterForm.value = !showFilterForm.value;
         }
-
-    }
-    const enableShowCreateForm = (form) => {
-        if(form == 'create'){
-            showCreateForm.value = true
-            showFilterForm.value = false
-        }else{
-            showFilterForm.value = !showFilterForm.value
-        }
-    }
+    };
 
     const formatDate = (isoDate) => {
         let date = new Date(isoDate);
@@ -107,7 +94,6 @@
         if(isoDate != null){
         return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
         }
-        
     }
 
 
@@ -118,25 +104,22 @@
     <div id="deletedMessage" v-if="GStore.deleteMessage">{{ GStore.deleteMessage }}</div>
 
     <transition name="fade">
-        <AssetCreate
-         @showCreate="disableShowCreateForm('create')" 
-         v-if="showCreateForm">
-         </AssetCreate>
+        <AssetCreate @showCreate="toggleFormVisibility('create')" v-if="showCreateForm"></AssetCreate>
     </transition>
 
     <div class="containerBox">
         
         <div class="filterBar">
-            <button class="navbtn createBtn" @click="enableShowCreateForm('create')">Utworz</button>
-            <button class="navbtn" @click="enableShowCreateForm('filter')" >Filtr</button>
+            <button class="navbtn createBtn" @click="toggleFormVisibility('create')">Utworz</button>
+            <button class="navbtn" @click="toggleFormVisibility('filter')">Filtr</button>
         </div>
 
         <transition name="slide-down">
-             <Filters 
-             @showCreate="disableShowCreateForm('filter')" 
-             @filterApply="filterAssets" 
-             v-if="showFilterForm"
-             v-model="filters">
+            <Filters 
+                @showCreate="toggleFormVisibility('filter')" 
+                @filterApply="filterAssets" 
+                v-if="showFilterForm"
+                v-model="filters">
             </Filters>
         </transition>
 
@@ -169,10 +152,22 @@
             </tr>
             
         </table>
+        <div class="card" style="width: 18rem;"
+        v-for="asset in assets">
+            <div class="card-body">
+                <h5 class="card-title">{{asset.name}}</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">{{asset.it_num}}</h6>
+                <p class="card-text">{{ asset.user_new }}</p>
+                <p class="card-text">{{ asset.serialnum }}</p>
+                <a href="#" class="card-link"><AssetActionData :asset="asset"></AssetActionData></a>
+                
+            </div>
+        </div>
+        
         <div class="tableFotter">
             <div class="paginationSection">
-                <button @click="pageMinus" v-if="page != 1"> < </button>
-                <button @click="pagePlus" v-if="totalPages > page" > > </button>
+                <button @click="changePage(-1)" v-if="page > 1"> < </button>
+                <button @click="changePage(1)" v-if="page < totalPages"> > </button>
             </div>
             <div class="rowsSection">
                 <button @click="changeLimit(limitOne)">{{ limitOne }}</button>
@@ -180,6 +175,8 @@
                 <button @click="changeLimit(limitThree)">{{ limitThree }}</button>
             </div>
         </div>
+
+        
         
     </div>
   
@@ -333,5 +330,14 @@
             color: #fff;
         }
     }
-
+    @media only screen and (min-width: 600px) {
+        .card{
+            display: none;
+        }
+    }
+    @media only screen and (max-width: 600px) {
+        .mainTable{
+            display: none;
+        }
+    }
 </style>
