@@ -7,7 +7,7 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
 
   const scorlledNav = ref(null)
   const mobileNav = ref(null)
-  const mobile = ref(window.innerWidth <= 1050)
+  const mobile = ref(window.innerWidth <= 950)
   const activeForm = ref(null);
 
   const disableActiveform = () =>{
@@ -30,8 +30,8 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
   });
 
   const checkMobile = () => {
-    mobile.value = window.innerWidth <= 1050;
-    mobileNav.value =  mobileNav.value ? window.innerWidth <= 1050 : false
+    mobile.value = window.innerWidth <= 950;
+    mobileNav.value =  mobileNav.value ? window.innerWidth <= 950 : false
   };
   
   const updateScroll= () => {
@@ -90,6 +90,7 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
           </div>
         </li>
       </ul>
+
       <div class="icon">
         <i @click="toggleMobileNav" v-show="mobile" :class="{'icon-active': mobileNav}" class="fa-solid fa-bars" ></i>
       </div>
@@ -99,7 +100,7 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
         <li><RouterLink :to="{ name: 'phone-list' }" class="link" >Telefony</RouterLink></li>
         <li><RouterLink :to="{ name: '' }" class="link" >Inwentaryzacja</RouterLink></li>
         <li class="dropdown">
-          <button class="dropbtn">Akcje <i class="fa-solid fa-chevron-down"></i></button>
+          <button>Akcje <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
             <a href="#">Przekazanie Sprzętu między użytkownikami</a>
             <a href="#">Przekazanie Telefonów między użytkownikami</a>
@@ -107,7 +108,7 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
         </li>
         
         <li class="dropdown">
-          <button class="dropbtn">Protokoły <i class="fa-solid fa-chevron-down"></i></button>
+          <button >Protokoły <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
             <a href="#">Protokół Przekazania</a>
             <a href="#">Protokół Zwortu</a>
@@ -138,7 +139,15 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
 </template>
 
 <style scoped>
+ button{
+          border: none;
+          background-color: transparent;
+          font-weight: 500;
+          font-size: 17px;
+        }
+
   header{
+    
     background-color: rgb(255, 255, 255);
     z-index: 99;
     width: 100%;
@@ -149,13 +158,15 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
     nav{
       position: relative;
       display: flex;
+      align-items: center;
+      justify-content: space-between;
       flex-direction: row;
       padding: 12px 0;
       transition: .5s ease all;
       width: 100%;
       margin: 0 auto;
       @media(min-width: 1150px){
-        max-width: 1150px;
+        max-width: 1550px;
       }
 
       ul,
@@ -170,12 +181,6 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
         padding: 16px;
         gap:  16px;
 
-        button{
-          border: none;
-          background-color: transparent;
-          font-weight: 500;
-          font-size: 17px;
-        }
       }
 
       .link{
@@ -200,8 +205,9 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
       .navigation{
         display: flex;
         align-items: center;
-        flex: 1;
-        justify-content: flex-end;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
         
         .dropdown {
           position: relative;
@@ -209,6 +215,7 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
         }
         .dropdown-content{
           display: block;
+          z-index: 100;
           position: absolute;
           padding: 10px 15px;
           background-color: #fff;
