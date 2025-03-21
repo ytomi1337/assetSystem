@@ -67,7 +67,7 @@
 
 <template>
   <div class="mainbox">
-      <div class="reminderContainer">
+      <!-- <div class="reminderContainer">
         <div class="accordion">
 
           <div 
@@ -168,7 +168,7 @@
       </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
 </template>
 

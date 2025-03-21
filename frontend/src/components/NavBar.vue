@@ -42,6 +42,7 @@ const toggleForm = (formName) => {
           </a>
           <ul class="dropdown-menu">
             <button class="dropdown-item" @click="toggleForm('userToUser')" >Przekazanie sprzetu miedzy uzytkownikami</button>
+            <button class="dropdown-item disabled" @click="toggleForm('userToUser')" >Przekazanie Telefonów miedzy uzytkownikami</button>
           </ul>
         </li>
 
