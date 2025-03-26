@@ -11,6 +11,7 @@ export const utilsStore = defineStore("utlisStore", () =>{
   const users = ref([]);
   const isWarranty = ref(['Aktywna', 'Wygaszona']);
   const error = ref(null);
+  const loading = ref(false)
 
   
   const fetchData = async (apiMethod, targetArr) => {
@@ -36,6 +37,7 @@ export const utilsStore = defineStore("utlisStore", () =>{
   };
   
   const loadAllData = async () => { 
+    loading.value = true
     try {
       await Promise.all([
         fetchData("getStatus", statuses),
@@ -45,7 +47,9 @@ export const utilsStore = defineStore("utlisStore", () =>{
       ]);
     } catch (err) {
       console.error("Error during data loading:", err);
-    } 
+    } finally {
+      loading.value = false;
+    }
   };
 
   const formatDate = (dateString) => {
@@ -62,6 +66,7 @@ export const utilsStore = defineStore("utlisStore", () =>{
     localizations,
     error,
     isWarranty,
+    loading,
     loadAllData,
     formatDate
   };

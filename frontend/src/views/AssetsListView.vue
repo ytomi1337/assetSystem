@@ -100,8 +100,6 @@
 </script>
 
 <template>
-    <div id="flashMessage" v-if="GStore.flashMessage">{{ GStore.flashMessage }}</div>
-    <div id="deletedMessage" v-if="GStore.deleteMessage">{{ GStore.deleteMessage }}</div>
 
     <transition name="fade">
         <AssetCreate @showCreate="toggleFormVisibility('create')" v-if="showCreateForm"></AssetCreate>
@@ -231,36 +229,6 @@
   transform-origin: top;
 } 
 
-
-    @keyframes yellowfade{
-        from{
-            background: rgb(144, 238, 144);
-        }
-        to{
-            background: rgba(144, 238, 144, 0.185);
-        }
-    }
-
-    @keyframes redFade{
-        from{
-            background: red;
-        }
-        to{
-            background: rgba(245, 214, 214, 0.993);
-        }
-    }
-    #flashMessage{
-        animation-name: yellowfade;
-        text-align: center;
-        animation-duration: 7s;
-    }
-
-    #deletedMessage{
-        color: #fff;
-        animation-name: redFade;
-        text-align: center;
-        animation-duration: 7s;
-    }
     th{
         text-align: center;
         background-color: #fdf9f9;
@@ -269,6 +237,7 @@
     td{
         text-align: center;
         padding-bottom: 5px;
+        border-bottom: 1px solid #f3efef;
     }
     .containerBox{
         margin-left: 10%;
@@ -278,7 +247,6 @@
     .mainTable{
         width: 100%;
         margin-top: 1%;
-        border-top: 1px solid black;
     }
     .filterBar{
         margin-top: 3%;
