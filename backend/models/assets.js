@@ -1,10 +1,12 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = global.sequelize;
- 
+const Category = require('./category');
+const Localization = require('./localization')
+const Status = require('./status')
+
 const Asset = sequelize.define(
   'assets',
   {
-    // Model attributes are defined here
     name: {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -15,46 +17,68 @@ const Asset = sequelize.define(
       unique: true,
     },
     serialnum: {
-        type: DataTypes.TEXT,
-        allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     user_new: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
     },
     user_old: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: true,
     },
-    localization: {
-      type: DataTypes.TEXT,
-      allowNull: true
+    localizationId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'Localizations', //<-- Nazwa Tabeli
+        key: 'id'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
     },
-    category:{
-        type: DataTypes.TEXT,
-        allowNull: true
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'categories', //<-- Nazwa Tabeli
+        key: 'id'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
     },
-    status:{
-        type:DataTypes.TEXT,
-        allowNull: true
+    statusId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'Status', //<-- Nazwa Tabeli
+        key: 'id'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
     },
-    recipt_date:{
+    recipt_date: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
     },
-    return_date:{
+    return_date: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
     },
-    warranty_date:{
-        type: DataTypes.DATE,
-        allowNull: true
+    warranty_date: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
-    note:{
+    note: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: true,
     },
   },
 );
- 
+
+Asset.belongsTo(Category, { foreignKey: 'categoryId' });
+Asset.belongsTo(Localization, { foreignKey: 'localizationId' });
+Asset.belongsTo(Status, { foreignKey: 'statusId' });
+
 module.exports = Asset;

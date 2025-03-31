@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = global.sequelize;
 
 const Status = sequelize.define(
-  'Status', // Model name
+  'status', 
   {
     name: {
       type: DataTypes.TEXT,
@@ -10,7 +10,7 @@ const Status = sequelize.define(
     },
   },
   {
-    tableName: 'Status', 
+    tableName: 'status', 
     timestamps: true,
   }
 );

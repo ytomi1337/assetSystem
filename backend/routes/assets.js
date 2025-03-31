@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var Asset = require('../models/assets.js');
+var Category = require('../models/category.js');
+var Localization = require('../models/localization.js');
+var Status = require('../models/status.js');
 const { Sequelize, where, Op } = require('sequelize');
 const { body, validationResult } = require('express-validator')
 
@@ -17,7 +20,21 @@ router.get('/assets', function(req, res){
         Asset.findAll({
             offset: (page -1) * limit,
             limit: (limit),
-            order: [ [sortKey, sortValue] ]
+            order: [ [sortKey, sortValue] ],
+            include: [
+                {
+                    model: Category,
+                    attributes: ['name'],
+                },
+                {
+                    model: Localization,
+                    attributes: ['name'],
+                },
+                {
+                    model: Status,
+                    attributes: ['name'],
+                }
+            ]
         })
     ]).then(([count, assets]) => {
         res.send({
@@ -37,38 +54,42 @@ router.get('/assets/:id', function(req, res){
 })
 
 router.post('/assets', [ 
-    // body('serialnum').isInt().withMessage('SN must be integer'),
-    body('it_num').isLength({min: 10, max: 10}).withMessage('Nr Działu IT musi zawierac 10 znaków!'),
-    body('serialnum').isLength({max: 30}).withMessage('Nr Seryjny musi zawierac  mniej niż 30 znaków!'),
-    body('user_new').isLength({max: 30}).withMessage('Pole użytkownik musi zawierac  mniej niż 30 znaków!'),
-    body('localization').isLength({max: 30}).withMessage('Pole lokalizacja musi zawierac  mniej niż 30 znaków!'),
-    body('category').isLength({max: 30}).withMessage('Pole Kategoria musi zawierac  mniej niż 30 znaków!'),
-    body('status').isLength({max: 30}).withMessage('Pole Status musi zawierac  mniej niż 30 znaków!'),
+    // body('it_num').isLength({min: 10, max: 10}).withMessage('Nr Działu IT musi zawierac 10 znaków!'),
+    // body('serialnum').isLength({max: 30}).withMessage('Nr Seryjny musi zawierac  mniej niż 30 znaków!'),
+    ], async(req, res) =>{
     
-  
-
-    ], function(req, res){
-
     const errors = validationResult(req)
 
     if(!errors.isEmpty()){
         return res.status(400).json({ errors: errors.array() })
     }
-    Asset.create({
-        name: req.body.name,
-        it_num: req.body.it_num,
-        serialnum: req.body.serialnum,
-        user_new: req.body.user_new,
-        localization: req.body.localization,
-        category: req.body.category,
-        status: req.body.status,
-        recipt_date: req.body.recipt_date?new Date(req.body.recipt_date):null,
-        warranty_date: req.body.warranty_date?new Date(req.body.warranty_date):null
-    }).then((asset)=>{
-        res.send(asset)
-    }).catch(()=>{
-        return res.status(400).json({ errors: [{ field: 'it_num', msg: 'Nr działu IT musi byc unikalny!' }] })
-    })
+    
+    try {
+
+        const category = req.body.category ? await Category.findOne({ where: { name: req.body.category } }) : null;
+        const localization = req.body.localization ? await Localization.findOne({ where: { name: req.body.localization } }) : null;
+        const status = req.body.status ? await Status.findOne({ where: { name: req.body.status } }) : null;
+
+
+        // 2️⃣ Tworzymy nowy asset używając znalezionych ID
+        const asset = await Asset.create({
+            name: req.body.name,
+            it_num: req.body.it_num,
+            serialnum: req.body.serialnum,
+            user_new: req.body.user_new,
+            localizationId: localization ? localization.id : null,
+            categoryId: category ? category.id : null,
+            statusId: status ? status.id : null,
+            recipt_date: req.body.recipt_date ? new Date(req.body.recipt_date) : null,
+            warranty_date: req.body.warranty_date ? new Date(req.body.warranty_date) : null
+        });
+
+        res.status(201).json(asset);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Błąd serwera' });
+    }
+   
 })
 
 router.post('/assets/filter', function(req, res){

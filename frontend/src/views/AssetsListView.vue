@@ -37,6 +37,7 @@
                     assets.value = response.data.assets
                     totalNum.value = response.data.count
                     totalPages.value = totalNum.value / limit.value
+                    console.log(assets.value);
                     
                 }).catch((error)=>{
                     console.log(error);
@@ -141,9 +142,9 @@
                 <td>{{ asset.name }}</td>
                 <td>{{ asset.serialnum }}</td>
                 <td>{{ asset.user_new }}</td>
-                <td>{{ asset.category }}</td>
-                <td>{{ asset.localization }}</td>
-                <td>{{ asset.status }}</td>
+                <td>{{ asset.category?.name }}</td>
+                <td>{{ asset.localization?.name }}</td>
+                <td>{{ asset.status?.name }}</td>
                 <td>{{ formatDate(asset.warranty_date) }}</td>
                 <td>{{ formatDate(asset.recipt_date)}}</td>
                 <td><AssetActionData :asset="asset"></AssetActionData></td>
