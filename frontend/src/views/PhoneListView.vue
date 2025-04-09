@@ -261,6 +261,7 @@ import { GStore } from '@/main';
     td{
         text-align: center;
         padding-bottom: 5px;
+        border-bottom: 1px solid #dedede;
     }
     .containerBox{
         margin-left: 10%;
@@ -270,7 +271,6 @@ import { GStore } from '@/main';
     .mainTable{
         width: 100%;
         margin-top: 1%;
-        border-top: 1px solid black;
     }
     .filterBar{
         margin-top: 3%;

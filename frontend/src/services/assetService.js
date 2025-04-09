@@ -31,6 +31,9 @@ export default {
     getCategories(){
         return apiAssetClient.get('/categories')
     },
+    countCategories(){
+        return apiAssetClient.get('/categories/count')
+    },
     getLocalizations(){
         return apiAssetClient.get('/localizations')
     },

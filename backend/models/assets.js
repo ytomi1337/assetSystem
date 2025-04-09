@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = global.sequelize;
  
 const Asset = sequelize.define(
-  'asset',
+  'assets',
   {
     // Model attributes are defined here
     name: {
