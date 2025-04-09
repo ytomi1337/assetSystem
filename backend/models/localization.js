@@ -8,6 +8,10 @@ const Localization = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: false
     }
+  },
+  {
+    tableName: 'localizations', 
+    timestamps: true,
   }
 );
 

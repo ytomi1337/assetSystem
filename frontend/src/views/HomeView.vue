@@ -1,42 +1,50 @@
 <script setup>
-  import { ref,onMounted, computed } from 'vue';
-  import { utilsStore } from '@/stores/mainStorege';
-  import DoughnutChart from '@/components/charts/DoughnutChart.vue';
-  import BarChart from '@/components/charts/BarChart.vue';
+import { ref, onMounted } from 'vue';
+import { utilsStore } from '@/stores/mainStorege';
+import assetService from '@/services/assetService';
+import DoughnutChart from '@/components/charts/DoughnutChart.vue';
+import BarChart from '@/components/charts/BarChart.vue';
 
-  const isLoading = ref(true)
-  const assetsData = ref({})
-  const phonesData = ref({})
-  const assetLocalization = ref({})
-  const useUtilsStore = utilsStore()
+const isLoading = ref(true);
+const assetsData = ref(null);
+const phonesData = ref(null);
+const assetLocalization = ref(null);
 
-  onMounted (async () =>{
-    await useUtilsStore.loadAllData();
-    isLoading.value = useUtilsStore.loading
+const useUtilsStore = utilsStore();
 
-    if(!isLoading.value){
+onMounted(async () => {
+    try {
+      const response = await assetService.countCategories();
+      
+
+      const assetLabels = response.data.assets.map(item => item.category);
+      const assetCounts = response.data.assets.map(item => Number(item.count));
+
+      const phoneLabels = response.data.phones.map(item => item.category);
+      const phoneCounts = response.data.phones.map(item => Number(item.count));
+
       assetsData.value = {
-        labels: useUtilsStore.categories,
+        labels: assetLabels,
         datasets: [
           {
-            data: [30,50,60,30,20],
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FC3192', 'FD92A1']
+            data: assetCounts,
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FC3192', '#FD92A1']
           }
         ]
-      }
+      };
 
       phonesData.value = {
-        labels: useUtilsStore.phoneCategories,
+        labels: phoneLabels, 
         datasets: [
           {
-            data: [30,50],
+            data: phoneCounts,
             backgroundColor: ['#FF6384', '#36A2EB']
           }
         ]
-      }
+      };
 
       assetLocalization.value = {
-        labels: [ 'January', 'February', 'March'],
+        labels: ['January', 'February', 'March'],
         datasets: [
           {
             label: 'Data One',
@@ -44,10 +52,12 @@
             data: [40, 20, 12]
           }
         ]
-      }
+      };
+    } catch (error) {
+      console.error('Błąd przy ładowaniu danych do wykresów:', error);
     }
+});
 
-  })
 
 
   // const reminders = ref([])
@@ -112,13 +122,15 @@
 <template>
   <div class="home-container">
     <div class="home-box box1">
-      <div v-if="isLoading">Ładowanie danych...</div>
+      <h1>Sprzęt IT</h1>
+      <div v-if="!assetsData">Ładowanie danych...</div>
       <div v-else>
         <DoughnutChart :chartData="assetsData" />
       </div>
     </div>
     <div class="home-box box1">
-      <div v-if="isLoading">Ładowanie danych...</div>
+      <h1>Phones</h1>
+      <div v-if="!phonesData">Ładowanie danych...</div>
       <div v-else>
         <DoughnutChart :chartData="phonesData" />
       </div>
@@ -127,23 +139,21 @@
       <h3>Reminders</h3>
     </div>
   </div>
+
   <div class="home-container">
-    <div class="home-box box2">
-      <div v-if="isLoading">Ładowanie danych...</div>
+    <div class="home-box box2" v-if="assetsData">
+      <DoughnutChart :chartData="assetsData" />
+    </div>
+    <div class="home-box box1">
+      <div v-if="!phonesData">Ładowanie danych...</div>
       <div v-else>
-        <DoughnutChart :chartData="assetsData" />
+        <DoughnutChart :chartData="phonesData" />
       </div>
     </div>
     <div class="home-box box1">
-      <div v-if="isLoading">Ładowanie danych...</div>
+      <div v-if="!phonesData">Ładowanie danych...</div>
       <div v-else>
-        <DoughnutChart :chartData="assetsData" />
-      </div>
-    </div>
-    <div class="home-box box1">
-      <div v-if="isLoading">Ładowanie danych...</div>
-      <div v-else>
-        <DoughnutChart :chartData="assetsData" />
+        <DoughnutChart :chartData="phonesData" />
       </div>
     </div>
   </div>

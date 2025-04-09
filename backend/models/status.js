@@ -10,7 +10,7 @@ const Status = sequelize.define(
     },
   },
   {
-    tableName: 'Status', 
+    tableName: 'statuses', 
     timestamps: true,
   }
 );

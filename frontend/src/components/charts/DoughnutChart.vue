@@ -10,10 +10,8 @@ import {
   CategoryScale
 } from 'chart.js'
 
-// Rejestracja modułów Chart.js
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
-// Definicja props
 const props = defineProps({
   chartData: {
     type: Object,
