@@ -1,17 +1,49 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { utilsStore } from '@/stores/mainStorege';
 import assetService from '@/services/assetService';
 import DoughnutChart from '@/components/charts/DoughnutChart.vue';
-import BarChart from '@/components/charts/BarChart.vue';
+import MenageTables from '@/components/MenageTables.vue';
 
-const isLoading = ref(true);
 const assetsData = ref(null);
 const phonesData = ref(null);
 const assetLocalization = ref(null);
 
-const useUtilsStore = utilsStore();
+const activeForm = ref(null);
+const formData = ref({})
 
+
+const toggleForm = (formName) => {
+    activeForm.value = true
+
+    if (formName == 'menageUsers'){
+      formData.value ={
+        header: 'Zarządzanie Użytkownikami',
+        type: 'users'
+      }
+    }
+    if (formName == 'menageLocalizations'){
+      formData.value ={
+        header: 'Zarządzanie Lokalizacjami',
+        type: 'localizations'
+      }
+    }
+    if (formName == 'menageCategories'){
+      formData.value ={
+        header: 'Zarządzanie Kategoriami',
+        type: 'categories'
+      }
+    }
+    if (formName == 'menageStatuses'){
+      formData.value ={
+        header: 'Zarządzanie Statusami',
+        type: 'statuses'
+      }
+    }
+  };
+
+const disableActiveform = () =>{
+  activeForm.value = null
+}
 onMounted(async () => {
     try {
       const response = await assetService.countCategories();
@@ -122,14 +154,12 @@ onMounted(async () => {
 <template>
   <div class="home-container">
     <div class="home-box box1">
-      <h1>Sprzęt IT</h1>
       <div v-if="!assetsData">Ładowanie danych...</div>
       <div v-else>
         <DoughnutChart :chartData="assetsData" />
       </div>
     </div>
     <div class="home-box box1">
-      <h1>Phones</h1>
       <div v-if="!phonesData">Ładowanie danych...</div>
       <div v-else>
         <DoughnutChart :chartData="phonesData" />
@@ -141,8 +171,27 @@ onMounted(async () => {
   </div>
 
   <div class="home-container">
-    <div class="home-box box2" v-if="assetsData">
-      <DoughnutChart :chartData="assetsData" />
+    <div class="home-box menage" >
+      <ul>
+      <li> 
+        <a href="#" @click="toggleForm('menageUsers')">Użytkownicy <i class="fa-solid fa-arrow-right"></i></a>
+      </li>
+      <li> 
+        <a href="#" @click="toggleForm('menageLocalizations')">Lokalizacje <i class="fa-solid fa-arrow-right"></i></a>
+      </li>
+      <li> 
+        <a href="#" @click="toggleForm('menageCategories')">Kategorie <i class="fa-solid fa-arrow-right"></i></a>
+      </li>
+      <li> 
+        <a href="#" @click="toggleForm('menageStatuses')">Statusy <i class="fa-solid fa-arrow-right"></i></a>
+      </li>
+      </ul>
+    </div>
+    <div class="home-box box1">
+      <div v-if="!phonesData">Ładowanie danych...</div>
+      <div v-else>
+        <DoughnutChart :chartData="phonesData" />
+      </div>
     </div>
     <div class="home-box box1">
       <div v-if="!phonesData">Ładowanie danych...</div>
@@ -157,6 +206,12 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+
+  <MenageTables 
+    @disableWindow="disableActiveform" 
+    v-if="activeForm"
+    :formData="formData">
+  </MenageTables>
 </template>
 
 <style>
@@ -181,7 +236,25 @@ onMounted(async () => {
     width: 25%;
   }
   .box2{
+    padding: 20px;
     width: 50%;
   }
+  .menage{
+    padding: 20px;
+    width: 25%;
+    text-align: left;
+    justify-content: start;
+    ul{
+      list-style: none;
+    }
+    li{
+      padding: 5px 0;
+    }
+    a{
+      text-decoration: none;
+      color: black;
+    }
   }
+  }
+  
 </style>
