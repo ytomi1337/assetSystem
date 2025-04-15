@@ -6,9 +6,9 @@ const { body, validationResult } = require('express-validator')
 
 
 router.get('/users', function(req, res){
-    const whereClause = {}; // Tworzymy pusty obiekt warunków
+    const whereClause = {};
 
-if (req.query.userName != undefined) { // Sprawdzamy, czy userName jest podane
+if (req.query.userName != undefined) { 
     whereClause.name = {
         [Op.iLike]: req.query.userName + '%'
     };
@@ -21,6 +21,22 @@ if (req.query.userName != undefined) { // Sprawdzamy, czy userName jest podane
         res.send(error.msg)
         console.log(error)
     })
+})
+
+router.post('/users', async (req,res)=>{
+    try{
+       await Users.create({
+        name: req.body.name,
+        profession: req.body.profession,
+        department: req.body.department
+    }).then((user)=>{
+            res.status(200).json({ message: "User added corectly: ", user})
+        }).catch((error)=>{
+            return res.status(500).json({message: "Errror while adding a user", error})
+        })
+    }catch(error){
+        console.log('Error podczas dodawania Użytkownika: ', error);
+    }
 })
 
 module.exports = router;
