@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Asset = require('../models/assets.js');
+var ActivityLog = require('../models/activitylog.js')
 const { Sequelize, where, Op } = require('sequelize');
 const { body, validationResult } = require('express-validator')
 
@@ -65,6 +66,15 @@ router.post('/assets', [
         recipt_date: req.body.recipt_date?new Date(req.body.recipt_date):null,
         warranty_date: req.body.warranty_date?new Date(req.body.warranty_date):null
     }).then((asset)=>{
+        ActivityLog.create({
+            action: 'AddedToDB',
+            it_number: asset.it_num,
+            deviceId: asset.id,
+            user: 'admin',
+            targetUser: asset.user_new,
+            operationNumber: 'AAA-TEST',
+            description: `Dodano nowe urządzenie: ${asset.name}`
+        })
         res.send(asset)
     }).catch(()=>{
         return res.status(400).json({ errors: [{ field: 'it_num', msg: 'Nr działu IT musi byc unikalny!' }] })
@@ -195,6 +205,15 @@ router.patch('/assets/:id', async(req, res) => {
 
         await asset.update(changes)
 
+        ActivityLog.create({
+            action: 'Edited',
+            it_number: asset.it_num,
+            deviceId: asset.id,
+            user: 'admin',
+            targetUser: asset.user_new,
+            operationNumber: 'AAA-TEST',
+            description: `Edytowano urządzenie ${asset.name}, Zmiany: ${changes}`
+        })
         res.status(200).json({ message: "Asset updated correctly", asset });
     }catch(error){
         console.log("Update Error:", error);
@@ -210,6 +229,7 @@ router.put('/assets/changeOwner', async(req, res) =>{
             { user_new: user },
             { where: { id: ids}}
         )
+        
         res.status(200).json({ message: "Asset updated correctly"})
     }catch(error){
         console.log("Update Error:", error);

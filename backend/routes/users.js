@@ -51,6 +51,14 @@ router.get('/usersData', function(req, res){
             users: users
         })
     })
+    // Users.findAll({
+    //     where: whereClause
+    // }).then((users) =>{
+    //     res.send(users)
+    // }).catch((error)=>{
+    //     res.send(error.msg)
+    //     console.log(error)
+    // })
 })
 router.post('/users', async (req,res)=>{
     try{

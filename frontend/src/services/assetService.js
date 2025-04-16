@@ -52,8 +52,8 @@ export default {
     getAllUsers(){
         return apiAssetClient.get('/users')
     },
-    getUsersData(){
-        return apiAssetClient.get('/usersData')
+    getUsersData(page, limit){
+        return apiAssetClient.get(`/usersData?page=${page}&limit=${limit}`)
     },
     addUser(data){
         return apiAssetClient.post('/users', data)

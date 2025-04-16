@@ -127,8 +127,8 @@ const setUser = (type, name) => {
             </table>
           </div>
           <div class="midBox">
-            <button @click="transferAssets(assetsData, receivedData)" :disabled="isDisabled">></button>
-            <button @click="transferAssets(receivedData, assetsData)" :disabled="isDisabled"><</button>
+            <button  class="paginationBtn3" @click="transferAssets(assetsData, receivedData)" :disabled="isDisabled"><i class="fa-solid fa-chevron-right"></i></button>
+            <button class="paginationBtn3" @click="transferAssets(receivedData, assetsData)" :disabled="isDisabled"><i class="fa-solid fa-chevron-left"></i></button>
           </div>
           <div class="tableBox rightBox">
             <table class="mainTable">
@@ -157,8 +157,8 @@ const setUser = (type, name) => {
         
         <div class="btnSection">
           <div>
-            <button id="paginationBtn1" @click="changePage(-1)" v-if="pagination.page > 1"><</button>
-            <button id="paginationBtn" @click="changePage(1)" v-if="total.pages > pagination.page">></button>
+            <button id="paginationBtn1" @click="changePage(-1)" v-if="pagination.page > 1"><i class="fa-solid fa-chevron-left"></i></button>
+            <button id="paginationBtn" @click="changePage(1)" v-if="total.pages > pagination.page"><i class="fa-solid fa-chevron-right"></i></button>
           </div>
           <div>
             <button class="applyBtn" @click="applyFunction">Zastosuj</button>
@@ -295,6 +295,13 @@ input:hover{
     background-color: #eb1414d7;
     color: white;
   }
+}
+
+.paginationBtn3{
+  border-bottom: 1px solid #f3efef;
+  border-style: none;
+  background-color: transparent;
+  padding: 5px 15px;
 }
 
 </style>

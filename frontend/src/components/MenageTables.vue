@@ -14,7 +14,13 @@ const props = defineProps({
 const useUtilsStore = utilsStore()
 
 const data = ref(null)
+const totalNum = ref(null)
+const totalPages = ref(null)
+
 const activeForm = ref('mainView')
+
+const page = ref(1)
+const limit = ref(20)
 
 const newEvent = ref({
   name: '',
@@ -27,11 +33,20 @@ onMounted(async() => {
 
   try{
     if(props.formData.type == 'users'){
-      await assetService.getUsersData().then((response)=>{
-        data.value = response.data.users.map(user => user.name)
-      }).catch((error) =>{
+      watchEffect(() => {
+        assetService.getUsersData(page.value, limit.value).then((response) => {
+          data.value = response.data.users
+          totalNum.value = response.data.count
+          totalPages.value = totalNum.value / limit.value
+        }).catch((error) =>{
         console.log('Bład wczytywania uzytkownikow: ', error);
       })
+      })
+      // await assetService.getUsersData().then((response)=>{
+      //   data.value = response.data.users.map(user => user.name)
+      // }).catch((error) =>{
+      //   console.log('Bład wczytywania uzytkownikow: ', error);
+      // })
     }
     if(props.formData.type == 'localizations'){
       data.value = useUtilsStore.localizations
@@ -125,6 +140,16 @@ const disableForm = () => {
   emits("disableWindow")
 }
 
+const changePage = (direction) => {
+        if (direction == -1){
+          page.value = page.value - 1
+        }
+
+        if (direction == 1){
+          page.value = page.value + 1
+        }
+    };
+
 
 </script>
 
@@ -151,14 +176,21 @@ const disableForm = () => {
           
         </tr>
         <tr v-for="(item, index) in data" :key="index" > 
-            <td>{{ index + 1 }}</td>
-            <td>{{ item }}</td>
+            <td v-show="props.formData.type != 'users'">{{ index }}</td>
+            <td v-show="props.formData.type != 'users'">{{ item }}</td>
+            <td v-if="props.formData.type == 'users'">{{ item.id }}</td>
+            <td v-if="props.formData.type == 'users'">{{ item.name }}</td>
             <td>
               <button @click="deleteEvent(item)" style="color: rgba(214, 30, 30, 0.781);" ><i class="fa-solid fa-trash"></i> </button>
               <button style="color: #71cc5eda;" v-if="props.formData.type == 'users'"><i class="fa-solid fa-user-pen"></i> </button>
             </td>
         </tr>
+        <div class="paginationSection">
+                <button class="paginationBtn" @click="changePage(-1)" v-if="page > 1"> <i class="fa-solid fa-chevron-left"></i> </button>
+                <button class="paginationBtn" @click="changePage(1)" v-if="page < totalPages"> <i class="fa-solid fa-chevron-right"></i> </button>
+            </div>
       </table>
+      
       
         <form @submit="crtEvent" v-if="activeForm == 'create'" class="createContainter">
             <div class="formRecord">
@@ -270,5 +302,9 @@ button{
   border-radius: 5px;
 }
 
+.paginationBtn{
+  border-bottom: 1px solid #f3efef;
+  padding: 5px 15px;
+}
 
 </style>
