@@ -52,6 +52,9 @@ export default {
     getAllUsers(){
         return apiAssetClient.get('/users')
     },
+    getUsersData(){
+        return apiAssetClient.get('/usersData')
+    },
     addUser(data){
         return apiAssetClient.post('/users', data)
     },

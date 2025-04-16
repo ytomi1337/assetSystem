@@ -7,12 +7,12 @@ const { body, validationResult } = require('express-validator')
 
 router.get('/users', function(req, res){
     const whereClause = {};
-
-if (req.query.userName != undefined) { 
-    whereClause.name = {
-        [Op.iLike]: req.query.userName + '%'
-    };
-}
+    
+    if (req.query.userName != undefined) { 
+        whereClause.name = {
+            [Op.iLike]: req.query.userName + '%'
+        };
+    }
     Users.findAll({
         where: whereClause
     }).then((users) =>{
@@ -23,6 +23,35 @@ if (req.query.userName != undefined) {
     })
 })
 
+
+router.get('/usersData', function(req, res){
+    const whereClause = {};
+
+    const page = Number(req.query.page) || 1
+    const limit = Number(req.query.limit) || 20
+    const sortKey = req.query.sortKey || 'name'
+    const sortValue = req.query.sortValue || 'asc'
+
+    if (req.query.userName != undefined) { 
+        whereClause.name = {
+            [Op.iLike]: req.query.userName + '%'
+        };
+    }
+    Promise.all([
+        Users.count(),
+        Users.findAll({
+            where: whereClause,
+            offset: (page -1) * limit,
+            limit: (limit),
+            order: [ [sortKey, sortValue] ]
+        })
+    ]).then(([count, users]) => {
+        res.send({
+            count: count,
+            users: users
+        })
+    })
+})
 router.post('/users', async (req,res)=>{
     try{
        await Users.create({

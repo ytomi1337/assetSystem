@@ -27,8 +27,11 @@ onMounted(async() => {
 
   try{
     if(props.formData.type == 'users'){
-      console.log('users');
-      data.value = useUtilsStore.users
+      await assetService.getUsersData().then((response)=>{
+        data.value = response.data.users.map(user => user.name)
+      }).catch((error) =>{
+        console.log('Bład wczytywania uzytkownikow: ', error);
+      })
     }
     if(props.formData.type == 'localizations'){
       data.value = useUtilsStore.localizations
@@ -148,7 +151,7 @@ const disableForm = () => {
           
         </tr>
         <tr v-for="(item, index) in data" :key="index" > 
-            <td>{{ index }}</td>
+            <td>{{ index + 1 }}</td>
             <td>{{ item }}</td>
             <td>
               <button @click="deleteEvent(item)" style="color: rgba(214, 30, 30, 0.781);" ><i class="fa-solid fa-trash"></i> </button>
