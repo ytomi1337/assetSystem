@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AssetsListView from '@/views/AssetsListView.vue'
 import PhoneListView from '@/views/PhoneListView.vue'
 import AssetDetalisView from '@/views/AssetDetalisView.vue'
+import ActivityLogsView from '@/views/AvtivityLogsView.vue'
 import PhoneDetalisView from '@/views/PhoneDetalisView.vue'
 import NotFound from '@/views/NotFound.vue'
 
@@ -49,6 +50,12 @@ const router = createRouter({
       name: 'phone-detalis',
       props: true,
       component: PhoneDetalisView
+    },
+    {
+      path: '/logs',
+      name: 'activity-logs',
+      props: true,
+      component: ActivityLogsView
     },
     
   ],

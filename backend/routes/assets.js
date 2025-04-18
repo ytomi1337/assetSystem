@@ -7,9 +7,8 @@ const { body, validationResult } = require('express-validator')
 
 
 router.get('/assets', function(req, res){
-    console.log('request to assets');
     const page = Number(req.query.page) || 1
-    const limit = Number(req.query.limit) || 3
+    const limit = Number(req.query.limit) || 20
     const sortKey = req.query.sortKey || 'id'
     const sortValue = req.query.sortValue || 'asc'
 
@@ -73,7 +72,7 @@ router.post('/assets', [
             user: 'admin',
             targetUser: asset.user_new,
             operationNumber: 'AAA-TEST',
-            description: `Dodano nowe urządzenie: ${asset.name}`
+            description: `Added: ${asset.name}`
         })
         res.send(asset)
     }).catch(()=>{
@@ -212,7 +211,7 @@ router.patch('/assets/:id', async(req, res) => {
             user: 'admin',
             targetUser: asset.user_new,
             operationNumber: 'AAA-TEST',
-            description: `Edytowano urządzenie ${asset.name}, Zmiany: ${changes}`
+            description: `Changes: ${JSON.stringify(changes)}`
         })
         res.status(200).json({ message: "Asset updated correctly", asset });
     }catch(error){

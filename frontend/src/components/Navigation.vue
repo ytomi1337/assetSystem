@@ -73,7 +73,7 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
         <li><RouterLink :to="{ name: 'asset-list' }" class="link" >Sprzęt IT</RouterLink></li>
         <li><RouterLink :to="{ name: 'phone-list' }" class="link" >Telefony</RouterLink></li>
         <li><RouterLink :to="{ name: '' }" class="link">Inwentaryzacja</RouterLink></li>
-        <li><RouterLink :to="{ name: '' }" class="link">Rejestrator</RouterLink></li>
+        <li><RouterLink :to="{ name: 'activity-logs' }" class="link">Rejestrator</RouterLink></li>
         
         <li class="dropdown">
           <button class="dropbtn">Akcje <i class="fa-solid fa-chevron-down"></i></button>

@@ -95,4 +95,7 @@ export default {
     deleteReminder(id){
         return apiAssetClient.delete(`/reminders/` + id)
     },
+    getActivityLogs(page, limit, sortValue, sortKey){
+        return apiAssetClient.get(`/logs?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)
+    },
 }
