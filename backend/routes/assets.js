@@ -208,10 +208,10 @@ router.patch('/assets/:id', async(req, res) => {
             action: 'Edited',
             it_number: asset.it_num,
             deviceId: asset.id,
-            user: 'admin',
+            user: asset.user_old || asset.user_new ,
             targetUser: asset.user_new,
             operationNumber: 'AAA-TEST',
-            description: `Changes: ${JSON.stringify(changes)}`
+            description: `Zmiany: ${JSON.stringify(changes)}`
         })
         res.status(200).json({ message: "Asset updated correctly", asset });
     }catch(error){
@@ -224,10 +224,27 @@ router.put('/assets/changeOwner', async(req, res) =>{
     const ids = req.body.recivedAssets.map(asset => asset.id)
     const user = req.body.user
     try{
-        Asset.update(
-            { user_new: user },
-            { where: { id: ids}}
-        )
+        console.log('ids', ids);
+        console.log('body:', req.body.recivedAssets);
+
+        for (let id of ids){
+            const asset = await Asset.findByPk(id)
+
+            await ActivityLog.create({
+                action: 'Transfer',
+                it_number: asset.it_num,
+                deviceId: asset.id,
+                user: asset.user_new,
+                targetUser: user,
+                operationNumber: 'AAA-TEST',
+                description: `Transfer od: ${asset.user_new} do: ${user}`
+            })
+
+            asset.update(
+                { user_new: user}
+             )
+        }
+       
         
         res.status(200).json({ message: "Asset updated correctly"})
     }catch(error){

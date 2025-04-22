@@ -68,8 +68,8 @@ ActivityLog.beforeCreate(async (log, options) => {
     }
   }
 
-  const padded = String(nextNumber).padStart(5, '0'); // 👈 tu była literówka
-  log.operationNumber = `${prefix}-${padded}`;
+  const padded = String(nextNumber).padStart(5, '0'); 
+  log.operationNumber = `${prefix}-${padded}`; 
 });
 
 module.exports = ActivityLog;

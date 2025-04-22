@@ -8,7 +8,7 @@
     const totalPages = ref(null)
 
     const page = ref(1)
-    const limit = ref(25)
+    const limit = ref(100)
     const sortKey = ref('id')
     const sortValue = ref('asc')
     const sortSymbol = ref('&darr;&uarr;')
