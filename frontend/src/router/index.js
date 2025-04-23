@@ -6,6 +6,7 @@ import AssetDetalisView from '@/views/AssetDetalisView.vue'
 import ActivityLogsView from '@/views/AvtivityLogsView.vue'
 import PhoneDetalisView from '@/views/PhoneDetalisView.vue'
 import NotFound from '@/views/NotFound.vue'
+import HistoryView from '@/views/HistoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,12 @@ const router = createRouter({
       name: 'asset-detalis',
       props: true,
       component: AssetDetalisView
+    },
+    {
+      path: '/assets/:id/history',
+      name: 'history-view',
+      props: true,
+      component: HistoryView
     },
     {
       path: '/:catchAll(.*)',

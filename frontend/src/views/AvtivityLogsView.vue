@@ -31,13 +31,16 @@
         }
     })
 
-    const formatDate = (isoDate) => {
-        let date = new Date(isoDate);
+    function formatDate(isoString) {
+        const date = new Date(isoString);
 
-        if(isoDate != null){
-        return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
-        }
-        
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Miesiące są od 0 do 11
+        const year = date.getFullYear();
+
+        return `${hours}:${minutes} ${day}.${month}.${year}`;
     }
 </script>
 <template>
@@ -53,11 +56,6 @@
 
     <div class="containerBox">
         
-        <div class="filterBar">
-            <button class="navbtn createBtn" @click="enableShowCreateForm('create')">Utworz</button>
-            <button class="navbtn" @click="enableShowCreateForm('filter')" >Filtr</button>
-        </div>
-
         <transition name="slide-down">
              <PhoneFilters 
              @showCreate="disableShowCreateForm('filter')" 
@@ -67,17 +65,18 @@
             </PhoneFilters>
         </transition>
 
-        <table id="mainTable" class="mainTable">
-            <tr class="tableHeader">
+        <table class="logTable">
+            <tr >
                 <th>ID <button class="sortBtn" @click="toggleSort('id')" ><ArrowIcons :column="sortKey" :value="sortValue" :current="'id'"></ArrowIcons></button> </th>
-                <th>OperationNumber<button class="sortBtn" @click="toggleSort('operationNumber')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'operationNumber'"></ArrowIcons></button></th>
-                <th>Asset It Num <button class="sortBtn" @click="toggleSort('it_number')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'it_number'"></ArrowIcons></button></th>
-                <th>Action <button class="sortBtn" @click="toggleSort('action')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'action'"></ArrowIcons></button></th>
-                <th>Device ID <button class="sortBtn" @click="toggleSort('deviceId')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'deviceId'"></ArrowIcons></button></th>
-                <th>User <button class="sortBtn" @click="toggleSort('user')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'user'"></ArrowIcons></button></th>
-                <th>Target User <button class="sortBtn" @click="toggleSort('targetUser')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'targetUser'"></ArrowIcons></button></th>
-                <th>Description <button class="sortBtn" @click="toggleSort('description')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'description'"></ArrowIcons></button></th>
+                <th>Nr<button class="sortBtn" @click="toggleSort('operationNumber')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'operationNumber'"></ArrowIcons></button></th>
+                <th>Nr IT sprzętu <button class="sortBtn" @click="toggleSort('it_number')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'it_number'"></ArrowIcons></button></th>
+                <th>Akcja <button class="sortBtn" @click="toggleSort('action')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'action'"></ArrowIcons></button></th>
+                <th>ID sprzętu <button class="sortBtn" @click="toggleSort('deviceId')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'deviceId'"></ArrowIcons></button></th>
+                <th>Użytkownik <button class="sortBtn" @click="toggleSort('user')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'user'"></ArrowIcons></button></th>
+                <th>Użytkownik docelowy <button class="sortBtn" @click="toggleSort('targetUser')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'targetUser'"></ArrowIcons></button></th>
+                <th>Opis <button class="sortBtn" @click="toggleSort('description')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'description'"></ArrowIcons></button></th>
                 <th>Utworzono <button class="sortBtn" @click="toggleSort('createdAt')"><ArrowIcons :column="sortKey" :value="sortValue" :current="'createdAt'"></ArrowIcons></button></th>
+                <th></th>
             </tr>
             <tr v-for="log in logs" >
                 <td>{{ log.id }}</td>
@@ -89,11 +88,13 @@
                 <td>{{ log.targetUser }}</td>
                 <td>{{ log.description }}</td>
                 <td>{{ formatDate(log.createdAt)}}</td>
-                <!-- <td><PhoneActionData :phone="phone"></PhoneActionData></td> -->
+                <td v-if="log.action == 'AddedToDB'"><i class="fa-solid fa-square-plus icon"></i></td>
+                <td v-else-if="log.action == 'Edited'"><i class="fa-solid fa-pen-to-square icon" ></i></td>
+                <td v-else-if="log.action == 'Transfer'"><i class="fa-solid fa-people-arrows icon"></i></td>
             </tr>
             
         </table>
-        <div class="tableFotter">
+        <div class="logTableFotter">
             <div class="paginationSection">
                 <button @click="pageMinus" v-if="page != 1"> < </button>
                 <button @click="pagePlus" v-if="totalPages > page" > > </button>
@@ -109,27 +110,15 @@
   
 </template>
 
-<style scoped>
+<style >
 
-th{
-        text-align: center;
-        background-color: #fdf9f9;
-        padding: 10px 0px;
-    }
-    td{
-        text-align: center;
-        padding-bottom: 5px;
-        border-bottom: 1px solid #dedede;
-    }
+
     .containerBox{
         margin-left: 10%;
         margin-right: 10%;
         width: 80%;
     }
-    .mainTable{
-        width: 100%;
-        margin-top: 1%;
-    }
+    
     .filterBar{
         margin-top: 3%;
         width: 100%;
@@ -161,7 +150,7 @@ th{
         
     }
     
-    .tableFotter{
+    .logTableFotter{
         display: flex;
         justify-content: space-between;
         margin-top: 2%;
@@ -183,3 +172,4 @@ th{
 
 
 </style>
+

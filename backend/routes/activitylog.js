@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Logs = require('../models/activitylog');
-const { Sequelize } = require('sequelize');
+const { Sequelize, where } = require('sequelize');
 const { body, validationResult } = require('express-validator')
 
 
@@ -33,4 +33,21 @@ router.get('/logs', (req, res) =>{
     
 })
 
+router.get('/assets/:id/history', async (req, res) => {
+    console.log(req.params.id);
+    try{
+        const logs = await Logs.findAll({
+            where: {
+                deviceId: Number(req.params.id)
+            }
+        })
+
+        res.send(logs)
+    }catch(error){
+        console.error("Błąd podczas pobierania logów: ", error);
+
+        res.status(500).json({ message: 'Błąd podczas pobierania logów: ', error: error})
+    }
+    
+} )
 module.exports = router;

@@ -192,6 +192,8 @@ router.delete('/assets/:id', function(req, res){
 })
 
 router.patch('/assets/:id', async(req, res) => {
+
+    
     const  id  = req.params.id
     const  changes  = req.body
 
