@@ -1,1 +1,5 @@
-{}
+{
+  "dependencies": {
+    "jsbarcode": "^3.11.6"
+  }
+}

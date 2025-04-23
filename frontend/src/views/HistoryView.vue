@@ -43,21 +43,6 @@ function formatDate(isoString) {
 
 <template>
     <div class="container">
-        <!-- <div class="log-object"
-        v-for="log in logs">
-            <ul class="dataHeader">
-                <li class="data" v-if="log.action == 'AddedToDB'"><i class="fa-solid fa-square-plus icon"></i></li>
-                <li class="data" v-else-if="log.action == 'Edited'"><i class="fa-solid fa-pen-to-square"></i></li>
-                <li class="data" v-else-if="log.action == 'Transfer'"><i class="fa-solid fa-people-arrows"></i></li>
-                <li class="data">{{ log.operationNumber }}</li>
-                <li class="data">{{ log.it_number }}</li>
-                <li class="data">{{ log.user }}</li>
-                <li class="data">{{ log.targetUser }}</li>
-                <li class="data">{{ log.description }}</li>
-                <li class="data"><i class="fa-solid fa-down-long"></i></li>
-                
-            </ul>
-        </div> -->
         <table class="logTable">
             <tr>
                 <th></th>

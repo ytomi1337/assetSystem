@@ -6,6 +6,8 @@
     import { cloneDeep } from 'lodash';
     import AutoComplete from '@/components/AutoComplete.vue';
     import { utilsStore } from '@/stores/mainStorege';
+    import Barcode from '@/components/Barcode.vue';
+    import BarcodePrint from '@/components/BarcodePrint.vue';
 
     const useUtilsStore = utilsStore()
 
@@ -27,6 +29,8 @@
     const isSave = ref(false)
     const isDelete = ref(true)
     const isDisabled = ref(true)
+
+    const printTemplateRef = ref(null);
 
     const useDateField = (field) => {
         return computed({
@@ -87,6 +91,7 @@
         isEdit.value = !isEditing;
         isLeaveEdited.value = isEditing;
         isDisabled.value = !isEditing;
+        console.log(asset.value);
 
         if (isEditing) {
             orginalAsset.value = cloneDeep(asset.value);
@@ -146,6 +151,26 @@
 
     }
     
+    const downloadPDF = async () => {
+        
+        const { default: html2pdf } = await import('html2pdf.js');
+        const element = printTemplateRef.value.printContent;
+        html2pdf().from(element).save(`${asset.value.it_num}, barcode.pdf`);
+        };
+
+    const printForm = async () => {
+
+    const { default: html2pdf } = await import('html2pdf.js');
+    const element = printTemplateRef.value.printContent;
+    html2pdf()
+        .from(element)
+        .toPdf()
+        .get('pdf')
+        .then(pdf => {
+        pdf.autoPrint();
+        window.open(pdf.output('bloburl'), '_blank'); 
+        });
+    };
 </script>
 
 <template>
@@ -205,28 +230,6 @@
                     </div>
 
                     <div class="formRecord">
-                    <label for="comment">Uwagi:</label>
-                    <textarea name="comment" 
-                    id="comment" 
-                    :disabled="isDisabled" 
-                    v-model="asset.note"
-                    placeholder="Wpisz komentarz.."></textarea>
-                    </div>
-                </div>
-                <div class="rightSectionForm">
-
-                    <RouterLink :to="{ name: 'history-view', params: { id: asset.id}}" class="history"><i class="fa-solid fa-clock-rotate-left icon"></i></RouterLink>
-                    
-                    <div class="formRecordImg"><img src="../assets/Hp-ProBook-650G8.png"></div>
-
-                    <div class="buttonsSection mb-4">
-                    <button v-if="isEdit" class="btnSectionNew editBtn" @click="editAsset">Edycja</button>
-                    <button type="button" v-if="isLeaveEdited" class="btnSectionNew deleteBtn" @click="leaveEdit">Opuść Edycje</button>
-                    <button type="button" v-if="isSave" class="btnSectionNew safeBtn"  @click="saveAsset">Zapisz</button>
-                    <button type="button" v-if="isDelete" class="btnSectionNew deleteBtn" @click="deleteAsset">Usuń</button>
-                    </div>
-
-                    <div class="formRecord">
                     <label for="name">Data Wydania:</label>
                     <input type="date" name="recipt_date" 
                     :disabled="isDisabled" 
@@ -249,11 +252,48 @@
                     v-model="warranty_date" 
                     />
                     </div>
+                    
+                </div>
+                <div class="rightSectionForm">
+                    <div class="buttonsSection">
+                        <RouterLink :to="{ name: 'history-view', params: { id: asset.id}}" class="templateBtn"><i class="fa-solid fa-clock-rotate-left icon"></i>Historia</RouterLink>
+                        <button type="button" @click="downloadPDF" class="templateBtn"><i class="fa-solid fa-download icon"></i>Pobierz Kod</button>
+                        <button type="button" @click="printForm" class="templateBtn"><i class="fa-solid fa-print icon "></i>Drukuj Kod</button>
+                    </div>
+                
+                    <div class="formRecordImg"><img src="../assets/Hp-ProBook-650G8.png"></div>
 
+                    <div class="buttonsSection">
+                    <button v-if="isEdit" class="btnSectionNew editBtn" @click="editAsset">Edycja</button>
+                    <button type="button" v-if="isLeaveEdited" class="btnSectionNew deleteBtn" @click="leaveEdit">Opuść Edycje</button>
+                    <button type="button" v-if="isSave" class="btnSectionNew safeBtn"  @click="saveAsset">Zapisz</button>
+                    <button type="button" v-if="isDelete" class="btnSectionNew deleteBtn" @click="deleteAsset">Usuń</button>
+                    </div>
+
+                    <div class="formRecord">
+                    <Barcode :asset="asset" />
+                    </div>
+
+                    <div class="formRecord">
+                        <label for="comment">Uwagi:</label>
+                        <textarea name="comment" 
+                        id="comment" 
+                        :disabled="isDisabled" 
+                        v-model="asset.note"
+                        placeholder="Wpisz komentarz.."
+                        style="height: 116px;"></textarea>
+                    </div>
                 </div>
                 </form>
         </div>
-    </div>
+    <div class="hidden-print" style="display: none;">
+        <BarcodePrint 
+        ref="printTemplateRef"
+        :asset="asset"
+        />
+     </div>
+ </div>
+    
 </template>
 
 <style scoped>
@@ -294,22 +334,12 @@
     display: flex;
     flex-direction: column;
 }
-.history{
-align-self: flex-end;
-border: none;
-padding: 5px 15px;
-background-color: transparent;
-}
+
 .icon{
     font-size: 1.3rem;
-    color: rgb(84, 84, 84);
-    transition: 0.2s;
+    margin-right: 5px;
 }
 
-.icon:hover{
-    color: rgb(0, 0, 0);
-    scale: 1.1;
-}
     .buttonsSection{
         width: 100%;
         display: flex;
@@ -332,5 +362,19 @@ background-color: transparent;
     .btnSectionNew.editBtn{
         background-color: rgb(62, 157, 212);
     }
+
+    .templateBtn{
+        border: none;
+        background-color: transparent;
+        text-decoration: none;
+        color: rgb(84, 84, 84);
+        transition: 0.4s ease all;
+
+        &:hover{
+            scale: 1.05;
+            color: #000;
+        }
+    }
     
+
 </style>
