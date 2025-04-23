@@ -37,6 +37,12 @@ export default {
     getLocalizations(){
         return apiAssetClient.get('/localizations')
     },
+    addLocalizations(name){
+        return apiAssetClient.post(`/localizations/${name}`)
+    },
+    deleteLocalizations(name) {
+        return apiAssetClient.delete(`/localizations/${name}`);
+      },
     getStatus(){
         return apiAssetClient.get('/status')
     },
@@ -45,6 +51,12 @@ export default {
     },
     getAllUsers(){
         return apiAssetClient.get('/users')
+    },
+    getUsersData(page, limit){
+        return apiAssetClient.get(`/usersData?page=${page}&limit=${limit}`)
+    },
+    addUser(data){
+        return apiAssetClient.post('/users', data)
     },
     applyFilters(page, limit, sortValue, sortKey, appliedFilters){
         return apiAssetClient.post(`/assets/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
@@ -82,5 +94,11 @@ export default {
     },
     deleteReminder(id){
         return apiAssetClient.delete(`/reminders/` + id)
+    },
+    getActivityLogs(page, limit, sortValue, sortKey){
+        return apiAssetClient.get(`/logs?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)
+    },
+    getAssetLogs(id){
+        return apiAssetClient.get('/assets/' + id + '/history')
     },
 }

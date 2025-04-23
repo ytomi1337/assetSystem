@@ -151,8 +151,9 @@
 <template>
     <div v-if="asset">
         <div id="editMessage" v-if="GStore.editMessage"> {{ GStore.editMessage }}</div>
-        <div  class="container mt-4">
-            <div>
+        <div  class="containerBox">
+            
+                
                 <form class="formClass">
 
                 <div class="leftSectionForm">
@@ -213,6 +214,9 @@
                     </div>
                 </div>
                 <div class="rightSectionForm">
+
+                    <RouterLink :to="{ name: 'history-view', params: { id: asset.id}}" class="history"><i class="fa-solid fa-clock-rotate-left icon"></i></RouterLink>
+                    
                     <div class="formRecordImg"><img src="../assets/Hp-ProBook-650G8.png"></div>
 
                     <div class="buttonsSection mb-4">
@@ -248,12 +252,11 @@
 
                 </div>
                 </form>
-            </div>
         </div>
     </div>
 </template>
 
-<style>
+<style scoped>
 @keyframes yellowfade{
         from{
             background: rgb(144, 238, 144);
@@ -263,35 +266,50 @@
         }
     }
 #editMessage{
-     animation-name: yellowfade;
-        text-align: center;
-        animation-duration: 7s;
+    animation-name: yellowfade;
+    text-align: center;
+    animation-duration: 7s;
 }
 
 .autoCompleteClass{
     z-index: 0;
 }
+
 .formRecordImg{
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.formClass{
+.containerBox{
     display: flex;
-    justify-content: space-around;
+    margin-top: 2%;
 }
-.leftSectionForm{
-    width: 40%;
+
+.formClass{
+    width: 100%;
 }
-.rightSectionForm{
-    width: 40%;
-}
+
     
-    .rightSection{
-        display: flex;
-        flex-direction: column;
-        align-items: end;
-    }
+.rightSectionForm{
+    display: flex;
+    flex-direction: column;
+}
+.history{
+align-self: flex-end;
+border: none;
+padding: 5px 15px;
+background-color: transparent;
+}
+.icon{
+    font-size: 1.3rem;
+    color: rgb(84, 84, 84);
+    transition: 0.2s;
+}
+
+.icon:hover{
+    color: rgb(0, 0, 0);
+    scale: 1.1;
+}
     .buttonsSection{
         width: 100%;
         display: flex;

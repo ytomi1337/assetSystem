@@ -11,7 +11,7 @@
     const totalNum = ref(null)
 
     const page = ref(1)
-    const limit = ref(25)
+    const limit = ref(18)
     const sortKey = ref('id')
     const sortValue = ref('asc')
     const sortSymbol = ref('&darr;&uarr;')

@@ -1,14 +1,14 @@
 var express = require('express');
 var router = express.Router();
 var Asset = require('../models/assets.js');
+var ActivityLog = require('../models/activitylog.js')
 const { Sequelize, where, Op } = require('sequelize');
 const { body, validationResult } = require('express-validator')
 
 
 router.get('/assets', function(req, res){
-    console.log('request to assets');
     const page = Number(req.query.page) || 1
-    const limit = Number(req.query.limit) || 3
+    const limit = Number(req.query.limit) || 20
     const sortKey = req.query.sortKey || 'id'
     const sortValue = req.query.sortValue || 'asc'
 
@@ -65,6 +65,15 @@ router.post('/assets', [
         recipt_date: req.body.recipt_date?new Date(req.body.recipt_date):null,
         warranty_date: req.body.warranty_date?new Date(req.body.warranty_date):null
     }).then((asset)=>{
+        ActivityLog.create({
+            action: 'AddedToDB',
+            it_number: asset.it_num,
+            deviceId: asset.id,
+            user: 'admin',
+            targetUser: asset.user_new,
+            operationNumber: 'AAA-TEST',
+            description: `Added: ${asset.name}`
+        })
         res.send(asset)
     }).catch(()=>{
         return res.status(400).json({ errors: [{ field: 'it_num', msg: 'Nr działu IT musi byc unikalny!' }] })
@@ -183,6 +192,8 @@ router.delete('/assets/:id', function(req, res){
 })
 
 router.patch('/assets/:id', async(req, res) => {
+
+    
     const  id  = req.params.id
     const  changes  = req.body
 
@@ -195,6 +206,15 @@ router.patch('/assets/:id', async(req, res) => {
 
         await asset.update(changes)
 
+        ActivityLog.create({
+            action: 'Edited',
+            it_number: asset.it_num,
+            deviceId: asset.id,
+            user: asset.user_old || asset.user_new ,
+            targetUser: asset.user_new,
+            operationNumber: 'AAA-TEST',
+            description: `Zmiany: ${JSON.stringify(changes)}`
+        })
         res.status(200).json({ message: "Asset updated correctly", asset });
     }catch(error){
         console.log("Update Error:", error);
@@ -206,10 +226,28 @@ router.put('/assets/changeOwner', async(req, res) =>{
     const ids = req.body.recivedAssets.map(asset => asset.id)
     const user = req.body.user
     try{
-        Asset.update(
-            { user_new: user },
-            { where: { id: ids}}
-        )
+        console.log('ids', ids);
+        console.log('body:', req.body.recivedAssets);
+
+        for (let id of ids){
+            const asset = await Asset.findByPk(id)
+
+            await ActivityLog.create({
+                action: 'Transfer',
+                it_number: asset.it_num,
+                deviceId: asset.id,
+                user: asset.user_new,
+                targetUser: user,
+                operationNumber: 'AAA-TEST',
+                description: `Transfer od: ${asset.user_new} do: ${user}`
+            })
+
+            asset.update(
+                { user_new: user}
+             )
+        }
+       
+        
         res.status(200).json({ message: "Asset updated correctly"})
     }catch(error){
         console.log("Update Error:", error);
