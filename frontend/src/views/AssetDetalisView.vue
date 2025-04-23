@@ -6,7 +6,6 @@
     import { cloneDeep } from 'lodash';
     import AutoComplete from '@/components/AutoComplete.vue';
     import { utilsStore } from '@/stores/mainStorege';
-    import Barcode from '@/components/Barcode.vue';
     import BarcodePrint from '@/components/BarcodePrint.vue';
 
     const useUtilsStore = utilsStore()
@@ -260,7 +259,6 @@
                         <button type="button" @click="downloadPDF" class="templateBtn"><i class="fa-solid fa-download icon"></i>Pobierz Kod</button>
                         <button type="button" @click="printForm" class="templateBtn"><i class="fa-solid fa-print icon "></i>Drukuj Kod</button>
                     </div>
-                
                     <div class="formRecordImg"><img src="../assets/Hp-ProBook-650G8.png"></div>
 
                     <div class="buttonsSection">
@@ -269,11 +267,7 @@
                     <button type="button" v-if="isSave" class="btnSectionNew safeBtn"  @click="saveAsset">Zapisz</button>
                     <button type="button" v-if="isDelete" class="btnSectionNew deleteBtn" @click="deleteAsset">Usuń</button>
                     </div>
-
-                    <div class="formRecord">
-                    <Barcode :asset="asset" />
-                    </div>
-
+                    
                     <div class="formRecord">
                         <label for="comment">Uwagi:</label>
                         <textarea name="comment" 
@@ -283,6 +277,7 @@
                         placeholder="Wpisz komentarz.."
                         style="height: 116px;"></textarea>
                     </div>
+        
                 </div>
                 </form>
         </div>

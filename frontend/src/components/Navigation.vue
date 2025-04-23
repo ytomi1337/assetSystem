@@ -4,6 +4,7 @@ import { ref, onMounted, onUnmounted} from 'vue'
 import UserToUser from '@/components/actions/UserToUser.vue';
 import TransferProtocol from './protocols/TransferProtocol.vue';
 import ReturnProtocol from './protocols/ReturnProtocol.vue';
+import PrintBarcodes from './actions/PrintBarcodes.vue';
 
   const scorlledNav = ref(null)
   const mobileNav = ref(null)
@@ -80,6 +81,7 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
           <div class="dropdown-content">
             <a href="#" @click="toggleForm('userToUser')">Przekazanie Sprzętu między użytkownikami</a>
             <a href="#" @click="toggleForm('zwrot')">Przekazanie Telefonów między użytkownikami</a>
+            <a href="#" @click="toggleForm('printBarcodes')">Drukowanie kodów kreskowych</a>
           </div>
         </li>
         
@@ -123,10 +125,15 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
     <div class="corporate-border"></div>
     </header>
     
-    <UserToUser 
+       <UserToUser 
         @disableWindow="disableActiveform" 
         v-if="activeForm === 'userToUser'">
         </UserToUser>
+
+        <PrintBarcodes 
+        @disableWindow="disableActiveform" 
+        v-if="activeForm === 'printBarcodes'">
+        </PrintBarcodes>
 
         <TransferProtocol
         @disableWindow="disableActiveform"

@@ -14,7 +14,7 @@
     defineExpose({ printContent })
 
     const generateDataString = (asset) => {
-     return `${asset.it_num} | ${asset.name} | ${asset.serialnum} | ${asset.user_new}`
+     return `${asset.it_num} | ${asset.name} | ${asset.serialnum} `
     }
     const renderBarcode = (value) => {
         if (barcode.value) {
