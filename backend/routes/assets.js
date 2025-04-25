@@ -27,6 +27,58 @@ router.get('/assets', function(req, res){
     })
 })
 
+router.get('/assets/it_numbers', async (req, res) => {
+    try {
+      const minQuery = req.query.min;
+      const maxQuery = req.query.max;
+  
+ 
+      const assets = await Asset.findAll({
+        attributes: ['it_num', 'name', 'serialnum']
+      });
+  
+      const plainAssets = assets.map(asset => asset.get({ plain: true }));
+  
+
+      const getNumber = (itNum) => {
+        const match = itNum.match(/ITBI_(\d+)/);
+        return match ? parseInt(match[1], 10) : null;
+      };
+  
+    
+      const allNumbers = plainAssets.map(item => getNumber(item.it_num)).filter(n => n !== null);
+      const globalMin = Math.min(...allNumbers);
+      const globalMax = Math.max(...allNumbers);
+  
+      const formatItNum = (num) => `ITBI_${num.toString().padStart(5, '0')}`;
+  
+      let filteredAssets = plainAssets;
+
+      if (minQuery && maxQuery) {
+        const userMin = parseInt(minQuery, 10);
+        const userMax = parseInt(maxQuery, 10);
+  
+        filteredAssets = plainAssets.filter(item => {
+          const num = getNumber(item.it_num);
+          return num !== null && num >= userMin && num <= userMax;
+        });
+      }
+  
+      const response = {
+        assets: filteredAssets,
+        min: formatItNum(globalMin),
+        max: formatItNum(globalMax)
+      };
+  
+      res.json(response);
+    } catch (error) {
+      res.status(500).json({
+        message: "Wystąpił błąd podczas zczytywania numerów", error
+      });
+    }
+  });
+  
+
 router.get('/assets/:id', function(req, res){
     
         Asset.findByPk(Number(req.params.id)).then((asset) => {
@@ -35,6 +87,7 @@ router.get('/assets/:id', function(req, res){
             res.status(500).send({ error: 'Not found asset in database', details: error.message });
         })
 })
+
 
 router.post('/assets', [ 
     // body('serialnum').isInt().withMessage('SN must be integer'),

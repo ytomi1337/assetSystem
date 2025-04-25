@@ -7,6 +7,7 @@
     import AutoComplete from '@/components/AutoComplete.vue';
     import { utilsStore } from '@/stores/mainStorege';
     import BarcodePrint from '@/components/BarcodePrint.vue';
+    import Barcode from '@/components/Barcode.vue';
 
     const useUtilsStore = utilsStore()
 
@@ -20,7 +21,7 @@
 
     const id = computed(()=> props.id)
 
-    const asset = ref(null)
+    const asset = ref([])
     const orginalAsset = ref(null)
 
     const isLeaveEdited = ref(false)

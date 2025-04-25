@@ -16,6 +16,14 @@ export default {
     getAssets(page, limit, sortValue, sortKey){
         return apiAssetClient.get(`/assets?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)
     },
+    getItNum(min, max){
+        if(min || max){
+            return apiAssetClient.get(`/assets/it_numbers?min=${min}&max=${max}`)
+        }else{
+            return apiAssetClient.get(`/assets/it_numbers`)
+        }
+       
+    },
     getId(id){
         return apiAssetClient.get('/assets/'+id)
     },
@@ -74,7 +82,6 @@ export default {
         return apiAssetClient.post(`/phones/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
     },
     createPhone(newPhone){
-        console.log(newPhone);
         return apiAssetClient.post('/phones',newPhone)
     },
     getPhoneId(id){
