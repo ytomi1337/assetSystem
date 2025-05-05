@@ -16,6 +16,14 @@ export default {
     getAssets(page, limit, sortValue, sortKey){
         return apiAssetClient.get(`/assets?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)
     },
+    getItNum(min, max){
+        if(min || max){
+            return apiAssetClient.get(`/assets/it_numbers?min=${min}&max=${max}`)
+        }else{
+            return apiAssetClient.get(`/assets/it_numbers`)
+        }
+       
+    },
     getId(id){
         return apiAssetClient.get('/assets/'+id)
     },
@@ -64,6 +72,9 @@ export default {
     getUserAssets(page, limit, userName){
         return apiAssetClient.post(`/assets/user?page=${page}&limit=${limit}`, { userName })
     },
+    deleteUser(name) {
+        return apiAssetClient.delete(`/users/${name}`);
+      },
     updateAssetfromUser(recivedAssets, user){
         return apiAssetClient.put('/assets/changeOwner', { recivedAssets, user})
     },
@@ -74,7 +85,6 @@ export default {
         return apiAssetClient.post(`/phones/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
     },
     createPhone(newPhone){
-        console.log(newPhone);
         return apiAssetClient.post('/phones',newPhone)
     },
     getPhoneId(id){

@@ -43,9 +43,9 @@ const filterResults = () => {
 };
 
 const setResult = (user) => {
-  search.value = user.name; // Nadal przypisujemy nazwę do pola
-  emit("update-name", user.name); // Emitujemy samą nazwę użytkownika
-  emit("userinfo", user); // Emitujemy cały obiekt użytkownika (np. ID, stanowisko)
+  search.value = user.name; 
+  emit("update-name", user.name);
+  emit("userinfo", user); 
   isOpen.value = false;
 };
 

@@ -12,7 +12,7 @@ import { GStore } from '@/main';
   <div id="flashMessage" v-if="GStore.flashMessage">{{ GStore.flashMessage }}</div>
   <div id="deletedMessage" v-if="GStore.deleteMessage">{{ GStore.deleteMessage }}</div>
   <RouterView />
-  <Footer>hi</Footer>
+  <!-- <Footer>hi</Footer> -->
 </template>
 
 <style>

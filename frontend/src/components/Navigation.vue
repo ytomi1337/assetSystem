@@ -4,6 +4,7 @@ import { ref, onMounted, onUnmounted} from 'vue'
 import UserToUser from '@/components/actions/UserToUser.vue';
 import TransferProtocol from './protocols/TransferProtocol.vue';
 import ReturnProtocol from './protocols/ReturnProtocol.vue';
+import PrintBarcodes from './actions/PrintBarcodes.vue';
 
   const scorlledNav = ref(null)
   const mobileNav = ref(null)
@@ -80,14 +81,15 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
           <div class="dropdown-content">
             <a href="#" @click="toggleForm('userToUser')">Przekazanie Sprzętu między użytkownikami</a>
             <a href="#" @click="toggleForm('zwrot')">Przekazanie Telefonów między użytkownikami</a>
+            <a href="#" @click="toggleForm('printBarcodes')">Drukowanie kodów kreskowych</a>
           </div>
         </li>
         
         <li class="dropdown">
           <button class="dropbtn">Protokoły <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
-            <a href="#" @click="toggleForm('zwrot')">Protokół Przekazania</a>
-            <a href="#" @click="toggleForm('przekazanie')">Protokół Zwortu</a>
+            <a href="#" @click="toggleForm('przekazanie')">Protokół Przekazania</a>
+            <a href="#" @click="toggleForm('zwrot')">Protokół Zwortu</a>
           </div>
         </li>
       </ul>
@@ -113,8 +115,8 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
         <li class="dropdown">
           <button >Protokoły <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
-            <a href="#">Protokół Przekazania</a>
             <a href="#">Protokół Zwortu</a>
+            <a href="#">Protokół Przekazania</a>
           </div>
         </li>
       </ul>
@@ -123,10 +125,15 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
     <div class="corporate-border"></div>
     </header>
     
-    <UserToUser 
+       <UserToUser 
         @disableWindow="disableActiveform" 
         v-if="activeForm === 'userToUser'">
         </UserToUser>
+
+        <PrintBarcodes 
+        @disableWindow="disableActiveform" 
+        v-if="activeForm === 'printBarcodes'">
+        </PrintBarcodes>
 
         <TransferProtocol
         @disableWindow="disableActiveform"
