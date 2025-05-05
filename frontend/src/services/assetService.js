@@ -72,6 +72,9 @@ export default {
     getUserAssets(page, limit, userName){
         return apiAssetClient.post(`/assets/user?page=${page}&limit=${limit}`, { userName })
     },
+    deleteUser(name) {
+        return apiAssetClient.delete(`/users/${name}`);
+      },
     updateAssetfromUser(recivedAssets, user){
         return apiAssetClient.put('/assets/changeOwner', { recivedAssets, user})
     },

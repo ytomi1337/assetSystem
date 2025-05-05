@@ -88,8 +88,8 @@ import PrintBarcodes from './actions/PrintBarcodes.vue';
         <li class="dropdown">
           <button class="dropbtn">Protokoły <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
-            <a href="#" @click="toggleForm('zwrot')">Protokół Przekazania</a>
-            <a href="#" @click="toggleForm('przekazanie')">Protokół Zwortu</a>
+            <a href="#" @click="toggleForm('przekazanie')">Protokół Przekazania</a>
+            <a href="#" @click="toggleForm('zwrot')">Protokół Zwortu</a>
           </div>
         </li>
       </ul>
@@ -115,8 +115,8 @@ import PrintBarcodes from './actions/PrintBarcodes.vue';
         <li class="dropdown">
           <button >Protokoły <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
-            <a href="#">Protokół Przekazania</a>
             <a href="#">Protokół Zwortu</a>
+            <a href="#">Protokół Przekazania</a>
           </div>
         </li>
       </ul>

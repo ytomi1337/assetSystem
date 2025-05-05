@@ -60,6 +60,7 @@ router.get('/usersData', function(req, res){
     //     console.log(error)
     // })
 })
+
 router.post('/users', async (req,res)=>{
     try{
        await Users.create({
@@ -76,4 +77,14 @@ router.post('/users', async (req,res)=>{
     }
 })
 
+router.delete('/users/:name',  function(req, res){
+    const { name } = req.params;
+    Users.destroy({
+        where: { name }
+    }).then((user)=>{
+        res.status(200).json({ message: "User deleted correctly: ", user})
+    }).catch((error)=>{
+        return res.status(500).json({message: "Error while deleting user", error})
+    })
+})
 module.exports = router;
