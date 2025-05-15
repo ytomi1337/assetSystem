@@ -42,6 +42,12 @@ export default {
     countCategories(){
         return apiAssetClient.get('/categories/count')
     },
+    addCategories(name){
+        return apiAssetClient.post(`/categories/${name}`)
+    },
+    deleteCategories(name) {
+        return apiAssetClient.delete(`/categories/${name}`);
+      },
     getLocalizations(){
         return apiAssetClient.get('/localizations')
     },
@@ -53,6 +59,9 @@ export default {
       },
     getStatus(){
         return apiAssetClient.get('/status')
+    },
+    addStatus(name){
+        return apiAssetClient.post(`/status/${name}`)
     },
     getUsers(userName){
         return apiAssetClient.get('/users?userName='+ userName)

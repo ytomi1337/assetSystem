@@ -47,4 +47,25 @@ router.get('/categories/count', async(req, res)=>{
       }
 })
 
+router.post('/categories/:name', function(req, res){
+    const { name } = req.params;
+    Category.create({
+        name
+    }).then((category)=>{
+        res.status(200).json({ message: "Category added correctly: ", category})
+    }).catch((error)=>{
+        return res.status(500).json({message: "Wystapił błąd podczas dodawania Lokalizacji", error})
+    })
+})
+
+router.delete('/categories/:name',  function(req, res){
+    const { name } = req.params;
+    Category.destroy({
+        where: { name }
+    }).then((category)=>{
+        res.status(200).json({ message: "Category added correctly: ", category})
+    }).catch((error)=>{
+        return res.status(500).json({message: "Wystapił błąd podczas dodawania Lokalizacji", error})
+    })
+})
 module.exports = router;

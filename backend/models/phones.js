@@ -27,7 +27,7 @@ const Phones = sequelize.define(
       unique: true,
       validate: {
         isNumeric: true,
-        len: [16, 16]
+        len: [15, 15]
       }
     },
     nr_tel: {

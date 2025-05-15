@@ -40,13 +40,8 @@ onMounted(async() => {
           totalPages.value = totalNum.value / limit.value
         }).catch((error) =>{
         console.log('Bład wczytywania uzytkownikow: ', error);
+        })
       })
-      })
-      // await assetService.getUsersData().then((response)=>{
-      //   data.value = response.data.users.map(user => user.name)
-      // }).catch((error) =>{
-      //   console.log('Bład wczytywania uzytkownikow: ', error);
-      // })
     }
     if(props.formData.type == 'localizations'){
       data.value = useUtilsStore.localizations
@@ -69,7 +64,8 @@ const toggleForm = (formName) => {
   };
 
 const crtEvent = async (event) =>{
-  event.preventDefault();
+
+    event.preventDefault()
 
   try{
     if (props.formData.type === 'users') {
@@ -77,15 +73,21 @@ const crtEvent = async (event) =>{
     } else if (props.formData.type === 'localizations') {
       await assetService.addLocalizations(newEvent.value.name);
     } else if (props.formData.type === 'categories') {
-      await assetService.addLocalizations(item);
+      await assetService.addCategories(newEvent.value.name);
     } else if (props.formData.type === 'statuses') {
-      await assetService.addLocalizations(item);
+      await assetService.addStatus(newEvent.value.name);
     }
 
     await useUtilsStore.loadAllData();
 
     if (props.formData.type == 'users') {
-      data.value = useUtilsStore.users;
+      assetService.getUsersData(page.value, limit.value).then((response) => {
+          data.value = response.data.users
+          totalNum.value = response.data.count
+          totalPages.value = totalNum.value / limit.value
+        }).catch((error) =>{
+        console.log('Bład wczytywania uzytkownikow: ', error);
+      })
     }
     if (props.formData.type == 'localizations') {
       data.value = useUtilsStore.localizations;
@@ -178,8 +180,8 @@ const changePage = (direction) => {
         <tr v-for="(item, index) in data" :key="index" > 
             <td v-show="props.formData.type != 'users'">{{ index }}</td>
             <td v-show="props.formData.type != 'users'">{{ item }}</td>
-            <td v-if="props.formData.type == 'users'">{{ item.id }}</td>
-            <td v-if="props.formData.type == 'users'">{{ item.name }}</td>
+            <td v-if="props.formData.type == 'users'" v-show="data">{{ item.id }}</td>
+            <td v-if="props.formData.type == 'users'" v-show="data">{{ item.name }}</td>
             <td>
               <button @click="deleteEvent(item)" style="color: rgba(214, 30, 30, 0.781);" ><i class="fa-solid fa-trash"></i> </button>
               <button style="color: #71cc5eda;" v-if="props.formData.type == 'users'"><i class="fa-solid fa-user-pen"></i> </button>

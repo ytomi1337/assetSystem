@@ -16,4 +16,26 @@ router.get('/status', function(req, res){
     })
 })
 
+router.post('/status/:name', function(req, res){
+    const { name } = req.params;
+    Status.create({
+        name
+    }).then((status)=>{
+        res.status(200).json({ message: "Status added correctly: ", status})
+    }).catch((error)=>{
+        return res.status(500).json({message: "Wystapił błąd podczas dodawania Lokalizacji", error})
+    })
+})
+
+router.delete('/status/:name',  function(req, res){
+    const { name } = req.params;
+    Status.destroy({
+        where: { name }
+    }).then((status)=>{
+        res.status(200).json({ message: "Status added correctly: ", status})
+    }).catch((error)=>{
+        return res.status(500).json({message: "Wystapił błąd podczas dodawania Lokalizacji", error})
+    })
+})
+
 module.exports = router;
