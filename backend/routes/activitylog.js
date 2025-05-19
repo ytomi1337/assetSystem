@@ -9,7 +9,7 @@ router.get('/logs', (req, res) =>{
     const page = Number(req.query.page) || 1
     const limit = Number(req.query.limit) || 20
     const sortKey = req.query.sortKey || 'id'
-    const sortValue = req.query.sortValue || 'asc'
+    const sortValue = 'desc'
 
     try{
         Promise.all([
