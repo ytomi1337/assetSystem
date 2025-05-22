@@ -75,7 +75,7 @@ import TransferPhone from './protocols/TransferPhone.vue';
       <ul v-show="!mobile" class="navigation">
         <li><RouterLink :to="{ name: 'asset-list' }" class="link" >Sprzęt IT</RouterLink></li>
         <li><RouterLink :to="{ name: 'phone-list' }" class="link" >Telefony</RouterLink></li>
-        <li><RouterLink :to="{ name: '' }" class="link">Inwentaryzacja</RouterLink></li>
+        <li><RouterLink :to="{ name: '' }" class="link"><s>Inwentaryzacja</s></RouterLink></li>
         <li><RouterLink :to="{ name: 'activity-logs' }" class="link">Rejestrator</RouterLink></li>
         
         <li class="dropdown">
