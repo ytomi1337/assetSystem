@@ -10,37 +10,43 @@ import {
   CategoryScale
 } from 'chart.js'
 
+
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
+
 const props = defineProps({
-  chartData: {
-    type: Object,
-    required: true
-  },
-  chartOptions: {
-    type: Object,
-    default: () => ({
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'top'
-        }
-      }
-    })
+  chartData: Object,
+  titleText: {
+    type: String,
+    default: 'Wykres'
   }
 })
+
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'top'
+    },
+    title: {
+      display: true,
+      text: props.titleText,
+      font: {
+        size: 18
+      },
+    }
+  }
+}
 </script>
 
 <template>
   <div class="chart-container">
-    <Doughnut :data="props.chartData" :options="props.chartOptions" />
+    <Doughnut :data="props.chartData" :options="chartOptions" />
   </div>
 </template>
 
 <style scoped>
-.chart-container {
-  display: flex;
-  justify-content: center;
-}
+
 </style>
