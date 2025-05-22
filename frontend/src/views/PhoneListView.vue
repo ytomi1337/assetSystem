@@ -84,6 +84,10 @@ import { GStore } from '@/main';
 
     };
 
+    const changePage = (direction) => {
+        page.value = Math.max(1, Math.min(totalPages.value, page.value + direction));
+    };
+
     const disableShowCreateForm = (form) =>{
         if(form == 'create'){
             showCreateForm.value = false
@@ -160,8 +164,8 @@ import { GStore } from '@/main';
         </table>
         <div class="tableFotter">
             <div class="paginationSection">
-                <button @click="pageMinus" v-if="page != 1"> < </button>
-                <button @click="pagePlus" v-if="totalPages > page" > > </button>
+                <button @click="changePage(-1)" v-if="page > 1"> < </button>
+                <button @click="changePage(1)" v-if="page < totalPages"> > </button>
             </div>
             <div class="rowsSection">
                 <button @click="changeLimit(limitOne)">{{ limitOne }}</button>
