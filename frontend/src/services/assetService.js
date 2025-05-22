@@ -84,11 +84,17 @@ export default {
     getUserAssets(page, limit, userName){
         return apiAssetClient.post(`/assets/user?page=${page}&limit=${limit}`, { userName })
     },
+    getUserPhones(page, limit, userName){
+        return apiAssetClient.post(`/phones/user?page=${page}&limit=${limit}`, { userName })
+    },
     deleteUser(name) {
         return apiAssetClient.delete(`/users/${name}`);
       },
     updateAssetfromUser(recivedAssets, user){
         return apiAssetClient.put('/assets/changeOwner', { recivedAssets, user})
+    },
+    updatePhonesfromUser(recivedAssets, user){
+        return apiAssetClient.put('/phones/changeOwner', { recivedAssets, user})
     },
     getPhones(page, limit, sortValue, sortKey){
         return apiAssetClient.get(`/phones?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)

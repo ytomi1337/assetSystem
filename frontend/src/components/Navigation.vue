@@ -5,6 +5,8 @@ import UserToUser from '@/components/actions/UserToUser.vue';
 import TransferProtocol from './protocols/TransferProtocol.vue';
 import ReturnProtocol from './protocols/ReturnProtocol.vue';
 import PrintBarcodes from './actions/PrintBarcodes.vue';
+import ReturnPhoneProtocol from './protocols/ReturnPhoneProtocol.vue';
+import TransferPhone from './protocols/TransferPhone.vue';
 
   const scorlledNav = ref(null)
   const mobileNav = ref(null)
@@ -80,7 +82,6 @@ import PrintBarcodes from './actions/PrintBarcodes.vue';
           <button class="dropbtn">Akcje <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
             <a href="#" @click="toggleForm('userToUser')">Przekazanie Sprzętu między użytkownikami</a>
-            <a href="#" @click="toggleForm('zwrot')">Przekazanie Telefonów między użytkownikami</a>
             <a href="#" @click="toggleForm('printBarcodes')">Drukowanie kodów kreskowych</a>
           </div>
         </li>
@@ -89,7 +90,9 @@ import PrintBarcodes from './actions/PrintBarcodes.vue';
           <button class="dropbtn">Protokoły <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
             <a href="#" @click="toggleForm('przekazanie')">Protokół Przekazania</a>
+            <a href="#" @click="toggleForm('przekazanie-tel')">Protokół Przekazanie Telefonu</a>
             <a href="#" @click="toggleForm('zwrot')">Protokół Zwortu</a>
+            <a href="#" @click="toggleForm('zwrot-tel')">Protokół Zwortu Telefonu</a>
           </div>
         </li>
       </ul>
@@ -141,11 +144,22 @@ import PrintBarcodes from './actions/PrintBarcodes.vue';
         v-if="activeForm === 'przekazanie'">
         </TransferProtocol>
 
+        <TransferPhone
+        @disableWindow="disableActiveform"
+        v-if="activeForm === 'przekazanie-tel'">
+        </TransferPhone>
+
         <ReturnProtocol
         @disableWindow="disableActiveform"
-       
         v-if="activeForm === 'zwrot'">
         </ReturnProtocol>
+
+        <ReturnPhoneProtocol
+        @disableWindow="disableActiveform"
+        v-if="activeForm === 'zwrot-tel'">
+        </ReturnPhoneProtocol>
+          
+
 </template>
 
 <style scoped>

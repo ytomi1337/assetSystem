@@ -5,10 +5,10 @@
   import printTemplate from './printTemplate.vue';
 
   const emits = defineEmits(['disableWindow',])
-  const assetData = ref({ assets: [], selected: []})
+  const data = ref({ phones: [], selected: []})
   const pagination = ref({ count: 1, limit: 10})
   const userData = ref([])
-  const header = ref('Protokół Zwrotu')
+  const header = ref('Protokół Zwrotu Telefonu')
   const isDisabled = computed (() => !userData.value.name )
   const errors = ref([])
   const printTemplateRef = ref(null);
@@ -16,22 +16,22 @@
   const returnToIt =ref(false)
 
 const allSelected = computed(() => 
-  assetData.value.selected.length === assetData.value.assets.length && assetData.value.assets.length > 0
+data.value.selected.length === data.value.phones.length && data.value.phones.length > 0
 );
 
 const toggleAll = (event) => {
-    assetData.value.selected = event.target.checked ? [...assetData.value.assets] : []
+  data.value.selected = event.target.checked ? [...data.value.phones] : []
 };
 
 const setUserData = (recivedData) =>{
   userData.value = recivedData
 }
 watchEffect(() =>{
-  assetData.value.selected = []
+  data.value.selected = []
     if(!userData.value.name) return
-      assetService.getUserAssets(pagination.value.count, pagination.value.limit, userData.value.name)
+      assetService.getUserPhones(pagination.value.count, pagination.value.limit, userData.value.name)
                 .then((response)=>{
-                  assetData.value.assets = response.data.assets
+                  data.value.phones = response.data.phones
                 }).catch((error)=>{
                     console.error('Bład podczas ładowania urzedzen uzytkownika: ', error)
                 }) 
@@ -39,7 +39,7 @@ watchEffect(() =>{
   })
 
 const downloadPDF = async () => {
-  if(!assetData.value.selected){
+  if(!data.value.selected){
     errors.value.push('Brak wybranego sprzętu')
     setTimeout(() => {
       errors.value = []
@@ -49,7 +49,7 @@ const downloadPDF = async () => {
   
   if(returnToIt.value == true){
     try{
-    await assetService.updateAssetfromUser(assetData.value.selected, 'IT Magazyn')
+    await assetService.updateAssetfromUser(data.value.selected, 'IT Magazyn')
     }catch(error){
       console.log('Error podczas przekazywania sprzetu do uzytkownika: "IT Magazyn"');
 
@@ -64,7 +64,7 @@ const downloadPDF = async () => {
 
 const printForm = async () => {
   console.log(returnToIt.value);
-  if(!assetData.value.selected.length){
+  if(!data.value.selected.length){
     errors.value.push('Brak wybranego sprzętu do wydruku')
     setTimeout(() => {
       errors.value = []
@@ -73,8 +73,9 @@ const printForm = async () => {
   }
 
   if(returnToIt.value == true){
+    console.log(returnToIt.value);
     try{
-    await assetService.updateAssetfromUser(assetData.value.selected, 'IT Magazyn')
+    await assetService.updatePhonesfromUser(data.value.selected, 'IT Magazyn')
     }catch(error){
       console.log('Error podczas przekazywania sprzetu do uzytkownika: "IT Magazyn"');
 
@@ -110,7 +111,7 @@ const leaveComponent = () => {
   <div class="box-overlay">
     <div class="box">
       
-      <h2>Protokół Zwrotu Od Użytkownika</h2>
+      <h2>Protokół Zwrotu Telefonu Od Użytkownika</h2>
 
       <div class="headerNav">
         <div class="item" style="text-align: left;">
@@ -136,21 +137,22 @@ const leaveComponent = () => {
         <table id="mainTable" class="mainTable">
               <tr>
                 <th><input type="checkbox" @change="toggleAll" :checked="allSelected" > </th>
-                <th>Nr IT</th>
-                <th>Nazwa</th>
-                <th>Nr Serii</th>
                 <th>Kategoria</th>
+                <th>Imei</th>
+                <th>Nazwa</th>
+                <th>Nr Tel</th>
               </tr>
-              <tr v-for="asset in assetData.assets" :key="asset.id">
+              <tr v-for="phone in data.phones" :key="phone.id">
                 <td>
                   <input type="checkbox" 
-                  :value="asset" 
-                  v-model="assetData.selected">
+                  :value="phone" 
+                  v-model="data.selected">
                 </td>
-                <td>{{ asset.it_num }}</td>
-                <td>{{ asset.name }}</td>
-                <td>{{ asset.serialnum }}</td>
-                <td>{{ asset.category }}</td>
+                <td>{{ phone.category }}</td>
+                <td>{{ phone.imei }}</td>
+                <td>{{ phone.name }}</td>
+                <td>{{ phone.nr_tel }}</td>
+                
               </tr>
             </table>
         </div>
@@ -164,7 +166,7 @@ const leaveComponent = () => {
     <printTemplate 
     ref="printTemplateRef"
     :userData="userData"
-    :selectedAssets="assetData.selected"
+    :selectedAssets="data.selected"
     :date="date"
     :header="header"
   />

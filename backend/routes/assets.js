@@ -279,26 +279,58 @@ router.put('/assets/changeOwner', async(req, res) =>{
     const ids = req.body.recivedAssets.map(asset => asset.id)
     const user = req.body.user
     try{
-        console.log('ids', ids);
-        console.log('body:', req.body.recivedAssets);
 
-        for (let id of ids){
-            const asset = await Asset.findByPk(id)
-
-            await ActivityLog.create({
-                action: 'Transfer',
-                it_number: asset.it_num,
-                deviceId: asset.id,
-                user: asset.user_new,
-                targetUser: user,
-                operationNumber: 'AAA-TEST',
-                description: `Transfer od: ${asset.user_new} do: ${user}`
-            })
-
-            asset.update(
-                { user_new: user}
-             )
+        if(user == 'IT Magazyn' ){
+            for (let id of ids){
+                const asset = await Asset.findByPk(id)
+    
+                await ActivityLog.create({
+                    action: 'Transfer',
+                    it_number: asset.it_num,
+                    deviceId: asset.id,
+                    user: asset.user_new,
+                    targetUser: user,
+                    operationNumber: 'AAA-TEST',
+                    description: `Transfer od: ${asset.user_new} do: ${user}`
+                })
+    
+                asset.update(
+                    { 
+                        user_new: user,
+                        status: 'Magazyn',
+                        localization: 'IT Magazyn'
+                    }
+                 )
+            }
         }
+        else
+        {
+            for (let id of ids){
+                const asset = await Asset.findByPk(id)
+    
+                await ActivityLog.create({
+                    action: 'Transfer',
+                    it_number: asset.it_num,
+                    deviceId: asset.id,
+                    user: asset.user_new,
+                    targetUser: user,
+                    operationNumber: 'AAA-TEST',
+                    description: `Transfer od: ${asset.user_new} do: ${user}`
+                })
+                
+                if(asset.user_new == 'IT Magazyn'){
+                    await asset.update(
+                        { 
+                            user_new: user,
+                            status: 'Wydane'}
+                     )
+                }
+                asset.update(
+                    { user_new: user}
+                 )
+            }
+        }
+        
        
         
         res.status(200).json({ message: "Asset updated correctly"})
