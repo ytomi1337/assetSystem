@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = global.sequelize;
 
 const Reminders = sequelize.define(
-  'Reminders',
+  'reminders',
   {
     id: {
       allowNull: false,

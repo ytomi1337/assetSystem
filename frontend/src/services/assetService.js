@@ -60,6 +60,9 @@ export default {
     getStatus(){
         return apiAssetClient.get('/status')
     },
+    countStatuses(){
+        return apiAssetClient.get('/status/count')
+    },
     addStatus(name){
         return apiAssetClient.post(`/status/${name}`)
     },
