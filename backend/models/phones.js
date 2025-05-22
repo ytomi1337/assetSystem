@@ -42,7 +42,7 @@ const Phones = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        len: [7, 8]
+        len: [8, 8]
       },
       set(value) {
         this.setDataValue('puk', value === "" ? null : value);
