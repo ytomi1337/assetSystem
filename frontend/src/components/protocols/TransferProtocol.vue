@@ -51,25 +51,36 @@ const downloadPDF = async () => {
 };
 
 const printForm = async () => {
-
-  if(!assetData.value.selected.length){
-    errors.value.push('Brak wybranego sprzętu do wydruku')
+  if (!assetData.value.selected.length) {
+    errors.value.push('Brak wybranego sprzętu do wydruku');
     setTimeout(() => {
-      errors.value = []
-    }, 5000)
-    return false
+      errors.value = [];
+    }, 5000);
+    return false;
   }
 
   const { default: html2pdf } = await import('html2pdf.js');
   const element = printTemplateRef.value.printContent;
 
+  const opt = {
+    margin: 0,
+    filename: 'protokol-przekazania.pdf',
+    image: { type: 'jpeg', quality: 1 }, 
+    html2canvas: {
+      scale: 3, 
+      useCORS: true 
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
   html2pdf()
+    .set(opt)
     .from(element)
     .toPdf()
     .get('pdf')
     .then(pdf => {
       pdf.autoPrint();
-      window.open(pdf.output('bloburl'), '_blank'); 
+      window.open(pdf.output('bloburl'), '_blank');
     });
 };
 

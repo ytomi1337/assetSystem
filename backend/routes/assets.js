@@ -27,6 +27,23 @@ router.get('/assets', function(req, res){
     })
 })
 
+router.get('/assets/lastNum', async (req, res) => {
+
+    try{
+        const lastAsset = await Asset.findOne({
+            attributes: ['it_num'],
+            order: [['it_num', 'DESC']]
+        })
+
+        res.json({
+            asset: lastAsset
+        })
+    }catch(error){
+        res.send('Błąd podczas pobierania ostatniego rekordu: ', error);
+    }
+
+
+})
 router.get('/assets/it_numbers', async (req, res) => {
     try {
       const minQuery = req.query.min;

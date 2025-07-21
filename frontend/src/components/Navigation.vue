@@ -69,7 +69,7 @@ import TransferPhone from './protocols/TransferPhone.vue';
     <nav>
       <div class="branding">
         <RouterLink :to="{ name: 'home' }" class="navbar-brand me-5 ms-5" href="#">
-          <img src="@/assets/Boerner-Insulation-Logo-2.png" alt="Boerner Insulation Logo">
+          <img src="@/assets/Holcim_Logo_2021_sRGB.jpg" alt="Holcim Logo" width="50%">
         </RouterLink>
       </div>
       <ul v-show="!mobile" class="navigation">
@@ -221,6 +221,7 @@ import TransferPhone from './protocols/TransferPhone.vue';
       .branding{
         display: flex;
         align-items: center;
+        width: 30%;
 
         img{
           transition: .5s ease all;
