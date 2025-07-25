@@ -1,17 +1,14 @@
 var express = require('express');
 var router = express.Router();
 var Asset = require('../models/assets.js');
-var Category = require('../models/category.js');
-var Localization = require('../models/localization.js');
-var Status = require('../models/status.js');
+var ActivityLog = require('../models/activitylog.js')
 const { Sequelize, where, Op } = require('sequelize');
 const { body, validationResult } = require('express-validator')
 
 
 router.get('/assets', function(req, res){
-    console.log('request to assets');
     const page = Number(req.query.page) || 1
-    const limit = Number(req.query.limit) || 3
+    const limit = Number(req.query.limit) || 20
     const sortKey = req.query.sortKey || 'id'
     const sortValue = req.query.sortValue || 'asc'
 
@@ -44,6 +41,75 @@ router.get('/assets', function(req, res){
     })
 })
 
+router.get('/assets/lastNum', async (req, res) => {
+
+    try{
+        const lastAsset = await Asset.findOne({
+            attributes: ['it_num'],
+            order: [['it_num', 'DESC']]
+        })
+
+        res.json({
+            asset: lastAsset
+        })
+    }catch(error){
+        res.send('Błąd podczas pobierania ostatniego rekordu: ', error);
+    }
+
+
+})
+router.get('/assets/it_numbers', async (req, res) => {
+    try {
+      const minQuery = req.query.min;
+      const maxQuery = req.query.max;
+  
+ 
+      const assets = await Asset.findAll({
+        attributes: ['it_num', 'name', 'serialnum']
+      });
+  
+      const plainAssets = assets.map(asset => asset.get({ plain: true }));
+  
+
+      const getNumber = (itNum) => {
+        const match = itNum.match(/ITBI_(\d+)/);
+        return match ? parseInt(match[1], 10) : null;
+      };
+  
+    
+      const allNumbers = plainAssets.map(item => getNumber(item.it_num)).filter(n => n !== null);
+      const globalMin = Math.min(...allNumbers);
+      const globalMax = Math.max(...allNumbers);
+  
+      const formatItNum = (num) => `ITBI_${num.toString().padStart(5, '0')}`;
+  
+      let filteredAssets = plainAssets;
+
+      if (minQuery && maxQuery) {
+        const userMin = parseInt(minQuery, 10);
+        const userMax = parseInt(maxQuery, 10);
+  
+        filteredAssets = plainAssets.filter(item => {
+          const num = getNumber(item.it_num);
+          return num !== null && num >= userMin && num <= userMax;
+        });
+      }
+  
+      const response = {
+        assets: filteredAssets,
+        min: formatItNum(globalMin),
+        max: formatItNum(globalMax)
+      };
+  
+      res.json(response);
+    } catch (error) {
+      res.status(500).json({
+        message: "Wystąpił błąd podczas zczytywania numerów", error
+      });
+    }
+  });
+  
+
 router.get('/assets/:id', function(req, res){
     
         Asset.findByPk(Number(req.params.id)).then((asset) => {
@@ -52,6 +118,7 @@ router.get('/assets/:id', function(req, res){
             res.status(500).send({ error: 'Not found asset in database', details: error.message });
         })
 })
+
 
 router.post('/assets', [ 
     // body('it_num').isLength({min: 10, max: 10}).withMessage('Nr Działu IT musi zawierac 10 znaków!'),
@@ -63,33 +130,30 @@ router.post('/assets', [
     if(!errors.isEmpty()){
         return res.status(400).json({ errors: errors.array() })
     }
-    
-    try {
-
-        const category = req.body.category ? await Category.findOne({ where: { name: req.body.category } }) : null;
-        const localization = req.body.localization ? await Localization.findOne({ where: { name: req.body.localization } }) : null;
-        const status = req.body.status ? await Status.findOne({ where: { name: req.body.status } }) : null;
-
-
-        // 2️⃣ Tworzymy nowy asset używając znalezionych ID
-        const asset = await Asset.create({
-            name: req.body.name,
-            it_num: req.body.it_num,
-            serialnum: req.body.serialnum,
-            user_new: req.body.user_new,
-            localizationId: localization ? localization.id : null,
-            categoryId: category ? category.id : null,
-            statusId: status ? status.id : null,
-            recipt_date: req.body.recipt_date ? new Date(req.body.recipt_date) : null,
-            warranty_date: req.body.warranty_date ? new Date(req.body.warranty_date) : null
-        });
-
-        res.status(201).json(asset);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Błąd serwera' });
-    }
-   
+    Asset.create({
+        name: req.body.name,
+        it_num: req.body.it_num,
+        serialnum: req.body.serialnum,
+        user_new: req.body.user_new,
+        localization: req.body.localization,
+        category: req.body.category,
+        status: req.body.status,
+        recipt_date: req.body.recipt_date?new Date(req.body.recipt_date):null,
+        warranty_date: req.body.warranty_date?new Date(req.body.warranty_date):null
+    }).then((asset)=>{
+        ActivityLog.create({
+            action: 'AddedToDB',
+            it_number: asset.it_num,
+            deviceId: asset.id,
+            user: 'admin',
+            targetUser: asset.user_new,
+            operationNumber: 'AAA-TEST',
+            description: `Added: ${asset.name}`
+        })
+        res.send(asset)
+    }).catch(()=>{
+        return res.status(400).json({ errors: [{ field: 'it_num', msg: 'Nr działu IT musi byc unikalny!' }] })
+    })
 })
 
 router.post('/assets/filter', function(req, res){
@@ -204,6 +268,8 @@ router.delete('/assets/:id', function(req, res){
 })
 
 router.patch('/assets/:id', async(req, res) => {
+
+    
     const  id  = req.params.id
     const  changes  = req.body
 
@@ -216,6 +282,15 @@ router.patch('/assets/:id', async(req, res) => {
 
         await asset.update(changes)
 
+        ActivityLog.create({
+            action: 'Edited',
+            it_number: asset.it_num,
+            deviceId: asset.id,
+            user: asset.user_old || asset.user_new ,
+            targetUser: asset.user_new,
+            operationNumber: 'AAA-TEST',
+            description: `Zmiany: ${JSON.stringify(changes)}`
+        })
         res.status(200).json({ message: "Asset updated correctly", asset });
     }catch(error){
         console.log("Update Error:", error);
@@ -227,10 +302,60 @@ router.put('/assets/changeOwner', async(req, res) =>{
     const ids = req.body.recivedAssets.map(asset => asset.id)
     const user = req.body.user
     try{
-        Asset.update(
-            { user_new: user },
-            { where: { id: ids}}
-        )
+
+        if(user == 'IT Magazyn' ){
+            for (let id of ids){
+                const asset = await Asset.findByPk(id)
+    
+                await ActivityLog.create({
+                    action: 'Transfer',
+                    it_number: asset.it_num,
+                    deviceId: asset.id,
+                    user: asset.user_new,
+                    targetUser: user,
+                    operationNumber: 'AAA-TEST',
+                    description: `Transfer od: ${asset.user_new} do: ${user}`
+                })
+    
+                asset.update(
+                    { 
+                        user_new: user,
+                        status: 'Magazyn',
+                        localization: 'IT Magazyn'
+                    }
+                 )
+            }
+        }
+        else
+        {
+            for (let id of ids){
+                const asset = await Asset.findByPk(id)
+    
+                await ActivityLog.create({
+                    action: 'Transfer',
+                    it_number: asset.it_num,
+                    deviceId: asset.id,
+                    user: asset.user_new,
+                    targetUser: user,
+                    operationNumber: 'AAA-TEST',
+                    description: `Transfer od: ${asset.user_new} do: ${user}`
+                })
+                
+                if(asset.user_new == 'IT Magazyn'){
+                    await asset.update(
+                        { 
+                            user_new: user,
+                            status: 'Wydane'}
+                     )
+                }
+                asset.update(
+                    { user_new: user}
+                 )
+            }
+        }
+        
+       
+        
         res.status(200).json({ message: "Asset updated correctly"})
     }catch(error){
         console.log("Update Error:", error);

@@ -13,6 +13,7 @@
   const errors = ref([])
   const printTemplateRef = ref(null);
   const date = new Date().toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  const returnToIt =ref(false)
 
 const allSelected = computed(() => 
   assetData.value.selected.length === assetData.value.assets.length && assetData.value.assets.length > 0
@@ -45,13 +46,24 @@ const downloadPDF = async () => {
     }, 5000)
     return false
   }
+  
+  if(returnToIt.value == true){
+    try{
+    await assetService.updateAssetfromUser(assetData.value.selected, 'IT Magazyn')
+    }catch(error){
+      console.log('Error podczas przekazywania sprzetu do uzytkownika: "IT Magazyn"');
+
+      return
+    }
+  }
+
   const { default: html2pdf } = await import('html2pdf.js');
   const element = printTemplateRef.value.printContent;
   html2pdf().from(element).save('Protokol_Przekazania.pdf');
 };
 
 const printForm = async () => {
-
+  console.log(returnToIt.value);
   if(!assetData.value.selected.length){
     errors.value.push('Brak wybranego sprzętu do wydruku')
     setTimeout(() => {
@@ -59,6 +71,18 @@ const printForm = async () => {
     }, 5000)
     return false
   }
+
+  if(returnToIt.value == true){
+    try{
+    await assetService.updateAssetfromUser(assetData.value.selected, 'IT Magazyn')
+    }catch(error){
+      console.log('Error podczas przekazywania sprzetu do uzytkownika: "IT Magazyn"');
+
+      return
+    }
+  }
+  
+  
 
   const { default: html2pdf } = await import('html2pdf.js');
   const element = printTemplateRef.value.printContent;
@@ -71,6 +95,8 @@ const printForm = async () => {
       pdf.autoPrint();
       window.open(pdf.output('bloburl'), '_blank'); 
     });
+
+    emits("disableWindow");
 };
 
 const leaveComponent = () => {
@@ -99,7 +125,12 @@ const leaveComponent = () => {
           <button type="button" @click="downloadPDF" class="printBtn" :disabled="isDisabled">📥 Pobierz PDF</button>
           <button type="button" @click="printForm" class="printBtn" :disabled="isDisabled">🖨️ Drukuj zaznaczone</button>
         </div>
+
       </div>
+      <div style="text-align: end;">
+          <input type="checkbox" name="returnToIt" :disabled="isDisabled" @click="returnToIt = !returnToIt" id="checkbox">
+          <label for="returnToIt" >Zwróć sprzęt do działu it</label>
+        </div>
       <p v-if="errors.length != 0" class="errorTag">{{ errors[0] }}</p>
       <div class="tableBox">
         <table id="mainTable" class="mainTable">
@@ -181,7 +212,7 @@ input:hover{
 .headerNav{
   display: flex;
   justify-content: space-between;
-  margin: 5% 0;
+  margin: 2% 0;
   align-items: end;
 }
 
@@ -207,6 +238,7 @@ input:hover{
 .btnSection{
   display: flex;
   justify-content: end;
+  align-items: center;
   gap: 2%;
   margin-top: 2%;
   padding-top: 20px;
@@ -238,5 +270,8 @@ th {
   background: #f4f4f4;
 }
 
-
+#checkbox{
+  scale: 1.4;
+  margin-right: 10px;
+}
 </style>

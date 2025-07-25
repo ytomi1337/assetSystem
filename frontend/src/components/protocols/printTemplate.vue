@@ -1,5 +1,6 @@
 <script setup>
 import { ref, defineProps } from 'vue';
+import logo from '@/assets/Holcim_Logo_2021_sRGB.jpg'; // ← poprawny import
 
 defineProps({
   userData: Object,
@@ -18,7 +19,7 @@ defineExpose({ printContent });
       <!-- Logo i nagłówek -->
       <div class="header">
         <h1><b>{{ header }}</b></h1>
-        <img src="#" alt="Logo" class="logo" />
+        <img :src="logo" alt="Logo" class="logo" />
       </div>
   
       <!-- Dane użytkownika -->

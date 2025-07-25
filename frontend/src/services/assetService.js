@@ -16,6 +16,14 @@ export default {
     getAssets(page, limit, sortValue, sortKey){
         return apiAssetClient.get(`/assets?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)
     },
+    getItNum(min, max){
+        if(min || max){
+            return apiAssetClient.get(`/assets/it_numbers?min=${min}&max=${max}`)
+        }else{
+            return apiAssetClient.get(`/assets/it_numbers`)
+        }
+       
+    },
     getId(id){
         return apiAssetClient.get('/assets/'+id)
     },
@@ -31,11 +39,32 @@ export default {
     getCategories(){
         return apiAssetClient.get('/categories')
     },
+    countCategories(){
+        return apiAssetClient.get('/categories/count')
+    },
+    addCategories(name){
+        return apiAssetClient.post(`/categories/${name}`)
+    },
+    deleteCategories(name) {
+        return apiAssetClient.delete(`/categories/${name}`);
+      },
     getLocalizations(){
         return apiAssetClient.get('/localizations')
     },
+    addLocalizations(name){
+        return apiAssetClient.post(`/localizations/${name}`)
+    },
+    deleteLocalizations(name) {
+        return apiAssetClient.delete(`/localizations/${name}`);
+      },
     getStatus(){
         return apiAssetClient.get('/status')
+    },
+    countStatuses(){
+        return apiAssetClient.get('/status/count')
+    },
+    addStatus(name){
+        return apiAssetClient.post(`/status/${name}`)
     },
     getUsers(userName){
         return apiAssetClient.get('/users?userName='+ userName)
@@ -43,14 +72,29 @@ export default {
     getAllUsers(){
         return apiAssetClient.get('/users')
     },
+    getUsersData(page, limit){
+        return apiAssetClient.get(`/usersData?page=${page}&limit=${limit}`)
+    },
+    addUser(data){
+        return apiAssetClient.post('/users', data)
+    },
     applyFilters(page, limit, sortValue, sortKey, appliedFilters){
         return apiAssetClient.post(`/assets/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
     },
     getUserAssets(page, limit, userName){
         return apiAssetClient.post(`/assets/user?page=${page}&limit=${limit}`, { userName })
     },
+    getUserPhones(page, limit, userName){
+        return apiAssetClient.post(`/phones/user?page=${page}&limit=${limit}`, { userName })
+    },
+    deleteUser(name) {
+        return apiAssetClient.delete(`/users/${name}`);
+      },
     updateAssetfromUser(recivedAssets, user){
         return apiAssetClient.put('/assets/changeOwner', { recivedAssets, user})
+    },
+    updatePhonesfromUser(recivedAssets, user){
+        return apiAssetClient.put('/phones/changeOwner', { recivedAssets, user})
     },
     getPhones(page, limit, sortValue, sortKey){
         return apiAssetClient.get(`/phones?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)
@@ -59,7 +103,6 @@ export default {
         return apiAssetClient.post(`/phones/filter?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`, appliedFilters)
     },
     createPhone(newPhone){
-        console.log(newPhone);
         return apiAssetClient.post('/phones',newPhone)
     },
     getPhoneId(id){
@@ -79,5 +122,11 @@ export default {
     },
     deleteReminder(id){
         return apiAssetClient.delete(`/reminders/` + id)
+    },
+    getActivityLogs(page, limit, sortValue, sortKey){
+        return apiAssetClient.get(`/logs?page=${page}&limit=${limit}&sortValue=${sortValue}&sortKey=${sortKey}`)
+    },
+    getAssetLogs(id){
+        return apiAssetClient.get('/assets/' + id + '/history')
     },
 }

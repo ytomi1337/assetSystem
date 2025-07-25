@@ -3,8 +3,10 @@ import HomeView from '../views/HomeView.vue'
 import AssetsListView from '@/views/AssetsListView.vue'
 import PhoneListView from '@/views/PhoneListView.vue'
 import AssetDetalisView from '@/views/AssetDetalisView.vue'
+import ActivityLogsView from '@/views/AvtivityLogsView.vue'
 import PhoneDetalisView from '@/views/PhoneDetalisView.vue'
 import NotFound from '@/views/NotFound.vue'
+import HistoryView from '@/views/HistoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,6 +33,12 @@ const router = createRouter({
       component: AssetDetalisView
     },
     {
+      path: '/assets/:id/history',
+      name: 'history-view',
+      props: true,
+      component: HistoryView
+    },
+    {
       path: '/:catchAll(.*)',
       name: 'NotFound',
       component: NotFound,
@@ -49,6 +57,12 @@ const router = createRouter({
       name: 'phone-detalis',
       props: true,
       component: PhoneDetalisView
+    },
+    {
+      path: '/logs',
+      name: 'activity-logs',
+      props: true,
+      component: ActivityLogsView
     },
     
   ],

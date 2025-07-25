@@ -26,7 +26,68 @@ router.get('/phones', function(req, res){
         })
     })
 })
+router.post('/phones/user', function(req, res){
+    const page = Number(req.query.page) || 1
+    const limit = Number(req.query.limit) || 3
 
+    Promise.all([
+        Phones.count({
+            where:{
+                user: req.body.userName
+            }
+        }),
+        Phones.findAll({
+            offset: (page -1) * limit,
+            limit: (limit),
+            where:{
+                user: req.body.userName
+            }
+        })
+    ]).then(([count, phones]) => {
+        res.send({
+            count: count,
+            phones: phones
+        })
+    })
+})
+
+router.put('/phones/changeOwner', async(req, res) =>{
+    const ids = req.body.recivedAssets.map(phone => phone.id)
+    const user = req.body.user
+    try{
+
+        if(user == 'IT Magazyn' ){
+            for (let id of ids){
+                const phone = await Phones.findByPk(id)
+    
+                phone.update(
+                    { 
+                        user: user,
+                        status: 'Magazyn',
+                    }
+                 )
+            }
+        }else{
+            for (let id of ids){
+                const phone = await Phones.findByPk(id)
+    
+                phone.update(
+                    { 
+                        user: user,
+                        status: 'Wydane',
+                    }
+                 )
+            }
+        }
+       
+        
+        res.status(200).json({ message: "Phone updated correctly"})
+    }catch(error){
+        console.log("Update Error:", error);
+        res.status(500).json({message: "Wystapił błąd podczas aktualizacji", error})
+    }
+
+})
 router.get('/phones/:id', function(req, res){
     
     Phones.findByPk(Number(req.params.id)).then((phone) => {

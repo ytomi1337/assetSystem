@@ -5,14 +5,14 @@ import assetService from '@/services/assetService';
 import AutoComplete from '../AutoComplete.vue';
 const emits = defineEmits(['disableWindow', 'update-name'])
 
-const users = ref({ sending: '', receiving: '' });
+const users = ref({ sending: 'IT Magazyn', receiving: '' });
 const pagination = ref({ page: 1, limit: 9 });
-const assetsData = ref({ assets: [], selected: [] });
-const receivedData = ref({ assets: [], selected: [] });
+const data = ref({ phones: [], selected: [] });
+const receivedData = ref({ phones: [], selected: [] });
 const total = ref({ count: null, pages: null });
 const errors = ref([]);
 
-const isDisabled = computed (()=> !users.value.sending || !users.value.receiving)
+const isDisabled = computed (()=> !users.value.receiving)
 
 const setUser = (type, name) => {
   users.value[type] = name
@@ -22,13 +22,13 @@ const setUser = (type, name) => {
   watchEffect(() =>{
     if(!users.value.sending) return;
 
-    assetsData.value.selected = []
+    data.value.selected = []
     receivedData.value.selected = []
-    receivedData.value.assets = []
+    receivedData.value.phones = []
 
-      assetService.getUserAssets(pagination.value.page, pagination.value.limit, users.value.sending)
+      assetService.getUserPhones(pagination.value.page, pagination.value.limit, users.value.sending)
                 .then((response)=>{
-                  assetsData.value.assets = response.data.assets
+                  data.value.phones = response.data.phones
                   total.value.count = response.data.count
                   total.value.pages = Math.ceil(total.value.count / pagination.value.limit);
                 }).catch((error)=>{
@@ -41,15 +41,15 @@ const setUser = (type, name) => {
     pagination.value.page = Math.max(1, Math.min(total.value.pages, pagination.value.page + direction));
   };
 
-  const allSelected = (data) => data.selected.length === data.assets.length && data.assets.length > 0;
+  const allSelected = (data) => data.selected.length === data.phones.length && data.phones.length > 0;
 
   const toggleAll = (data, event) => {
-    data.selected = event.target.checked ? [...data.assets] : []
+    data.selected = event.target.checked ? [...data.phones] : []
   };
 
   const transferAssets = (from, to) => {
-    to.assets.push(...from.selected);
-    from.assets = from.assets.filter(asset => !from.selected.some(selected => selected.id === asset.id));
+    to.phones.push(...from.selected);
+    from.phones = from.phones.filter(phone => !from.selected.some(selected => selected.id === phone.id));
     from.selected = [];
   }
 
@@ -57,9 +57,11 @@ const setUser = (type, name) => {
       const { sending, receiving } = users.value;
       if (!sending || !receiving) return showError('Pole użytkownika odbierającego i wysyłającego musi być wypełnione!');
       if (sending === receiving) return showError('Użytkownik odbierający i wysyłający nie mogą być tacy sami!');
-      if (receivedData.value.assets.length === 0) return showError('Nie został wybrany żaden sprzęt do transferu!');
+      if (receivedData.value.phones.length === 0) return showError('Nie został wybrany żaden sprzęt do transferu!');
 
-      assetService.updateAssetfromUser(receivedData.value.assets, receiving)
+      console.log(receivedData.value.phones);
+
+      assetService.updatePhonesfromUser(receivedData.value.phones, receiving)
         .then(() => {
           GStore.flashMessage = 'Operacja Aktualizacji przebiegła pomyślnie!';
           GStore.wasChange = true;
@@ -82,13 +84,13 @@ const setUser = (type, name) => {
 <template>
  <div class="box-overlay">
     <div class="box">
-        <h3>Przekazanie między użytkownikami</h3>
+        <h3>Przekazanie Telefonu</h3>
         <p v-if="errors.length">{{ errors[0] }}</p>
 
         <div class="navUserDiv">
           <div class="item">
             <label><b>Użytkownik od:</b></label>
-          <AutoComplete @update-name="(name) => setUser('sending', name)"> </AutoComplete>
+          <input type="text" v-model="users.sending" disabled>
           </div>
           <div class="item">
             <label><b>Użytkownik do:</b></label>
@@ -104,31 +106,31 @@ const setUser = (type, name) => {
               <tr>
                 <th>
                    <input type="checkbox"
-                   @change="(event) => toggleAll(assetsData, event)" 
-                   :checked="allSelected(assetsData)">
+                   @change="(event) => toggleAll(data, event)" 
+                   :checked="allSelected(data)">
                 </th>
-                <th>Nr IT</th>
-                <th>Nazwa</th>
-                <th>Nr Serii</th>
                 <th>Kategoria</th>
+                <th>Nazwa</th>
+                <th>IMEI</th>
+                <th>Nr_tel</th>
               </tr>
-              <tr v-for="asset in assetsData.assets" :key="asset.id">
+              <tr v-for="phone in data.phones" :key="phone.id">
                 <td>
                   <input type="checkbox" 
-                  :value="asset" 
-                  v-model="assetsData.selected" />
+                  :value="phone" 
+                  v-model="data.selected" />
                 </td>
-                <td>{{ asset.it_num }}</td>
-                <td>{{ asset.name }}</td>
-                <td>{{ asset.serialnum }}</td>
-                <td>{{ asset.category }}</td>
+                <td>{{ phone.category }}</td>
+                <td>{{ phone.name }}</td>
+                <td>{{ phone.imei }}</td>
+                <td>{{ phone.nr_tel }}</td>
               </tr>
               
             </table>
           </div>
           <div class="midBox">
-            <button  class="paginationBtn3" @click="transferAssets(assetsData, receivedData)" :disabled="isDisabled"><i class="fa-solid fa-chevron-right"></i></button>
-            <button class="paginationBtn3" @click="transferAssets(receivedData, assetsData)" :disabled="isDisabled"><i class="fa-solid fa-chevron-left"></i></button>
+            <button  class="paginationBtn3" @click="transferAssets(data, receivedData)" :disabled="isDisabled"><i class="fa-solid fa-chevron-right"></i></button>
+            <button class="paginationBtn3" @click="transferAssets(receivedData, data)" :disabled="isDisabled"><i class="fa-solid fa-chevron-left"></i></button>
           </div>
           <div class="tableBox rightBox">
             <table class="mainTable">
@@ -139,16 +141,16 @@ const setUser = (type, name) => {
                 <th>Nr Serii</th>
                 <th>Kategoria</th>
               </tr>
-              <tr v-for="rAsset in receivedData.assets" :key="rAsset.id">
+              <tr v-for="rPhone in receivedData.phones" :key="rPhone.id">
                 <td>
                   <input type="checkbox" 
-                  :value="rAsset" 
+                  :value="rPhone" 
                   v-model="receivedData.selected">
                 </td>
-                <td>{{ rAsset.it_num }}</td>
-                <td>{{ rAsset.name }}</td>
-                <td>{{ rAsset.serialnum }}</td>
-                <td>{{ rAsset.category }}</td>
+                <td>{{ rPhone.it_num }}</td>
+                <td>{{ rPhone.name }}</td>
+                <td>{{ rPhone.serialnum }}</td>
+                <td>{{ rPhone.category }}</td>
               </tr>
     
             </table>
@@ -216,6 +218,8 @@ input:hover{
 }
 .item{
   width: 100%;
+  display: flex;
+  flex-direction: column;
   text-align: left;
 }
 

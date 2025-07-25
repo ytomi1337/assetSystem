@@ -36,7 +36,6 @@ const updateUser = (receivedName) => {
 
 const crtAssetFun = (event) => {
   event.preventDefault();
-  console.log(userChoice.value);
   assetService
     .createPhone(newPhone.value)
     .then(() => {

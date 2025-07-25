@@ -4,6 +4,9 @@ import { ref, onMounted, onUnmounted} from 'vue'
 import UserToUser from '@/components/actions/UserToUser.vue';
 import TransferProtocol from './protocols/TransferProtocol.vue';
 import ReturnProtocol from './protocols/ReturnProtocol.vue';
+import PrintBarcodes from './actions/PrintBarcodes.vue';
+import ReturnPhoneProtocol from './protocols/ReturnPhoneProtocol.vue';
+import TransferPhone from './protocols/TransferPhone.vue';
 
   const scorlledNav = ref(null)
   const mobileNav = ref(null)
@@ -66,27 +69,30 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
     <nav>
       <div class="branding">
         <RouterLink :to="{ name: 'home' }" class="navbar-brand me-5 ms-5" href="#">
-          <img src="@/assets/Boerner-Insulation-Logo-2.png" alt="Boerner Insulation Logo">
+          <img src="@/assets/Holcim_Logo_2021_sRGB.jpg" alt="Holcim Logo" width="50%">
         </RouterLink>
       </div>
       <ul v-show="!mobile" class="navigation">
         <li><RouterLink :to="{ name: 'asset-list' }" class="link" >Sprzęt IT</RouterLink></li>
         <li><RouterLink :to="{ name: 'phone-list' }" class="link" >Telefony</RouterLink></li>
-        <li><RouterLink :to="{ name: '' }" class="link">Inwentaryzacja</RouterLink></li>
+        <li><RouterLink :to="{ name: '' }" class="link"><s>Inwentaryzacja</s></RouterLink></li>
+        <li><RouterLink :to="{ name: 'activity-logs' }" class="link">Rejestrator</RouterLink></li>
         
         <li class="dropdown">
           <button class="dropbtn">Akcje <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
             <a href="#" @click="toggleForm('userToUser')">Przekazanie Sprzętu między użytkownikami</a>
-            <a href="#" @click="toggleForm('zwrot')">Przekazanie Telefonów między użytkownikami</a>
+            <a href="#" @click="toggleForm('printBarcodes')">Drukowanie kodów kreskowych</a>
           </div>
         </li>
         
         <li class="dropdown">
           <button class="dropbtn">Protokoły <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
-            <a href="#" @click="toggleForm('zwrot')">Protokół Przekazania</a>
-            <a href="#" @click="toggleForm('przekazanie')">Protokół Zwortu</a>
+            <a href="#" @click="toggleForm('przekazanie')">Protokół Przekazania</a>
+            <a href="#" @click="toggleForm('przekazanie-tel')">Protokół Przekazanie Telefonu</a>
+            <a href="#" @click="toggleForm('zwrot')">Protokół Zwortu</a>
+            <a href="#" @click="toggleForm('zwrot-tel')">Protokół Zwortu Telefonu</a>
           </div>
         </li>
       </ul>
@@ -99,6 +105,8 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
         <li><RouterLink :to="{ name: 'asset-list' }" class="link" >Sprzęt IT</RouterLink></li>
         <li><RouterLink :to="{ name: 'phone-list' }" class="link" >Telefony</RouterLink></li>
         <li><RouterLink :to="{ name: '' }" class="link" >Inwentaryzacja</RouterLink></li>
+        <li><RouterLink :to="{ name: '' }" class="link">Rejestrator</RouterLink></li>
+
         <li class="dropdown">
           <button>Akcje <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
@@ -110,8 +118,8 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
         <li class="dropdown">
           <button >Protokoły <i class="fa-solid fa-chevron-down"></i></button>
           <div class="dropdown-content">
-            <a href="#">Protokół Przekazania</a>
             <a href="#">Protokół Zwortu</a>
+            <a href="#">Protokół Przekazania</a>
           </div>
         </li>
       </ul>
@@ -120,10 +128,15 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
     <div class="corporate-border"></div>
     </header>
     
-    <UserToUser 
+       <UserToUser 
         @disableWindow="disableActiveform" 
         v-if="activeForm === 'userToUser'">
         </UserToUser>
+
+        <PrintBarcodes 
+        @disableWindow="disableActiveform" 
+        v-if="activeForm === 'printBarcodes'">
+        </PrintBarcodes>
 
         <TransferProtocol
         @disableWindow="disableActiveform"
@@ -131,11 +144,22 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
         v-if="activeForm === 'przekazanie'">
         </TransferProtocol>
 
+        <TransferPhone
+        @disableWindow="disableActiveform"
+        v-if="activeForm === 'przekazanie-tel'">
+        </TransferPhone>
+
         <ReturnProtocol
         @disableWindow="disableActiveform"
-       
         v-if="activeForm === 'zwrot'">
         </ReturnProtocol>
+
+        <ReturnPhoneProtocol
+        @disableWindow="disableActiveform"
+        v-if="activeForm === 'zwrot-tel'">
+        </ReturnPhoneProtocol>
+          
+
 </template>
 
 <style scoped>
@@ -197,6 +221,7 @@ import ReturnProtocol from './protocols/ReturnProtocol.vue';
       .branding{
         display: flex;
         align-items: center;
+        width: 30%;
 
         img{
           transition: .5s ease all;
