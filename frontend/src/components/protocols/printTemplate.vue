@@ -9,132 +9,179 @@ defineProps({
   header: String
 });
 
+
 const printContent = ref(null);
 
 defineExpose({ printContent });
+
+
 </script>
 
 <template>
     <div ref="printContent" class="pdf-container">
-      <!-- Logo i nagłówek -->
+
       <div class="header">
-        <h1><b>{{ header }}</b></h1>
-        <img :src="logo" alt="Logo" class="logo" />
+        <div class="headerLogo">
+          <img :src="logo" alt="Logo" class="logo" />
+        </div>
+        
+        <div class="headerTopic">
+          <h6><b>{{ header }}</b></h6>
+        </div>
+        
+
+        <div class="protocolInfo">
+          <div class="protocolBox">LI3.02.01.PR001.02</div>
+          <div class="protocolBox">Wyd. 3</div>
+          <div class="protocolBox">str. 1/1</div>
+        
+          
+        </div>
+
       </div>
   
-      <!-- Dane użytkownika -->
+     
       <div class="user-info">
-        <div class="leftSection">
-            <p><strong>Imię i Nazwisko:</strong> {{ userData.name }}</p>
-            <p><strong>Stanowisko:</strong> {{ userData.profession }}</p>
-            <p><strong>Dział:</strong> {{ userData.department }}</p>
-        </div>
-        <div class="rightSection">
-            <p><strong>{{ userData.company }}</strong></p>
-            <p>{{ date }}</p>
-        </div>
+          <p><strong>Użytkownik (Imię i Nazwisko): </strong> {{ userData.name }}</p>
+          <p><strong>Przekazujący (Imię i Nazwisko): </strong> ........................................................................................</p>
+
+          <div class="assetData">
+            <p><strong>Typ Sprzętu IT: </strong> </p> 
+              <div v-for="(selectedAsset, index) in selectedAssets" :key="index" >
+                {{ selectedAsset.category }}, 
+              </div>
+          </div>
+
+          <div class="assetData">
+            <p><strong>Model: </strong> </p> 
+              <div v-for="(selectedAsset, index) in selectedAssets" :key="index" >
+                {{ selectedAsset.name }}, 
+              </div>
+          </div>
+
+          <div class="assetData">
+            <p><strong>S/N /IMEI: </strong> </p> 
+              <div v-for="(selectedAsset, index) in selectedAssets" :key="index" >
+                {{ selectedAsset.serialnum }}, 
+              </div>
+          </div>
+
+          <div class="assetData">
+            <p><strong>Stan techniczny (nowy/ używany) </strong> </p> 
+              <div v-for="(selectedAsset, index) in selectedAssets" :key="index" >
+                {{ selectedAsset.status }}, 
+              </div>
+          </div>
+
+          <p><strong>Data Przekazania: </strong> {{ date }}</p>
+          <p><strong>Wyposażenie dodatkowe: </strong> ........................................................................................</p>
+          <p><strong>Inne, dodatkowe informacje: </strong> ........................................................................................</p>
+          
       </div>
   
-      <!-- Tabela -->
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nr działu IT</th>
-            <th>Nazwa</th>
-            <th>Nr Seryjny</th>
-            <th>Kategoria</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(selectedAsset, index) in selectedAssets" :key="index">
-            <td>{{ index + 1 }}</td>
-            <td>{{ selectedAsset.it_num }}</td>
-            <td>{{ selectedAsset.name }}</td>
-            <td>{{ selectedAsset.serialnum }}</td>
-            <td>{{ selectedAsset.category }}</td>
-          </tr>
-        </tbody>
-      </table>
-  
-      <!-- Miejsce na podpisy -->
+      <div class="infoNotes">
+            <p style="color: red;">Sprzęt pozostaje w dyspozycji pracownika na czas pełnienia 
+            obowiązków dla pracodawcy/usługodawcy. Z chwilą zakończenia pracy pracownik 
+            ma obowiązek odesłać/zdać sprzęt do lokalnego działu IT</p>
+          <p >Zapoznałem się z procedurą LI3.02.01.PR001.00 Procedura 
+            IT zarządzania aplikacjami i domenami, sprzętem teleinformatycznym 
+            oraz dostępami do systemów informatycznych,
+            rozumiem i akceptuję zasady używania sprzętu IT.</p>
+          </div>
+
       <div class="signatures">
         <div>
-           <p>Podpis / data osoby przekazującej</p>
-          <div class="signature-line"></div>
+           <div class="signature-line"></div>
+           <p>Data</p>
         </div>
         <div>
-          <p>Podpis / data osoby odbierającej</p>
           <div class="signature-line"></div>
+           <p>Czytelny Podpis Przekazujacego</p>
+        </div>
+        <div>
+          <div class="signature-line"></div>
+          <p>Czytelny Podpis Przekazujacego</p>
         </div>
       </div>
     </div>
+
+
   </template>
   
   <style scoped>
   .pdf-container {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  max-width: 800px;
-  margin: auto;
-  background: white;
-  border: 1px solid #ddd;
-  
-  display: flex;
-  flex-direction: column;
-  min-height: 122vh; /* Zapewnia pełną wysokość strony A4 */
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
-  align-items: center;
-
-  img{
-    width: 15rem;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    border: 1px solid #ddd;
+    
+    display: flex;
+    flex-direction: column;
+    min-height: 122vh; 
   }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    align-items: center;
+    border: 1px solid black;
+
+    .headerLogo{
+      border-right: 1px solid black;
+      padding: 10px;
+    }
+    .logo {
+      height: 52px;
+    }
+  
+    .protocolInfo{
+    display: flex;
+    flex-direction: column;
+
+    .protocolBox{
+      padding: 0 5px;
+      text-align: center;
+      border-left: 1px solid black;
+      border-bottom: 1px solid black;
+    }
+
+    .protocolBox:last-child{
+      border-bottom: none
+    }
+
+    }
 }
 
-.logo {
-  width: 150px;
-  margin-bottom: 10px;
-}
 
 .user-info {
   display: flex;
-  margin-top: 10%;
-  justify-content: space-between;
-  padding-bottom: 10px;
-  margin-bottom: 12%;
+  flex-direction: column;
+  margin: 5% 0;
+
+  .assetData{
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  }
+
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
 
-th, td {
-  padding: 10px;
-  text-align: left;
-}
 
-th {
-  background: #f4f4f4;
-}
-
-/* Upewnia się, że treść rośnie w górę, a podpisy zostają na dole */
 .signatures {
+  text-align: center;
   display: flex;
   justify-content: space-between;
-  margin-top: auto; /* Przesuwa podpisy na dół */
+  margin-top: auto; 
   padding-top: 40px;
 }
 
 .signature-line {
-  border-top: 1px solid black;
-  width: 200px;
-  margin-top: 10px;
+  border-top: 1px dotted black;
+  margin-bottom: 10px;
 }
   </style>
   

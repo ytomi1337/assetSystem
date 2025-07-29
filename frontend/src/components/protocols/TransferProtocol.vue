@@ -8,7 +8,7 @@
   const assetData = ref({ assets: [], selected: []})
   const pagination = ref({ count: 1, limit: 10})
   const userData = ref([])
-  const header = ref('Protokół przekazania')
+  const header = ref('Protokół przekazania Sprzętu IT')
   const isDisabled = computed (() => !userData.value.name )
   const errors = ref([])
   const printTemplateRef = ref(null);
