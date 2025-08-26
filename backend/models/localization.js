@@ -1,18 +1,18 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = global.sequelize;
+'use strict';
 
-const Localization = sequelize.define(
+module.exports = (sequelize, DataTypes) =>{
+  const Localization = sequelize.define(
   'Localization',
-  {
-    name:{
-      type: DataTypes.TEXT,
-      allowNull: false
+    {
+      name:{
+        type: DataTypes.TEXT,
+        allowNull: false
+      }
+    },
+    {
+      tableName: 'localizations', 
+      timestamps: true,
     }
-  },
-  {
-    tableName: 'localizations', 
-    timestamps: true,
-  }
-);
-
-module.exports = Localization;
+  );
+return Localization
+}

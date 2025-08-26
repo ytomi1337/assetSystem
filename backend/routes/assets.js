@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
-var Asset = require('../models/assets.js');
-var ActivityLog = require('../models/activitylog.js')
-const { Sequelize, where, Op } = require('sequelize');
+
+const db = require('../models');
+const Asset = db.Asset; 
+
+const { Op } = require('sequelize');
 const { body, validationResult } = require('express-validator')
+const isAuthenticated = require('../middlewares/isAuthenticated')
 
 
 router.get('/assets', function(req, res){
@@ -24,6 +27,9 @@ router.get('/assets', function(req, res){
             count: count,
             assets: assets
         })
+    }).catch(err => {
+        console.error(err);
+        res.status(500).send({ error: 'Wystąpił błąd podczas pobierania danych' });
     })
 })
 

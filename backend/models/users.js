@@ -1,30 +1,30 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = global.sequelize;
+'use strict';
 
-const Users = sequelize.define(
+module.exports = (sequelize, DataTypes) =>{
+  const Users = sequelize.define(
   'Users', // Model name
-  {
-    name: {
-      type: DataTypes.TEXT,
-      allowNull: false,
+    {
+      name: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      employeId: {
+        type: DataTypes.INTEGER,
+      },
+      company: {
+        type: DataTypes.TEXT,
+      },
+      profession: {
+        type: DataTypes.TEXT,
+      },
+      department: {
+        type: DataTypes.TEXT,
+      },
+      email: {
+        type: DataTypes.INTEGER,
+      },
     },
-    employeId: {
-      type: DataTypes.INTEGER,
-    },
-    company: {
-      type: DataTypes.TEXT,
-    },
-    profession: {
-      type: DataTypes.TEXT,
-    },
-    department: {
-      type: DataTypes.TEXT,
-    },
-    email: {
-      type: DataTypes.INTEGER,
-    },
-  },
-  
-);
+  );
 
-module.exports = Users;
+  return Users
+}

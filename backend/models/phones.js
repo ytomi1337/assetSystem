@@ -1,7 +1,7 @@
-const { Sequelize, DataTypes, TEXT } = require('sequelize');
-const sequelize = global.sequelize;
+'use strict';
 
-const Phones = sequelize.define(
+module.exports = (sequelize, DataTypes) =>  {
+  const Phones = sequelize.define(
   'phones',
   {
     id: {
@@ -91,4 +91,5 @@ const Phones = sequelize.define(
   }
 );
 
-module.exports = Phones;
+return Phones
+}

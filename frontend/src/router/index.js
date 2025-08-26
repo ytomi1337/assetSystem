@@ -7,6 +7,7 @@ import ActivityLogsView from '@/views/AvtivityLogsView.vue'
 import PhoneDetalisView from '@/views/PhoneDetalisView.vue'
 import NotFound from '@/views/NotFound.vue'
 import HistoryView from '@/views/HistoryView.vue'
+import LoginPanel from '@/views/LoginPanel.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,6 +64,12 @@ const router = createRouter({
       name: 'activity-logs',
       props: true,
       component: ActivityLogsView
+    },
+    {
+      path: '/auth',
+      name: 'auth-panel',
+      props: true,
+      component: LoginPanel
     },
     
   ],
