@@ -1,18 +1,19 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = global.sequelize;
+'use strict';
 
-const Status = sequelize.define(
-  'Status', // Model name
-  {
-    name: {
-      type: DataTypes.TEXT,
-      allowNull: false,
+module.exports = (sequelize, DataTypes) =>{
+  const Status = sequelize.define(
+    'Status', // Model name
+    {
+      name: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
     },
-  },
-  {
-    tableName: 'statuses', 
-    timestamps: true,
-  }
-);
+    {
+      tableName: 'statuses', 
+      timestamps: true,
+    }
+  );
 
-module.exports = Status;
+  return Status
+}

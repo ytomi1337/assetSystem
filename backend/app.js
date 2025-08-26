@@ -1,76 +1,79 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require('cors')
 require('dotenv').config();
+const express = require('express');
 
-const { Sequelize } = require('sequelize');
-const basicAuth = require('express-basic-auth')
+const session = require('express-session');
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-global.sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: 'postgres'
-  }
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors')
+const corsOptions = require('./config/corsOptions.js')
+const sequelize = require('./config/db.js');
+const createError = require('http-errors');
+
+const assetsRouter = require('./routes/assets.js');
+const categoriesRouter = require('./routes/category.js');
+const localizationsRouter = require('./routes/localizations.js');
+const statusRouter = require('./routes/status.js')
+const usersRouter = require('./routes/users.js')
+const phonesRouter = require('./routes/phones.js')
+const remindersRouter = require('./routes/reminders.js')
+const activityLog = require('./routes/activitylog.js')
+
+const app = express();
+
+//Authorization
+app.use(session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: true
+    })
+)
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL:process.env.GOOGLE_CALLBACKURL
+    },
+    (accessToken, refreshToken, profile, done) => {
+        return done(null, profile)
+        }
+    )
 );
 
-async function testDatabaseConnection() {
-  try {
-    await global.sequelize.authenticate();
-    console.log('Connection to PostgreSQL established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }
-}
+app.get("/auth/google", passport.authenticate('google', {scope: ["profile", "email"] }) 
+);
 
-testDatabaseConnection();
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null,user));
 
-var assetsRouter = require('./routes/assets.js');
-var categoriesRouter = require('./routes/category.js');
-var localizationsRouter = require('./routes/localizations.js');
-var statusRouter = require('./routes/status.js')
-var usersRouter = require('./routes/users.js')
-var phonesRouter = require('./routes/phones.js')
-var remindersRouter = require('./routes/reminders.js')
-var activityLog = require('./routes/activitylog.js')
+app.get("/auth", (req, res) => {
+    res.send("<a href='/auth/google'>Login with Google</a>")
+});
 
-var app = express();
+app.get("/auth/google/callback", passport.authenticate('google', {failureRedirect: "/"}), (req, res) =>{
+    res.redirect('/assets')
+})
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, "*");
-    callback(null, origin);
-  },
-  credentials: true,
-  methods: "GET,POST,PATCH,PUT,DELETE,OPTIONS",
-  allowedHeaders: "Content-Type,Authorization",
-};
-
+app.get("/logout", (req, res) => {
+    req.logOut(() =>{
+        res.redirect("/");
+    });
+})
+//Middleware
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
-
-app.use(basicAuth({
-  users: { admin: 'test123' },
-  challenge: true 
-}));
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-
+//Routing
 app.use('/', assetsRouter);
 app.use('/', categoriesRouter);
 app.use('/', localizationsRouter);
@@ -80,20 +83,14 @@ app.use('/', phonesRouter);
 app.use('/', remindersRouter);
 app.use('/', activityLog);
 
-// catch 404 and forward to error handler
+
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({ error: err.message });
 });
 
 module.exports = app;

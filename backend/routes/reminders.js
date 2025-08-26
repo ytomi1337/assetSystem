@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var Reminders = require('../models/reminders.js');
+
+const db = require('../models');
+const Reminders = db.reminders; 
 const { Sequelize, Op, where } = require('sequelize');
 
 
